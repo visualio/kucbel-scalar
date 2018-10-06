@@ -2,7 +2,10 @@
 
 namespace Kucbel\Scalar\Input;
 
-class EnvironmentInput extends StrictInput
+use Kucbel\Scalar\Output\OutputException;
+use Kucbel\Scalar\Output\OutputInterface;
+
+class EnvironmentInput extends StrictInput implements OutputInterface
 {
 	/**
 	 * @var string | null
@@ -29,6 +32,30 @@ class EnvironmentInput extends StrictInput
 		$value = getenv( $this->alias( $name ));
 
 		return $value !== false ? $value : $null;
+	}
+
+	/**
+	 * @param string $name
+	 * @param mixed $value
+	 */
+	function set( string $name, $value )
+	{
+		$name = $this->alias( $name );
+
+		if( $value === null ) {
+			$done = putenv( $name );
+		} elseif( is_bool( $value )) {
+			$value = $value ? 1 : 0;
+			$done = putenv("$name=$value");
+		} elseif( is_scalar( $value )) {
+			$done = putenv("$name=$value");
+		} else {
+			$done = false;
+		}
+
+		if( $done === false ) {
+			throw new OutputException("Unable to modify environment value.");
+		}
 	}
 
 	/**
