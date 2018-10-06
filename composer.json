@@ -1,0 +1,17 @@
+{
+	"name": "kucbel/scalar",
+	"description": "Scalar validator",
+	"homepage": "https://bitbucket.org/kucbel/scalar/",
+	"license": ["GPLv3"],
+	"authors": [{
+		"name": "David Kucbel",
+		"homepage": "https://bitbucket.org/kucbel/"
+	}],
+	"require": {
+		"php": "^7.1",
+		"nette/utils": "^2.4"
+	},
+	"autoload": {
+		"classmap": ["src"]
+	}
+}
