@@ -6,7 +6,7 @@ use DOMDocument;
 use DOMElement;
 use DOMXPath;
 
-class DocumentInput extends StrictInput
+class DocumentInput extends Input
 {
 	/**
 	 * @var DOMDocument
@@ -50,10 +50,9 @@ class DocumentInput extends StrictInput
 
 	/**
 	 * @param string $name
-	 * @param mixed $null
 	 * @return mixed
 	 */
-	function get( string $name, $null = null )
+	function get( string $name )
 	{
 		$query = @$this->search->query( $name, $this->element );
 
@@ -72,7 +71,7 @@ class DocumentInput extends StrictInput
 
 			return $list;
 		} else {
-			return $null;
+			return null;
 		}
 	}
 }
