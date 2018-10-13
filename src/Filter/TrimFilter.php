@@ -12,7 +12,7 @@ class TrimFilter extends Filter
 		ARRAY	= 0b10,
 		EMPTY	= 0b100,
 		SPACE	= 0b1000,
-		LINE	= 0b10000;
+		BREAK	= 0b10000;
 
 	/**
 	 * @var int
@@ -30,7 +30,7 @@ class TrimFilter extends Filter
 			throw new InvalidArgumentException;
 		}
 
-		if( $mode & self::LINE and !( $mode & self::SPACE )) {
+		if( $mode & self::BREAK and !( $mode & self::SPACE )) {
 			throw new InvalidArgumentException;
 		}
 
@@ -55,7 +55,7 @@ class TrimFilter extends Filter
 			}
 		} elseif( is_string( $value )) {
 			if( $this->mode & self::SPACE ) {
-				$value = Strings::replace( $value, '~^[\pC\pZ]+|[\pC\pZ]+$|([\pC\pZ]+)~u', [ $this, $this->mode & self::LINE ? 'space' : 'block']);
+				$value = Strings::replace( $value, '~^[\pC\pZ]+|[\pC\pZ]+$|([\pC\pZ]+)~u', [ $this, $this->mode & self::BREAK ? 'space' : 'block']);
 			} elseif( $this->mode & self::STRING ) {
 				$value = Strings::replace( $value, '~^[\pC\pZ]+|[\pC\pZ]+$~u', '');
 			}
