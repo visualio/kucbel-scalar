@@ -121,6 +121,18 @@ class StringValidator extends ScalarValidator
 	}
 
 	/**
+	 * @return $this
+	 */
+	function line()
+	{
+		if( Strings::match( $this->value, '~\R~u')) {
+			$this->error( Error::STR_LINE );
+		}
+
+		return $this;
+	}
+
+	/**
 	 * @param bool $real
 	 * @return $this
 	 */

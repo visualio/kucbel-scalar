@@ -82,6 +82,14 @@ class StringIterator extends ScalarIterator
 	}
 
 	/**
+	 * @return $this
+	 */
+	function line()
+	{
+		return $this->each('line');
+	}
+
+	/**
 	 * @param bool $real
 	 * @return $this
 	 */

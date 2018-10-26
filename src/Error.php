@@ -43,10 +43,11 @@ class Error
 
 		STR_EMAIL		= 101,
 		STR_URL			= 102,
-		STR_DIR			= 103,
-		STR_FILE		= 104,
-		STR_CLASS		= 105,
-		STR_INTER		= 106,
+		STR_LINE		= 103,
+		STR_DIR			= 104,
+		STR_FILE		= 105,
+		STR_CLASS		= 106,
+		STR_INTER		= 107,
 
 		DATE_VAL_GTE	= 121,
 		DATE_VAL_GT		= 122,
@@ -125,6 +126,7 @@ class Error
 
 			case Error::STR_EMAIL:		return 'Parameter $name must be an email.';
 			case Error::STR_URL:		return 'Parameter $name must be an url.';
+			case Error::STR_LINE:		return 'Parameter $name must be a single line.';
 			case Error::STR_DIR:		return 'Parameter $name must point to a directory.';
 			case Error::STR_FILE:		return 'Parameter $name must point to a file.';
 			case Error::STR_CLASS:		return 'Parameter $name must extend $class class.';
