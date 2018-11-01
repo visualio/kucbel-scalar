@@ -199,8 +199,8 @@ class InputFactory
 	/**
 	 * @return InputBuilder
 	 */
-	function build() : InputBuilder
+	function builder() : InputBuilder
 	{
-		return new InputBuilder( $this->factory->build(), $this->inputs, $this->filters, $this->adapters );
+		return new InputBuilder( $this->factory->builder(), $this->inputs, $this->filters, $this->adapters );
 	}
 }

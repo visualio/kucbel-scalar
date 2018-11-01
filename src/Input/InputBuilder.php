@@ -50,9 +50,9 @@ class InputBuilder
 	/**
 	 * @return InputFactory
 	 */
-	function close() : InputFactory
+	function create() : InputFactory
 	{
-		return new InputFactory( $this->builder->close(), $this->inputs, $this->filters, $this->adapters );
+		return new InputFactory( $this->builder->create(), $this->inputs, $this->filters, $this->adapters );
 	}
 
 	/**
@@ -95,9 +95,7 @@ class InputBuilder
 	 */
 	function filter( int $type, int $flag )
 	{
-		if( $flag < 0 ) {
-			throw new InvalidArgumentException("Invalid flag.");
-		}
+		self::check( $flag );
 
 		foreach( self::split( $type ) as $type ) {
 			$this->filters[ $type ] = $flag;
@@ -113,15 +111,23 @@ class InputBuilder
 	 */
 	function adapter( int $type, int $flag )
 	{
-		if( $flag < 0 ) {
-			throw new InvalidArgumentException("Invalid flag.");
-		}
+		self::check( $flag );
 
 		foreach( self::split( $type ) as $type ) {
 			$this->adapters[ $type ] = $flag;
 		}
 
 		return $this;
+	}
+
+	/**
+	 * @param int $flag
+	 */
+	static function check( int $flag )
+	{
+		if( $flag < 0 ) {
+			throw new InvalidArgumentException("Invalid flag.");
+		}
 	}
 
 	/**

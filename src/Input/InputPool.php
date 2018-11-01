@@ -9,7 +9,7 @@ class InputPool extends InputAdapter
 	/**
 	 * @var int
 	 */
-	protected $final;
+	protected $index;
 
 	/**
 	 * InputPool constructor.
@@ -20,7 +20,7 @@ class InputPool extends InputAdapter
 	{
 		parent::__construct( ...$inputs );
 
-		$this->final = count( $inputs ) - 1;
+		$this->index = count( $inputs ) - 1;
 	}
 
 	/**
@@ -32,7 +32,7 @@ class InputPool extends InputAdapter
 		foreach( $this->inputs as $index => $input ) {
 			$mixed = $input->create( $name );
 
-			if( $this->final === $index ) {
+			if( $this->index === $index ) {
 				return $mixed;
 			} elseif( $this->mode & self::CHECK ) {
 				if( $mixed->fetch() !== null ) {
@@ -59,7 +59,7 @@ class InputPool extends InputAdapter
 		foreach( $this->inputs as $index => $input ) {
 			$value = $input->get( $name );
 
-			if( $this->final === $index ) {
+			if( $this->index === $index ) {
 				return $value;
 			} elseif( $this->mode & self::CHECK ) {
 				if( $value !== null ) {
