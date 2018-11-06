@@ -100,7 +100,7 @@ class Error
 			case Error::TYPE_VOID:		return 'Parameter $name does not exist.';
 
 			case Error::SCA_EQUAL:		return 'Parameter $name must be equal to $val.';
-			case Error::SCA_OPTION:		return 'Parameter $name must be one the following $opts.';
+			case Error::SCA_OPTION:		return 'Parameter $name must be one the following $opt.';
 			case Error::SCA_REGEX:		return 'Parameter $name must match $regex pattern.';
 
 			case Error::NUM_VAL_GTE:
