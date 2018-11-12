@@ -81,14 +81,14 @@ class InputFactory
 	 */
 	protected function wrap( $source, ...$options ) : InputInterface
 	{
+		if( $source instanceof InputInterface ) {
+			return $source;
+		}
+
 		foreach( $this->inputs as $input => $check ) {
 			if( $source instanceof $check ) {
 				return new $input( $source, ...$options );
 			}
-		}
-
-		if( $source instanceof InputInterface ) {
-			return $source;
 		}
 
 		$type = is_object( $source ) ? get_class( $source ) : gettype( $source );
