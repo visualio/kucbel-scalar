@@ -121,19 +121,23 @@ class InputFactory
 	{
 		array_unshift( $sources, $source );
 
-		$i = 0;
+		$index = 0;
 
-		foreach( $sources as $i => $source ) {
-			$input = is_array( $source ) ? $this->wrap( ...$source ) : $this->wrap( $source );
+		foreach( $sources as $index => $source ) {
+			if( is_array( $source )) {
+				$input = $this->wrap( ...$source );
+			} else {
+				$input = $this->wrap( $source );
+			}
 
 			if( $this->filters[ self::POOL ] & InputFilter::EACH ) {
 				$input = $this->factory->create( $input );
 			}
 
-			$sources[ $i ] = $input;
+			$sources[ $index ] = $input;
 		}
 
-		if( $i > 0 ) {
+		if( $index > 0 ) {
 			$input = new InputPool( ...$sources );
 			$input->mode( $this->adapters[ self::POOL ] );
 
@@ -160,14 +164,18 @@ class InputFactory
 	{
 		array_unshift( $sources, $source );
 
-		foreach( $sources as $i => $source ) {
-			$input = is_array( $source ) ? $this->wrap( ...$source ) : $this->wrap( $source );
+		foreach( $sources as $index => $source ) {
+			if( is_array( $source )) {
+				$input = $this->wrap( ...$source );
+			} else {
+				$input = $this->wrap( $source );
+			}
 
 			if( $this->filters[ self::LIST ] & InputFilter::EACH ) {
 				$input = $this->factory->create( $input );
 			}
 
-			$sources[ $i ] = $input;
+			$sources[ $index ] = $input;
 		}
 
 		$input = new InputList( ...$sources );

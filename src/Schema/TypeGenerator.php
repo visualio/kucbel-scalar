@@ -40,7 +40,7 @@ class TypeGenerator
 	{
 		$closure = $this->create( ...$methods );
 
-		return Strings::replace("return $closure;", '~[\n][\t]*(return|->|;|})~', '$1');
+		return Strings::replace("return $closure;", '~\n\t*(return|->|;|})~', '$1');
 	}
 
 	/**
