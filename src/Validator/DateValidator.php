@@ -23,6 +23,7 @@ class DateValidator extends Validator
 		$this->name = $name;
 		$this->value = $value;
 	}
+
 	/**
 	 * @param mixed $limit
 	 * @param bool $equal
