@@ -35,7 +35,7 @@ class ContainerInput extends StrictInput
 	 */
 	function get( string $name, $null = null )
 	{
-		return $this->search( $this->builder->parameters, "{$this->section}$name", $null );
+		return $this->search( $this->builder->parameters, "{$this->section}{$name}", $null );
 	}
 
 	/**

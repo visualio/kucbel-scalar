@@ -46,9 +46,9 @@ class EnvironmentInput extends StrictInput implements OutputInterface
 			$done = putenv( $name );
 		} elseif( is_bool( $value )) {
 			$value = $value ? 1 : 0;
-			$done = putenv("$name=$value");
+			$done = putenv("{$name}={$value}");
 		} elseif( is_scalar( $value )) {
-			$done = putenv("$name=$value");
+			$done = putenv("{$name}={$value}");
 		} else {
 			$done = false;
 		}
@@ -76,6 +76,6 @@ class EnvironmentInput extends StrictInput implements OutputInterface
 	 */
 	protected function alias( string $name ) : string
 	{
-		return strtoupper( str_replace('.', '_', "{$this->section}$name"));
+		return strtoupper( str_replace('.', '_', "{$this->section}{$name}"));
 	}
 }
