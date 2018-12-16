@@ -12,18 +12,18 @@ class DirectInput extends StrictInput
 	/**
 	 * @var string | null
 	 */
-	private $section;
+	private $alias;
 
 	/**
 	 * DirectInput constructor.
 	 *
 	 * @param array $values
-	 * @param string $section
+	 * @param string $alias
 	 */
-	function __construct( array $values, string $section = null )
+	function __construct( array $values, string $alias = null )
 	{
 		$this->values = $values;
-		$this->section = self::suffix( $section );
+		$this->alias = self::suffix( $alias );
 	}
 
 	/**
@@ -42,6 +42,6 @@ class DirectInput extends StrictInput
 	 */
 	protected function alias( string $name ) : string
 	{
-		return "{$this->section}$name";
+		return "{$this->alias}$name";
 	}
 }
