@@ -65,7 +65,7 @@ class MixedValidator extends Validator
 		if( $type === 'int' and ( $value === 1 or $value === 0 )) {
 			$type = 'bool';
 			$value = (bool) $value;
-		} elseif( $type === 'float' and ( $value === 1. or $value === 0. )) {
+		} elseif( $type === 'dec' and ( $value === 1. or $value === 0. )) {
 			$type = 'bool';
 			$value = (bool) $value;
 		} elseif( $type === 'str' and $match = Strings::match( $value, '~^(true|on|yes|y|1)$|^(false|off|no|n|0)$~i')) {
@@ -90,19 +90,19 @@ class MixedValidator extends Validator
 		$value = $this->value;
 		$type = self::detect( $value );
 
-		if( $type === 'float' and !is_finite( $value )) {
+		if( $type === 'dec' and !is_finite( $value )) {
 			$type = 'wtf';
 		} elseif( $type === 'str' and $match = Strings::match( $value, '~^[+-]?([.][0-9]+|[0-9]+[.]?[0-9]*)([Ee][+-]?[0-9]{1,2})?$~') and strlen( Strings::replace( $match[1], '~^[0.]+|[0.]+$|[.]~', '')) <= 14 ) {
-			$type = 'float';
+			$type = 'dec';
 			$value = (float) $value;
 		} elseif( $type === 'date') {
-			$type = 'float';
+			$type = 'dec';
 			$value = (float) $value->format('U');
 		}
 
 		if( $type === 'null') {
 			$this->error( Error::TYPE_NULL );
-		} elseif( $type !== 'float' and $type !== 'int') {
+		} elseif( $type !== 'dec' and $type !== 'int') {
 			$this->error( Error::TYPE_FLOAT );
 		}
 
@@ -123,7 +123,7 @@ class MixedValidator extends Validator
 		} elseif( $type === 'str' and Strings::match( $value, '~^[+-]?[0-9]+[.]?0*$~') and $value >= PHP_INT_MIN and $value <= PHP_INT_MAX ) {
 			$type = 'int';
 			$value = (int) $value;
-		} elseif( $type === 'float' and is_finite( $value ) and $value === floor( $value ) and $value >= PHP_INT_MIN and $value <= PHP_INT_MAX ) {
+		} elseif( $type === 'dec' and is_finite( $value ) and $value === floor( $value ) and $value >= PHP_INT_MIN and $value <= PHP_INT_MAX ) {
 			$type = 'int';
 			$value = (int) $value;
 		} elseif( $type === 'date' and ( $stamp = $value->format('U')) <= PHP_INT_MAX ) {
@@ -155,7 +155,7 @@ class MixedValidator extends Validator
 
 		if( $type === 'null') {
 			$this->error( Error::TYPE_NULL );
-		} elseif( $type !== 'str' and $type !== 'int' and $type !== 'float') {
+		} elseif( $type !== 'str' and $type !== 'int' and $type !== 'dec') {
 			$this->error( Error::TYPE_STRING );
 		}
 
@@ -172,9 +172,9 @@ class MixedValidator extends Validator
 
 		if( $type === 'null') {
 			$this->error( Error::TYPE_NULL );
-		} elseif( $type === 'array' or $type === 'obj') {
+		} elseif( $type === 'arr' or $type === 'obj') {
 			$this->error( Error::TYPE_DATE );
-		} elseif( $type === 'float' and $value !== floor( $value )) {
+		} elseif( $type === 'dec' and $value !== floor( $value )) {
 			$this->error( Error::TYPE_DATE );
 		}
 
@@ -198,13 +198,13 @@ class MixedValidator extends Validator
 
 		if( $type === 'null') {
 			$this->error( Error::TYPE_NULL );
-		} elseif( $type !== 'array' and $keys ) {
+		} elseif( $type !== 'arr' and $keys ) {
 			$this->error( Error::TYPE_ARRAY );
 		}
 
 		$items = [];
 
-		if( $type === 'array') {
+		if( $type === 'arr') {
 			if( strpos( $this->name, '.')) {
 				$print = '%s.%s';
 			} else {
@@ -236,22 +236,22 @@ class MixedValidator extends Validator
 				return 'int';
 			case 'double':
 			case 'float':
-				return 'float';
+				return 'dec';
 			case 'string':
 				return 'str';
 			case 'array':
-				return 'array';
+				return 'arr';
 			case 'resource':
 			case 'unknown type':
 				return 'wtf';
 		}
 
 		switch( true ) {
-			case $value instanceof Traversable:
-			case $value instanceof stdClass:
-				return 'array';
 			case $value instanceof DateTimeInterface:
 				return 'date';
+			case $value instanceof Traversable:
+			case $value instanceof stdClass:
+				return 'arr';
 			default:
 				return 'obj';
 		}
