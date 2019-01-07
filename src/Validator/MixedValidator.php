@@ -62,7 +62,10 @@ class MixedValidator extends Validator
 		$value = $this->value;
 		$type = self::detect( $value );
 
-		if(( $type === 'int' or $type === 'float') and (( $value = (float) $value ) === 1. or $value === 0. )) {
+		if( $type === 'int' and ( $value === 1 or $value === 0 )) {
+			$type = 'bool';
+			$value = (bool) $value;
+		} elseif( $type === 'float' and ( $value === 1. or $value === 0. )) {
 			$type = 'bool';
 			$value = (bool) $value;
 		} elseif( $type === 'str' and $match = Strings::match( $value, '~^(true|on|yes|y|1)$|^(false|off|no|n|0)$~i')) {
@@ -87,7 +90,9 @@ class MixedValidator extends Validator
 		$value = $this->value;
 		$type = self::detect( $value );
 
-		if( $type === 'str' and $match = Strings::match( $value, '~^[+-]?([.][0-9]+|[0-9]+[.]?[0-9]*)([Ee][+-]?[0-9]{1,2})?$~') and strlen( Strings::replace( $match[1], '~^[0.]+|[0.]+$|[.]~', '')) <= 14 ) {
+		if( $type === 'float' and !is_finite( $value )) {
+			$type = 'wtf';
+		} elseif( $type === 'str' and $match = Strings::match( $value, '~^[+-]?([.][0-9]+|[0-9]+[.]?[0-9]*)([Ee][+-]?[0-9]{1,2})?$~') and strlen( Strings::replace( $match[1], '~^[0.]+|[0.]+$|[.]~', '')) <= 14 ) {
 			$type = 'float';
 			$value = (float) $value;
 		} elseif( $type === 'date') {
@@ -118,7 +123,7 @@ class MixedValidator extends Validator
 		} elseif( $type === 'str' and Strings::match( $value, '~^[+-]?[0-9]+[.]?0*$~') and $value >= PHP_INT_MIN and $value <= PHP_INT_MAX ) {
 			$type = 'int';
 			$value = (int) $value;
-		} elseif( $type === 'float' and $value === floor( $value ) and $value >= PHP_INT_MIN and $value <= PHP_INT_MAX ) {
+		} elseif( $type === 'float' and is_finite( $value ) and $value === floor( $value ) and $value >= PHP_INT_MIN and $value <= PHP_INT_MAX ) {
 			$type = 'int';
 			$value = (int) $value;
 		} elseif( $type === 'date' and ( $stamp = $value->format('U')) <= PHP_INT_MAX ) {
@@ -238,7 +243,7 @@ class MixedValidator extends Validator
 				return 'array';
 			case 'resource':
 			case 'unknown type':
-				return 'obj';
+				return 'wtf';
 		}
 
 		switch( true ) {
