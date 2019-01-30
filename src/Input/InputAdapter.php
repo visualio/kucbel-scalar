@@ -9,9 +9,9 @@ abstract class InputAdapter implements InputInterface
 	use SmartObject;
 
 	const
-		NONE		= 0,
-		QUERY		= 1,
-		CHECK		= 2;
+		NONE	= 0,
+		QUERY	= 0b1,
+		CHECK	= 0b10;
 
 	/**
 	 * @var InputInterface[]

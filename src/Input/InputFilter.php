@@ -11,7 +11,7 @@ class InputFilter implements InputInterface
 	use SmartObject;
 
 	const
-		NONE	= 0b0,
+		NONE	= 0,
 		WRAP	= 0b1,
 		EACH	= 0b10;
 

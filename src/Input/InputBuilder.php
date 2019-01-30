@@ -90,15 +90,15 @@ class InputBuilder
 
 	/**
 	 * @param int $type
-	 * @param int $flag
+	 * @param int $mode
 	 * @return $this
 	 */
-	function filter( int $type, int $flag )
+	function filter( int $type, int $mode )
 	{
-		self::check( $flag );
+		self::check( $mode );
 
 		foreach( self::split( $type ) as $type ) {
-			$this->filters[ $type ] = $flag;
+			$this->filters[ $type ] = $mode;
 		}
 
 		return $this;
@@ -106,27 +106,27 @@ class InputBuilder
 
 	/**
 	 * @param int $type
-	 * @param int $flag
+	 * @param int $mode
 	 * @return $this
 	 */
-	function adapter( int $type, int $flag )
+	function adapter( int $type, int $mode )
 	{
-		self::check( $flag );
+		self::check( $mode );
 
 		foreach( self::split( $type ) as $type ) {
-			$this->adapters[ $type ] = $flag;
+			$this->adapters[ $type ] = $mode;
 		}
 
 		return $this;
 	}
 
 	/**
-	 * @param int $flag
+	 * @param int $mode
 	 */
-	static function check( int $flag )
+	static function check( int $mode )
 	{
-		if( $flag < 0 ) {
-			throw new InvalidArgumentException("Invalid flag.");
+		if( $mode < 0 ) {
+			throw new InvalidArgumentException("Invalid mode flag.");
 		}
 	}
 
@@ -137,7 +137,7 @@ class InputBuilder
 	static function split( int $type ) : array
 	{
 		if( $type <= 0 ) {
-			throw new InvalidArgumentException("Invalid flag.");
+			throw new InvalidArgumentException("Invalid type flag.");
 		}
 
 		$bin = decbin( $type );
