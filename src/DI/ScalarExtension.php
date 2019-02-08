@@ -153,7 +153,7 @@ class ScalarExtension extends CompilerExtension
 		$builder = $this->getContainerBuilder();
 
 		$builder->getDefinition( $filter = $this->prefix('filter.factory'))
-			->setArguments([ $this->filters ?? [] ]);
+			->setArguments([ $this->filters ]);
 
 		$builder->getDefinition( $this->prefix('input.factory'))
 			->setArguments(["@$filter", $this->inputs, null, null ]);
@@ -162,7 +162,7 @@ class ScalarExtension extends CompilerExtension
 			->setArguments([ $tests ]);
 
 		$builder->getDefinition( $this->prefix('schema.factory'))
-			->setArguments(["@$type", $this->schemas ?? [] ]);
+			->setArguments(["@$type", $this->schemas ]);
 	}
 
 	/**

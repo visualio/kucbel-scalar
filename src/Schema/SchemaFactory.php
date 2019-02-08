@@ -15,7 +15,7 @@ class SchemaFactory
 	protected $factory;
 
 	/**
-	 * @var array
+	 * @var array | null
 	 */
 	protected $schemas;
 
@@ -25,7 +25,7 @@ class SchemaFactory
 	 * @param TypeFactory $factory
 	 * @param array $schemas
 	 */
-	function __construct( TypeFactory $factory, array $schemas )
+	function __construct( TypeFactory $factory, array $schemas = null )
 	{
 		$this->factory = $factory;
 		$this->schemas = $schemas;
@@ -51,6 +51,7 @@ class SchemaFactory
 	 * @param InputInterface $input
 	 * @param array $schema
 	 * @return Schema
+	 * @deprecated ttl 1 μs
 	 */
 	function custom( InputInterface $input, array $schema ) : Schema
 	{
