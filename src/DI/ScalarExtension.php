@@ -142,7 +142,7 @@ class ScalarExtension extends CompilerExtension
 		$this->addTypes( $input );
 		$this->addSchemas( $input );
 		$this->addInputs( $input );
-		$this->addFilters( $input, true );
+		$this->setFilters( $input );
 
 		$tests = [];
 
@@ -180,10 +180,6 @@ class ScalarExtension extends CompilerExtension
 	 */
 	function addTypes( InputInterface $input )
 	{
-		if( !$input->has('types')) {
-			return;
-		}
-
 		$types = $input->create('types')
 			->optional()
 			->array( true )
@@ -238,10 +234,6 @@ class ScalarExtension extends CompilerExtension
 	 */
 	function addSchemas( InputInterface $input )
 	{
-		if( !$input->has('schemas')) {
-			return;
-		}
-
 		$schemas = $input->create('schemas')
 			->optional()
 			->array( true )
@@ -261,7 +253,7 @@ class ScalarExtension extends CompilerExtension
 	 */
 	function addSchema( InputInterface $input, string $name, string $alias = null )
 	{
-		$columns = $input->create("schemas.$name")
+		$types = $input->create("schemas.$name")
 			->optional()
 			->array( true )
 			->string()
@@ -270,13 +262,13 @@ class ScalarExtension extends CompilerExtension
 
 		$schema = [];
 
-		foreach( $columns ?? [] as $column ) {
-			$what = $input->get("schemas.$name.$column");
+		foreach( $types ?? [] as $type ) {
+			$what = $input->get("schemas.$name.$type");
 
 			if( is_array( $what )) {
-				$schema[ $column ] = $this->getAnonymousType( $input, $name, $column );
+				$schema[ $type ] = $this->getAnonymousType( $input, $name, $type );
 			} else {
-				$schema[ $column ] = $this->getExistingType( $input, $name, $column );
+				$schema[ $type ] = $this->getExistingType( $input, $name, $type );
 			}
 		}
 
@@ -295,12 +287,12 @@ class ScalarExtension extends CompilerExtension
 	/**
 	 * @param InputInterface $input
 	 * @param string $name
-	 * @param string $column
+	 * @param string $type
 	 * @return string
 	 */
-	protected function getExistingType( InputInterface $input, string $name, string $column ) : string
+	protected function getExistingType( InputInterface $input, string $name, string $type ) : string
 	{
-		return $input->create("schemas.$name.$column")
+		return $input->create("schemas.$name.$type")
 			->string()
 			->match('~^[^.]+$~')
 			->fetch();
@@ -309,24 +301,24 @@ class ScalarExtension extends CompilerExtension
 	/**
 	 * @param InputInterface $input
 	 * @param string $name
-	 * @param string $column
+	 * @param string $type
 	 * @return string
 	 */
-	protected function getAnonymousType( InputInterface $input, string $name, string $column ) : string
+	protected function getAnonymousType( InputInterface $input, string $name, string $type ) : string
 	{
 		do {
 			$alias = mt_rand( 1000, 9999 );
-			$alias = "{$column}_{$alias}";
+			$alias = "{$type}_{$alias}";
 		} while( isset( $this->types[ $alias ] ));
 
-		$tests = $input->create("schemas.$name.$column")
+		$tests = $input->create("schemas.$name.$type")
 			->array()
 			->min( 1 )
 			->fetch();
 
-		$input = new Input\DirectInput(['types' => [ $column => $tests ]], $this->name );
+		$input = new Input\DirectInput(['types' => [ $type => $tests ]], $this->name );
 
-		$this->addType( $input, $column, $alias );
+		$this->addType( $input, $type, $alias );
 
 		return $alias;
 	}
@@ -337,10 +329,6 @@ class ScalarExtension extends CompilerExtension
 	 */
 	function addInputs( InputInterface $input )
 	{
-		if( !$input->has('inputs')) {
-			return;
-		}
-
 		$classes = $input->create('inputs')
 			->optional()
 			->array()
@@ -359,10 +347,6 @@ class ScalarExtension extends CompilerExtension
 	 */
 	function addFiles( InputInterface $input )
 	{
-		if( !$input->has('files')) {
-			return;
-		}
-
 		$files = $input->create('files')
 			->optional()
 			->array()
@@ -388,18 +372,9 @@ class ScalarExtension extends CompilerExtension
 
 	/**
 	 * @param InputInterface $input
-	 * @param bool $reset
 	 */
-	function addFilters( InputInterface $input, bool $reset = false )
+	function addFilters( InputInterface $input )
 	{
-		if( !$input->has('filters')) {
-			return;
-		}
-
-		if( $reset ) {
-			$this->filters = [];
-		}
-
 		$filters = $input->create('filters')
 			->optional()
 			->array()
@@ -411,5 +386,30 @@ class ScalarExtension extends CompilerExtension
 		foreach( $filters ?? [] as $filter ) {
 			$this->filters[] = $this->aliases[ $filter ] ?? $filter;
 		}
+	}
+
+	/**
+	 * @param InputInterface $input
+	 */
+	function setFilters( InputInterface $input )
+	{
+		if( $input->has('filters')) {
+			$this->filters = [];
+
+			$this->addFiles( $input );
+		}
+	}
+
+	/**
+	 * @param string $name
+	 * @return bool
+	 */
+	function hasFilter( string $name )
+	{
+		if(( $name[0] ?? null ) !== '@') {
+			$name = "@$name";
+		}
+
+		return in_array( $name, $this->filters, true );
 	}
 }
