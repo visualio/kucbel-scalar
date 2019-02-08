@@ -12,8 +12,9 @@ class InputFactory
 
 	const
 		INPUT	= 0b1,
-		POOL	= 0b10,
-		LIST	= 0b100;
+		VALUE	= 0b10,
+		POOL	= 0b100,
+		LIST	= 0b1000;
 
 	/**
 	 * @var FilterFactory
@@ -37,6 +38,7 @@ class InputFactory
 	 */
 	protected $filters = [
 		self::INPUT		=> InputFilter::WRAP,
+		self::VALUE		=> InputFilter::WRAP,
 		self::POOL 		=> InputFilter::WRAP,
 		self::LIST 		=> InputFilter::WRAP,
 	];
@@ -197,7 +199,7 @@ class InputFactory
 	{
 		$mixed = new MixedValidator( $name, $value );
 
-		if( $this->filters[ self::INPUT ] & InputFilter::WRAP ) {
+		if( $this->filters[ self::VALUE ] & InputFilter::WRAP ) {
 			$mixed->clear( $this->factory->get() );
 		}
 
