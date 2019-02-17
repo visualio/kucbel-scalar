@@ -2,7 +2,6 @@
 	"name": "kucbel/scalar",
 	"description": "Scalar validator",
 	"homepage": "https://bitbucket.org/kucbel/scalar/",
-	"license": ["GPLv3"],
 	"authors": [{
 		"name": "David Kucbel",
 		"homepage": "https://bitbucket.org/kucbel/"
