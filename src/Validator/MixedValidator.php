@@ -90,9 +90,7 @@ class MixedValidator extends Validator
 		$value = $this->value;
 		$type = self::detect( $value );
 
-		if( $type === 'dec' and !is_finite( $value )) {
-			$type = 'wtf';
-		} elseif( $type === 'str' and $match = Strings::match( $value, '~^[+-]?([.][0-9]+|[0-9]+[.]?[0-9]*)([Ee][+-]?[0-9]{1,2})?$~') and strlen( Strings::replace( $match[1], '~^[0.]+|[0.]+$|[.]~', '')) <= 14 ) {
+		if( $type === 'str' and $match = Strings::match( $value, '~^[+-]?([.][0-9]+|[0-9]+[.]?[0-9]*)([Ee][+-]?[0-9]{1,2})?$~') and strlen( Strings::replace( $match[1], '~^[0.]+|[0.]+$|[.]~', '')) <= 14 ) {
 			$type = 'dec';
 			$value = (float) $value;
 		} elseif( $type === 'date') {
@@ -123,7 +121,7 @@ class MixedValidator extends Validator
 		} elseif( $type === 'str' and Strings::match( $value, '~^[+-]?[0-9]+[.]?0*$~') and $value >= PHP_INT_MIN and $value <= PHP_INT_MAX ) {
 			$type = 'int';
 			$value = (int) $value;
-		} elseif( $type === 'dec' and is_finite( $value ) and $value === floor( $value ) and $value >= PHP_INT_MIN and $value <= PHP_INT_MAX ) {
+		} elseif( $type === 'dec' and $value === floor( $value ) and $value >= PHP_INT_MIN and $value <= PHP_INT_MAX ) {
 			$type = 'int';
 			$value = (int) $value;
 		} elseif( $type === 'date' and ( $stamp = $value->format('U')) <= PHP_INT_MAX ) {
@@ -205,14 +203,10 @@ class MixedValidator extends Validator
 		$items = [];
 
 		if( $type === 'arr') {
-			if( strpos( $this->name, '.')) {
-				$print = '%s.%s';
-			} else {
-				$print = '%s[%s]';
-			}
+			$hint = strpos( $this->name, '.') === false;
 
 			foreach( $value as $index => $each ) {
-				$items[] = new MixedValidator( sprintf( $print, $this->name, $index ), $keys ? $index : $each );
+				$items[] = new MixedValidator( $hint ? "{$this->name}[{$index}]" : "{$this->name}.{$index}", $keys ? $index : $each );
 			}
 		} else {
 			$items[] = $this;
@@ -236,7 +230,7 @@ class MixedValidator extends Validator
 				return 'int';
 			case 'double':
 			case 'float':
-				return 'dec';
+				return is_finite( $value ) ? 'dec' : 'wtf';
 			case 'string':
 				return 'str';
 			case 'array':
