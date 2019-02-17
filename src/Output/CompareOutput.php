@@ -38,13 +38,7 @@ class CompareOutput extends Output
 	{
 		$exist = $this->input->get( $name );
 
-		if( $exist instanceof DateTimeInterface and $value instanceof DateTimeInterface ) {
-			$strict = false;
-		} else {
-			$strict = true;
-		}
-
-		if(( $strict and $exist !== $value ) or ( !$strict and $exist != $value )) {
+		if( !$this->equal( $exist, $value )) {
 			$this->values[ $name ] = $value;
 		}
 	}
@@ -55,5 +49,19 @@ class CompareOutput extends Output
 	function fetch() : ?iterable
 	{
 		return $this->values;
+	}
+
+	/**
+	 * @param mixed $old
+	 * @param mixed $new
+	 * @return bool
+	 */
+	protected function equal( $old, $new ) : bool
+	{
+		if( $old instanceof DateTimeInterface and $new instanceof DateTimeInterface ) {
+			return $old == $new;
+		} else {
+			return $old === $new;
+		}
 	}
 }
