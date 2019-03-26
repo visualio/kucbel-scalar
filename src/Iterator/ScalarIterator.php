@@ -20,10 +20,15 @@ abstract class ScalarIterator extends Iterator
 	 */
 	function unique()
 	{
+		$string = $this instanceof FloatIterator;
 		$values = [];
 
 		foreach( $this->list as $item ) {
-			$value = (string) $item->fetch();
+			if( $string ) {
+				$value = (string) $item->fetch();
+			} else {
+				$value = $item->fetch();
+			}
 
 			if( isset( $values[ $value ] )) {
 				$this->error( Error::ARR_UNIQUE );
