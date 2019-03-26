@@ -64,7 +64,7 @@ class IntegerIterator extends ScalarIterator
 	 */
 	function range( int $min, int $max )
 	{
-		return $this->each('min', $min, $max );
+		return $this->each('range', $min, $max );
 	}
 
 	/**
