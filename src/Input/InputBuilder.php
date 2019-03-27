@@ -95,11 +95,9 @@ class InputBuilder
 	 */
 	function filter( int $type, int $mode )
 	{
-		self::check( $mode );
+		$filters = self::split( $type, $mode );
 
-		foreach( self::split( $type ) as $type ) {
-			$this->filters[ $type ] = $mode;
-		}
+		$this->filters = $filters + $this->filters;
 
 		return $this;
 	}
@@ -111,49 +109,34 @@ class InputBuilder
 	 */
 	function adapter( int $type, int $mode )
 	{
-		self::check( $mode );
+		$adapters = self::split( $type, $mode );
 
-		foreach( self::split( $type ) as $type ) {
-			$this->adapters[ $type ] = $mode;
-		}
+		$this->adapters = $adapters + $this->adapters;
 
 		return $this;
 	}
 
 	/**
-	 * @param int $mode
-	 */
-	static function check( int $mode )
-	{
-		if( $mode < 0 ) {
-			throw new InvalidArgumentException("Invalid mode flag.");
-		}
-	}
-
-	/**
 	 * @param int $type
+	 * @param int $mode
 	 * @return array
 	 */
-	static function split( int $type ) : array
+	static function split( int $type, int $mode ) : array
 	{
 		if( $type <= 0 ) {
 			throw new InvalidArgumentException("Invalid type flag.");
+		} elseif( $mode < 0 ) {
+			throw new InvalidArgumentException("Invalid mode flag.");
 		}
 
-		$bin = decbin( $type );
-		$len = strlen( $bin );
-		$dec = str_repeat('0', $len );
-		
-		$arr = [];
+		$list = [];
 
-		for( $i = 0; $i < $len; $i++ ) {
-			if( $bin[ $i ] ) {
-				$dec[ $i ] = '1';
-				$arr[] = bindec( $dec );
-				$dec[ $i ] = '0';
+		for( $i = 1; $i <= $type; $i *= 2 ) {
+			if( $type & $i ) {
+				$list[ $i ] = $mode;
 			}
 		}
 
-		return $arr;
+		return $list;
 	}
 }
