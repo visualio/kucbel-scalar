@@ -2,6 +2,8 @@
 
 namespace Kucbel\Scalar\Input;
 
+use Nette\Utils\Json;
+use Nette\Utils\JsonException;
 use stdClass;
 
 class JsonInput extends StrictInput
@@ -46,5 +48,19 @@ class JsonInput extends StrictInput
 		}
 
 		return $values;
+	}
+
+	/**
+	 * @param string $json
+	 * @return JsonInput
+	 * @throws JsonException
+	 */
+	static function decode( string $json ) : JsonInput
+	{
+		if( !$json or $json[0] !== '{' or $json[-1] !== '}') {
+			throw new JsonException('Syntax error');
+		}
+
+		return new self( Json::decode( $json ));
 	}
 }
