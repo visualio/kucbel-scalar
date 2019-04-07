@@ -27,15 +27,12 @@ class ConsoleInput extends Input
 	 */
 	function get( string $name )
 	{
-		return $this->input->hasArgument( $name ) ? $this->input->getArgument( $name ) : null;
-	}
-
-	/**
-	 * @param string $name
-	 * @return bool
-	 */
-	function has( string $name ) : bool
-	{
-		return $this->input->hasArgument( $name );
+		if( $this->input->hasArgument( $name )) {
+			return $this->input->getArgument( $name );
+		} elseif( $this->input->hasOption( $name )) {
+			return $this->input->getOption( $name );
+		} else {
+			return null;
+		}
 	}
 }
