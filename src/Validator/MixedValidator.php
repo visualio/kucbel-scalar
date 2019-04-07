@@ -186,33 +186,60 @@ class MixedValidator extends Validator
 	}
 
 	/**
-	 * @param bool $keys
 	 * @return MixedIterator
 	 */
-	function array( bool $keys = false )
+	function array()
 	{
-		$value = $this->value;
-		$type = self::detect( $value );
+		if( func_num_args() and func_get_arg(0) ) {
+			return $this->index();
+		}
+
+		$type = self::detect( $this->value );
 
 		if( $type === 'null') {
 			$this->error( Error::TYPE_NULL );
-		} elseif( $type !== 'arr' and $keys ) {
+		}
+
+		$list = [];
+
+		if( $type === 'arr') {
+			$hint = strpos( $this->name, '.');
+
+			foreach( $this->value as $index => $value ) {
+				$name = $hint ? "{$this->name}.{$index}" : "{$this->name}[{$index}]";
+
+				$list[] = new MixedValidator( $name, $value );
+			}
+		} else {
+			$list[] = $this;
+		}
+
+		return new MixedIterator( $this->name, ...$list );
+	}
+
+	/**
+	 * @return MixedIterator
+	 */
+	function index()
+	{
+		$type = self::detect( $this->value );
+
+		if( $type === 'null') {
+			$this->error( Error::TYPE_NULL );
+		} elseif( $type !== 'arr') {
 			$this->error( Error::TYPE_ARRAY );
 		}
 
-		$items = [];
+		$list = [];
+		$hint = strpos( $this->name, '.');
 
-		if( $type === 'arr') {
-			$hint = strpos( $this->name, '.') === false;
+		foreach( $this->value as $index => $value ) {
+			$name = $hint ? "{$this->name}.{$index}" : "{$this->name}[{$index}]";
 
-			foreach( $value as $index => $each ) {
-				$items[] = new MixedValidator( $hint ? "{$this->name}[{$index}]" : "{$this->name}.{$index}", $keys ? $index : $each );
-			}
-		} else {
-			$items[] = $this;
+			$list[] = new MixedValidator( $name, $index );
 		}
 
-		return new MixedIterator( $this->name, ...$items );
+		return new MixedIterator( $this->name, ...$list );
 	}
 
 	/**
