@@ -17,17 +17,17 @@ class InputBuilder
 	protected $builder;
 
 	/**
-	 * @var array | null
+	 * @var array
 	 */
 	protected $inputs;
 
 	/**
-	 * @var array | null
+	 * @var array
 	 */
 	protected $filters;
 
 	/**
-	 * @var array | null
+	 * @var array
 	 */
 	protected $adapters;
 
@@ -39,7 +39,7 @@ class InputBuilder
 	 * @param array $filters
 	 * @param array $adapters
 	 */
-	function __construct( FilterBuilder $builder, array $inputs = null, array $filters = null, array $adapters = null )
+	function __construct( FilterBuilder $builder, array $inputs, array $filters, array $adapters )
 	{
 		$this->builder = $builder;
 		$this->inputs = $inputs;

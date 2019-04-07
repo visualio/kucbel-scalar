@@ -11,6 +11,7 @@ use Kucbel\Scalar\Validator;
 use Nette\DI\CompilerExtension;
 use Nette\Neon\Neon;
 use Nette\PhpGenerator\ClassType;
+use Nette\PhpGenerator\PhpLiteral;
 use ReflectionClass;
 use ReflectionException;
 
@@ -153,7 +154,7 @@ class ScalarExtension extends CompilerExtension
 		$builder = $this->getContainerBuilder();
 
 		$builder->getDefinition( $filter = $this->prefix('filter.factory'))
-			->setArguments([ $this->filters ]);
+			->setArguments( $this->filters ?? [ new PhpLiteral('') ]);
 
 		$builder->getDefinition( $this->prefix('input.factory'))
 			->setArguments(["@$filter", $this->inputs, null, null ]);
@@ -162,7 +163,7 @@ class ScalarExtension extends CompilerExtension
 			->setArguments([ $tests ]);
 
 		$builder->getDefinition( $this->prefix('schema.factory'))
-			->setArguments(["@$type", $this->schemas ]);
+			->setArguments(["@$type", $this->schemas ?? [] ]);
 	}
 
 	/**

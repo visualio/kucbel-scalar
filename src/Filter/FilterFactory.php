@@ -11,16 +11,16 @@ class FilterFactory
 	use SmartObject;
 
 	/**
-	 * @var FilterInterface[] | null
+	 * @var FilterInterface[]
 	 */
 	protected $filters;
 
 	/**
 	 * FilterFactory constructor.
 	 *
-	 * @param FilterInterface[] $filters
+	 * @param FilterInterface ...$filters
 	 */
-	function __construct( array $filters = null )
+	function __construct( FilterInterface ...$filters )
 	{
 		$this->filters = $filters;
 	}
@@ -57,6 +57,6 @@ class FilterFactory
 	 */
 	function builder() : FilterBuilder
 	{
-		return new FilterBuilder( $this->filters );
+		return new FilterBuilder( ...$this->filters );
 	}
 }

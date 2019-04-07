@@ -9,16 +9,16 @@ class FilterBuilder
 	use SmartObject;
 
 	/**
-	 * @var FilterInterface[] | null
+	 * @var FilterInterface[]
 	 */
 	protected $filters;
 
 	/**
 	 * FilterBuilder constructor.
 	 *
-	 * @param FilterInterface[] $filters
+	 * @param FilterInterface ...$filters
 	 */
-	function __construct( array $filters = null )
+	function __construct( FilterInterface ...$filters )
 	{
 		$this->filters = $filters;
 	}
@@ -28,7 +28,7 @@ class FilterBuilder
 	 */
 	function create() : FilterFactory
 	{
-		return new FilterFactory( $this->filters );
+		return new FilterFactory( ...$this->filters );
 	}
 
 	/**
@@ -37,7 +37,7 @@ class FilterBuilder
 	 */
 	function push( FilterInterface ...$filters )
 	{
-		$this->filters = array_merge( $this->filters ?? [], $filters );
+		$this->filters = array_merge( $this->filters, $filters );
 
 		return $this;
 	}
@@ -48,7 +48,7 @@ class FilterBuilder
 	 */
 	function shift( FilterInterface ...$filters )
 	{
-		$this->filters = array_merge( $filters, $this->filters ?? [] );
+		$this->filters = array_merge( $filters, $this->filters );
 
 		return $this;
 	}
