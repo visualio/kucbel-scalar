@@ -52,7 +52,7 @@ class ScalarExtension extends CompilerExtension
 	private $schemas;
 
 	/**
-	 * @var array
+	 * @var array | null
 	 */
 	private $types = [
 		'bool'			=> ['bool'],
@@ -146,7 +146,7 @@ class ScalarExtension extends CompilerExtension
 
 		$tests = [];
 
-		foreach( $this->types as $name => $methods ) {
+		foreach( $this->types ?? [] as $name => $methods ) {
 			$tests[ $name ] = $this->generator->compress( ...$methods );
 		}
 
@@ -178,11 +178,23 @@ class ScalarExtension extends CompilerExtension
 	/**
 	 * @param InputInterface $input
 	 */
+	function setTypes( InputInterface $input )
+	{
+		if( $input->has('types')) {
+			$this->types = null;
+
+			$this->addTypes( $input );
+		}
+	}
+
+	/**
+	 * @param InputInterface $input
+	 */
 	function addTypes( InputInterface $input )
 	{
 		$types = $input->create('types')
 			->optional()
-			->array( true )
+			->index()
 			->string()
 			->match('~^[^.]+$~')
 			->fetch();
@@ -200,7 +212,7 @@ class ScalarExtension extends CompilerExtension
 	function addType( InputInterface $input, string $name, string $alias = null )
 	{
 		$tests = $input->create("types.$name")
-			->array( true )
+			->index()
 			->min( 1 )
 			->fetch();
 
@@ -232,11 +244,23 @@ class ScalarExtension extends CompilerExtension
 	/**
 	 * @param InputInterface $input
 	 */
+	function setSchemas( InputInterface $input )
+	{
+		if( $input->has('schemas')) {
+			$this->schemas = null;
+
+			$this->addSchemas( $input );
+		}
+	}
+
+	/**
+	 * @param InputInterface $input
+	 */
 	function addSchemas( InputInterface $input )
 	{
 		$schemas = $input->create('schemas')
 			->optional()
-			->array( true )
+			->index()
 			->string()
 			->match('~^[^.]+$~')
 			->fetch();
@@ -255,7 +279,7 @@ class ScalarExtension extends CompilerExtension
 	{
 		$types = $input->create("schemas.$name")
 			->optional()
-			->array( true )
+			->index()
 			->string()
 			->match('~^[^.]+$~')
 			->fetch();
@@ -279,7 +303,7 @@ class ScalarExtension extends CompilerExtension
 	 * @param string $name
 	 * @return bool
 	 */
-	function hasSchema( string $name )
+	function hasSchema( string $name ) : bool
 	{
 		return isset( $this->schemas[ $name ] );
 	}
@@ -327,6 +351,19 @@ class ScalarExtension extends CompilerExtension
 	 * @param InputInterface $input
 	 * @throws ReflectionException
 	 */
+	function setInputs( InputInterface $input )
+	{
+		if( $input->has('inputs')) {
+			$this->inputs = null;
+
+			$this->addInputs( $input );
+		}
+	}
+
+	/**
+	 * @param InputInterface $input
+	 * @throws ReflectionException
+	 */
 	function addInputs( InputInterface $input )
 	{
 		$classes = $input->create('inputs')
@@ -340,6 +377,15 @@ class ScalarExtension extends CompilerExtension
 		foreach( $classes ?? [] as $class ) {
 			$this->inputs[ $class ] = $this->reflector->getArgument( new ReflectionClass( $class ));
 		}
+	}
+
+	/**
+	 * @param string $class
+	 * @return bool
+	 */
+	function hasInput( string $class ) : bool
+	{
+		return isset( $this->inputs[ $class ] );
 	}
 
 	/**
@@ -373,6 +419,18 @@ class ScalarExtension extends CompilerExtension
 	/**
 	 * @param InputInterface $input
 	 */
+	function setFilters( InputInterface $input )
+	{
+		if( $input->has('filters')) {
+			$this->filters = null;
+
+			$this->addFilters( $input );
+		}
+	}
+
+	/**
+	 * @param InputInterface $input
+	 */
 	function addFilters( InputInterface $input )
 	{
 		$filters = $input->create('filters')
@@ -389,27 +447,15 @@ class ScalarExtension extends CompilerExtension
 	}
 
 	/**
-	 * @param InputInterface $input
-	 */
-	function setFilters( InputInterface $input )
-	{
-		if( $input->has('filters')) {
-			$this->filters = [];
-
-			$this->addFiles( $input );
-		}
-	}
-
-	/**
 	 * @param string $name
 	 * @return bool
 	 */
-	function hasFilter( string $name )
+	function hasFilter( string $name ) : bool
 	{
 		if(( $name[0] ?? null ) !== '@') {
-			$name = "@$name";
+			$name = "@{$name}";
 		}
 
-		return in_array( $name, $this->filters, true );
+		return in_array( $this->aliases[ $name ] ?? $name, $this->filters ?? [], true );
 	}
 }
