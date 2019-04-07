@@ -15,7 +15,7 @@ class CallFilter extends Filter
 	private $condition;
 
 	/**
-	 * CallbackFilter constructor.
+	 * CallFilter constructor.
 	 *
 	 * @param callable $callback
 	 * @param callable ...$conditions

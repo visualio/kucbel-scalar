@@ -36,20 +36,6 @@ abstract class Iterator implements IteratorInterface
 	}
 
 	/**
-	 * @param string $method
-	 * @param mixed ...$arguments
-	 * @return $this
-	 */
-	protected function each( string $method, ...$arguments )
-	{
-		foreach( $this->list as $item ) {
-			$item->$method( ...$arguments );
-		}
-
-		return $this;
-	}
-
-	/**
 	 * @return array
 	 */
 	function fetch()

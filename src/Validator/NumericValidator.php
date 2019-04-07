@@ -10,7 +10,7 @@ abstract class NumericValidator extends ScalarValidator
 	 * @param int $limit
 	 * @return $this
 	 */
-	protected function digits( int $limit )
+	protected function digit( int $limit )
 	{
 		if( abs( $this->value ) >= pow( 10, $limit )) {
 			$this->error( Error::NUM_DIGIT, ['dig' => $limit ]);

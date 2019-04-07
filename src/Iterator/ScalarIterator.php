@@ -3,16 +3,26 @@
 namespace Kucbel\Scalar\Iterator;
 
 use Kucbel\Scalar\Error;
+use Kucbel\Scalar\Validator\ScalarValidator;
 
 abstract class ScalarIterator extends Iterator
 {
+	/**
+	 * @var ScalarValidator[]
+	 */
+	protected $list;
+
 	/**
 	 * @param string $regex
 	 * @return $this
 	 */
 	function match( string $regex )
 	{
-		return $this->each('match', $regex );
+		foreach( $this->list as $item ) {
+			$item->match( $regex );
+		}
+
+		return $this;
 	}
 
 	/**

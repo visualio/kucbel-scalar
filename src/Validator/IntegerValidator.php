@@ -87,11 +87,11 @@ class IntegerValidator extends NumericValidator
 	}
 
 	/**
-	 * @param int $digits
+	 * @param int $digit
 	 * @return $this
 	 */
-	function length( int $digits )
+	function length( int $digit )
 	{
-		return $this->digits( $digits );
+		return $this->digit( $digit );
 	}
 }

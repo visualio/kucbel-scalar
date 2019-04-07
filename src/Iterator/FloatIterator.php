@@ -34,7 +34,11 @@ class FloatIterator extends ScalarIterator
 	 */
 	function equal( float ...$options )
 	{
-		return $this->each('equal', ...$options );
+		foreach( $this->list as $item ) {
+			$item->equal( ...$options );
+		}
+
+		return $this;
 	}
 
 	/**
@@ -44,7 +48,11 @@ class FloatIterator extends ScalarIterator
 	 */
 	function max( float $limit, bool $equal = true )
 	{
-		return $this->each('max', $limit, $equal );
+		foreach( $this->list as $item ) {
+			$item->max( $limit, $equal );
+		}
+
+		return $this;
 	}
 
 	/**
@@ -54,7 +62,11 @@ class FloatIterator extends ScalarIterator
 	 */
 	function min( float $limit, bool $equal = true )
 	{
-		return $this->each('min', $limit, $equal );
+		foreach( $this->list as $item ) {
+			$item->min( $limit, $equal );
+		}
+
+		return $this;
 	}
 
 	/**
@@ -64,16 +76,24 @@ class FloatIterator extends ScalarIterator
 	 */
 	function range( float $min, float $max )
 	{
-		return $this->each('range', $min, $max );
+		foreach( $this->list as $item ) {
+			$item->range( $min, $max );
+		}
+
+		return $this;
 	}
 
 	/**
-	 * @param int $digits
-	 * @param int $decimals
+	 * @param int $digit
+	 * @param int $point
 	 * @return $this
 	 */
-	function length( int $digits, int $decimals )
+	function length( int $digit, int $point )
 	{
-		return $this->each('length', $digits, $decimals );
+		foreach( $this->list as $item ) {
+			$item->length( $digit, $point );
+		}
+
+		return $this;
 	}
 }

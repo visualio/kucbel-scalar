@@ -34,7 +34,11 @@ class StringIterator extends ScalarIterator
 	 */
 	function equal( string ...$options )
 	{
-		return $this->each('equal', ...$options );
+		foreach( $this->list as $item ) {
+			$item->equal( ...$options );
+		}
+
+		return $this;
 	}
 
 	/**
@@ -43,7 +47,11 @@ class StringIterator extends ScalarIterator
 	 */
 	function max( int $limit )
 	{
-		return $this->each('max', $limit );
+		foreach( $this->list as $item ) {
+			$item->max( $limit );
+		}
+
+		return $this;
 	}
 
 	/**
@@ -52,7 +60,11 @@ class StringIterator extends ScalarIterator
 	 */
 	function min( int $limit )
 	{
-		return $this->each('min', $limit );
+		foreach( $this->list as $item ) {
+			$item->min( $limit );
+		}
+
+		return $this;
 	}
 
 	/**
@@ -62,7 +74,11 @@ class StringIterator extends ScalarIterator
 	 */
 	function length( int $min, int $max = null )
 	{
-		return $this->each('length', $min, $max );
+		foreach( $this->list as $item ) {
+			$item->length( $min, $max );
+		}
+
+		return $this;
 	}
 
 	/**
@@ -70,7 +86,11 @@ class StringIterator extends ScalarIterator
 	 */
 	function email()
 	{
-		return $this->each('email');
+		foreach( $this->list as $item ) {
+			$item->email();
+		}
+
+		return $this;
 	}
 
 	/**
@@ -78,7 +98,11 @@ class StringIterator extends ScalarIterator
 	 */
 	function url()
 	{
-		return $this->each('url');
+		foreach( $this->list as $item ) {
+			$item->url();
+		}
+
+		return $this;
 	}
 
 	/**
@@ -86,7 +110,11 @@ class StringIterator extends ScalarIterator
 	 */
 	function line()
 	{
-		return $this->each('line');
+		foreach( $this->list as $item ) {
+			$item->line();
+		}
+
+		return $this;
 	}
 
 	/**
@@ -95,7 +123,11 @@ class StringIterator extends ScalarIterator
 	 */
 	function dir( bool $real = false )
 	{
-		return $this->each('dir', $real );
+		foreach( $this->list as $item ) {
+			$item->dir( $real );
+		}
+
+		return $this;
 	}
 
 	/**
@@ -104,7 +136,11 @@ class StringIterator extends ScalarIterator
 	 */
 	function file( bool $real = false )
 	{
-		return $this->each('file', $real );
+		foreach( $this->list as $item ) {
+			$item->file( $real );
+		}
+
+		return $this;
 	}
 
 	/**
@@ -114,6 +150,10 @@ class StringIterator extends ScalarIterator
 	 */
 	function impl( string $class, bool $equal = false )
 	{
-		return $this->each('impl', $class, $equal );
+		foreach( $this->list as $item ) {
+			$item->impl( $class, $equal );
+		}
+
+		return $this;
 	}
 }

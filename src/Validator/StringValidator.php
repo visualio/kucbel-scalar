@@ -189,11 +189,7 @@ class StringValidator extends ScalarValidator
 	{
 		$value = ltrim( $this->value, '\\');
 
-		if( $equal ) {
-			$equal = $value === $class;
-		}
-
-		if( !class_exists( $value ) or !( $equal or is_subclass_of( $value, $class ))) {
+		if( !class_exists( $value ) or !(( $equal and is_a( $value, $class, true )) or ( !$equal and is_subclass_of( $value, $class, true )))) {
 			if( interface_exists( $class )) {
 				$this->error( Error::STR_INTER, ['inter' => $class ]);
 			} else {

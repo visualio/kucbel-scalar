@@ -36,7 +36,11 @@ class DateIterator extends Iterator
 	 */
 	function max( $limit, bool $equal = true )
 	{
-		return $this->each('max', $limit, $equal );
+		foreach( $this->list as $item ) {
+			$item->max( $limit, $equal );
+		}
+
+		return $this;
 	}
 
 	/**
@@ -46,7 +50,11 @@ class DateIterator extends Iterator
 	 */
 	function min( $limit, bool $equal = true )
 	{
-		return $this->each('min', $limit, $equal );
+		foreach( $this->list as $item ) {
+			$item->min( $limit, $equal );
+		}
+
+		return $this;
 	}
 
 	/**
@@ -56,6 +64,10 @@ class DateIterator extends Iterator
 	 */
 	function range( $min, $max )
 	{
-		return $this->each('range', $min, $max );
+		foreach( $this->list as $item ) {
+			$item->range( $min, $max );
+		}
+
+		return $this;
 	}
 }

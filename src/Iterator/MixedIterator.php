@@ -86,13 +86,13 @@ class MixedIterator extends Iterator
 	 */
 	function bool()
 	{
-		$items = [];
+		$list = [];
 
-		foreach( $this->list as $value ) {
-			$items[] = $value->bool();
+		foreach( $this->list as $item ) {
+			$list[] = $item->bool();
 		}
 
-		return new BoolIterator( $this->name, ...$items );
+		return new BoolIterator( $this->name, ...$list );
 	}
 
 	/**
@@ -100,13 +100,13 @@ class MixedIterator extends Iterator
 	 */
 	function float()
 	{
-		$items = [];
+		$list = [];
 
-		foreach( $this->list as $value ) {
-			$items[] = $value->float();
+		foreach( $this->list as $item ) {
+			$list[] = $item->float();
 		}
 
-		return new FloatIterator( $this->name, ...$items );
+		return new FloatIterator( $this->name, ...$list );
 	}
 
 	/**
@@ -114,13 +114,13 @@ class MixedIterator extends Iterator
 	 */
 	function integer()
 	{
-		$items = [];
+		$list = [];
 
-		foreach( $this->list as $value ) {
-			$items[] = $value->integer();
+		foreach( $this->list as $item ) {
+			$list[] = $item->integer();
 		}
 
-		return new IntegerIterator( $this->name, ...$items );
+		return new IntegerIterator( $this->name, ...$list );
 	}
 
 	/**
@@ -128,13 +128,13 @@ class MixedIterator extends Iterator
 	 */
 	function string()
 	{
-		$items = [];
+		$list = [];
 
-		foreach( $this->list as $value ) {
-			$items[] = $value->string();
+		foreach( $this->list as $item ) {
+			$list[] = $item->string();
 		}
 
-		return new StringIterator( $this->name, ...$items );
+		return new StringIterator( $this->name, ...$list );
 	}
 
 	/**
@@ -142,12 +142,12 @@ class MixedIterator extends Iterator
 	 */
 	function date()
 	{
-		$items = [];
+		$list = [];
 
-		foreach( $this->list as $value ) {
-			$items[] = $value->date();
+		foreach( $this->list as $item ) {
+			$list[] = $item->date();
 		}
 
-		return new DateIterator( $this->name, ...$items );
+		return new DateIterator( $this->name, ...$list );
 	}
 }

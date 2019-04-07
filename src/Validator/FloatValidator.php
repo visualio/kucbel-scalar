@@ -86,20 +86,20 @@ class FloatValidator extends NumericValidator
 	}
 
 	/**
-	 * @param int $digits
-	 * @param int $decimals
+	 * @param int $digit
+	 * @param int $point
 	 * @return $this
 	 */
-	function length( int $digits, int $decimals )
+	function length( int $digit, int $point )
 	{
-		return $this->digits( $digits )->decimals( $decimals );
+		return $this->digit( $digit )->point( $point );
 	}
 
 	/**
 	 * @param int $limit
 	 * @return $this
 	 */
-	protected function decimals( int $limit )
+	protected function point( int $limit )
 	{
 		if( $this->value !== round( $this->value, $limit )) {
 			$this->error( Error::NUM_POINT, ['dec' => $limit ]);

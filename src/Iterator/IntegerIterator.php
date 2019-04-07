@@ -34,7 +34,11 @@ class IntegerIterator extends ScalarIterator
 	 */
 	function equal( int ...$options )
 	{
-		return $this->each('equal', ...$options );
+		foreach( $this->list as $item ) {
+			$item->equal( ...$options );
+		}
+
+		return $this;
 	}
 
 	/**
@@ -44,7 +48,11 @@ class IntegerIterator extends ScalarIterator
 	 */
 	function max( int $limit, bool $equal = true )
 	{
-		return $this->each('max', $limit, $equal );
+		foreach( $this->list as $item ) {
+			$item->max( $limit, $equal );
+		}
+
+		return $this;
 	}
 
 	/**
@@ -54,7 +62,11 @@ class IntegerIterator extends ScalarIterator
 	 */
 	function min( int $limit, bool $equal = true )
 	{
-		return $this->each('min', $limit, $equal );
+		foreach( $this->list as $item ) {
+			$item->min( $limit, $equal );
+		}
+
+		return $this;
 	}
 
 	/**
@@ -64,15 +76,23 @@ class IntegerIterator extends ScalarIterator
 	 */
 	function range( int $min, int $max )
 	{
-		return $this->each('range', $min, $max );
+		foreach( $this->list as $item ) {
+			$item->range( $min, $max );
+		}
+
+		return $this;
 	}
 
 	/**
-	 * @param int $digits
+	 * @param int $digit
 	 * @return $this
 	 */
-	function length( int $digits )
+	function length( int $digit )
 	{
-		return $this->each('length', $digits );
+		foreach( $this->list as $item ) {
+			$item->length( $digit );
+		}
+
+		return $this;
 	}
 }
