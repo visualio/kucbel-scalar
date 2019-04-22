@@ -46,15 +46,4 @@ class SchemaFactory
 
 		return new Schema( $this->factory, $input, $schema );
 	}
-
-	/**
-	 * @param InputInterface $input
-	 * @param array $schema
-	 * @return Schema
-	 * @deprecated ttl 1 μs
-	 */
-	function custom( InputInterface $input, array $schema ) : Schema
-	{
-		return new Schema( $this->factory, $input, $schema );
-	}
 }
