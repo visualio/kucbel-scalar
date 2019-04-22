@@ -55,7 +55,7 @@ class FilterFactory
 	/**
 	 * @return FilterBuilder
 	 */
-	function builder() : FilterBuilder
+	function setup() : FilterBuilder
 	{
 		return new FilterBuilder( ...$this->filters );
 	}

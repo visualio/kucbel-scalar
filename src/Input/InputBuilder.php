@@ -50,9 +50,9 @@ class InputBuilder
 	/**
 	 * @return InputFactory
 	 */
-	function create() : InputFactory
+	function close() : InputFactory
 	{
-		return new InputFactory( $this->builder->create(), $this->inputs, $this->filters, $this->adapters );
+		return new InputFactory( $this->builder->close(), $this->inputs, $this->filters, $this->adapters );
 	}
 
 	/**
