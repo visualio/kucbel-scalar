@@ -214,7 +214,7 @@ class ScalarExtension extends CompilerExtension
 	{
 		$tests = $input->create("types.$name")
 			->index()
-			->min( 1 )
+			->count( 1, null )
 			->fetch();
 
 		$type = [];
@@ -338,7 +338,7 @@ class ScalarExtension extends CompilerExtension
 
 		$tests = $input->create("schemas.$name.$type")
 			->array()
-			->min( 1 )
+			->count( 1, null )
 			->fetch();
 
 		$input = new Input\DirectInput(['types' => [ $type => $tests ]], $this->name );
