@@ -5,6 +5,7 @@ namespace Kucbel\Scalar\Input;
 use DOMDocument;
 use DOMElement;
 use DOMXPath;
+use Nette\InvalidArgumentException;
 
 class DocumentInput extends Input
 {
@@ -24,23 +25,28 @@ class DocumentInput extends Input
 	private $search;
 
 	/**
-	 * XmlInput constructor.
+	 * DocumentInput constructor.
 	 *
 	 * @param DOMDocument $document
 	 * @param DOMElement $element
+	 * @param DOMXPath $search
 	 */
-	function __construct( DOMDocument $document, DOMElement $element = null )
+	function __construct( DOMDocument $document, DOMElement $element = null, DOMXPath $search = null )
 	{
 		if( $document->firstChild === null ) {
-			throw new InputException("Document isn't loaded.");
+			throw new InvalidArgumentException("Document isn't loaded.");
 		} elseif( $element and $element->ownerDocument !== $document ) {
-			throw new InputException("Element isn't attached.");
+			throw new InvalidArgumentException("Element isn't attached.");
+		} elseif( $search and $search->document !== $document ) {
+			throw new InvalidArgumentException("Search isn't attached.");
 		}
 
-		$search = new DOMXPath( $document );
+		if( $search === null ) {
+			$search = new DOMXPath( $document );
 
-		foreach( $search->query('namespace::*') as $node ) {
-			$search->registerNamespace( $node->localName, $node->nodeValue );
+			foreach( $search->query('namespace::*') as $node ) {
+				$search->registerNamespace( $node->localName, $node->nodeValue );
+			}
 		}
 
 		$this->document = $document;
