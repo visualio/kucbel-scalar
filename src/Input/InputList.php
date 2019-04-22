@@ -21,24 +21,22 @@ class InputList extends InputAdapter
 	 */
 	function get( string $name )
 	{
-		$value = null;
+		$values = null;
 
 		foreach( $this->inputs as $input ) {
-			$each = $input->get( $name );
-
 			if( $this->mode & self::CHECK ) {
-				if( $each !== null ) {
-					$value[] = $each;
+				if(( $value = $input->get( $name )) !== null ) {
+					$values[] = $value;
 				}
 			} elseif( $this->mode & self::QUERY ) {
-				if( $each !== null or $input->has( $name )) {
-					$value[] = $each;
+				if( $input->has( $name )) {
+					$values[] = $input->get( $name );
 				}
 			} else {
-				$value[] = $each;
+				$values[] = $input->get( $name );
 			}
 		}
 
-		return $value;
+		return $values;
 	}
 }

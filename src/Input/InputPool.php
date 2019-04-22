@@ -30,20 +30,18 @@ class InputPool extends InputAdapter
 	function create( string $name ) : MixedValidator
 	{
 		foreach( $this->inputs as $index => $input ) {
-			$mixed = $input->create( $name );
-
 			if( $this->index === $index ) {
-				return $mixed;
+				return $input->create( $name );
 			} elseif( $this->mode & self::CHECK ) {
-				if( $mixed->fetch() !== null ) {
-					return $mixed;
+				if( $input->get( $name ) !== null ) {
+					return $input->create( $name );
 				}
 			} elseif( $this->mode & self::QUERY ) {
-				if( $mixed->fetch() !== null or $input->has( $name )) {
-					return $mixed;
+				if( $input->has( $name )) {
+					return $input->create( $name );
 				}
 			} else {
-				return $mixed;
+				return $input->create( $name );
 			}
 		}
 
@@ -57,20 +55,18 @@ class InputPool extends InputAdapter
 	function get( string $name )
 	{
 		foreach( $this->inputs as $index => $input ) {
-			$value = $input->get( $name );
-
 			if( $this->index === $index ) {
-				return $value;
+				return $input->get( $name );
 			} elseif( $this->mode & self::CHECK ) {
-				if( $value !== null ) {
+				if(( $value = $input->get( $name )) !== null ) {
 					return $value;
 				}
 			} elseif( $this->mode & self::QUERY ) {
-				if( $value !== null or $input->has( $name )) {
-					return $value;
+				if( $input->has( $name )) {
+					return $input->get( $name );
 				}
 			} else {
-				return $value;
+				return $input->get( $name );
 			}
 		}
 
