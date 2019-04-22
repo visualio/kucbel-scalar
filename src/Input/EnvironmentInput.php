@@ -8,6 +8,11 @@ use Kucbel\Scalar\Output\OutputInterface;
 class EnvironmentInput extends StrictInput implements OutputInterface
 {
 	/**
+	 * @var array | null
+	 */
+	static private $aliases;
+
+	/**
 	 * @var string | null
 	 */
 	private $section;
@@ -76,6 +81,8 @@ class EnvironmentInput extends StrictInput implements OutputInterface
 	 */
 	protected function alias( string $name ) : string
 	{
-		return strtoupper( str_replace('.', '_', "{$this->section}{$name}"));
+		$name = $this->section . $name;
+
+		return self::$aliases[ $name ] ?? self::$aliases[ $name ] = strtoupper( str_replace('.', '_', $name ));
 	}
 }

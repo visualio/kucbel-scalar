@@ -42,6 +42,6 @@ class DirectInput extends StrictInput
 	 */
 	protected function alias( string $name ) : string
 	{
-		return "{$this->alias}{$name}";
+		return $this->alias . $name;
 	}
 }

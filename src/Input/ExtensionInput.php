@@ -11,7 +11,7 @@ class ExtensionInput extends StrictInput
 	/**
 	 * @var ExtensionInput[] | null
 	 */
-	private static $inputs;
+	static private $inputs;
 
 	/**
 	 * @var CompilerExtension
@@ -59,7 +59,9 @@ class ExtensionInput extends StrictInput
 	 */
 	function get( string $name, $null = null )
 	{
-		return $this->search( $this->extension->getConfig(), $this->validator->add("{$this->section}{$name}"), $null );
+		$this->validator->add( $name = $this->section . $name );
+
+		return $this->search( $this->extension->getConfig(), $name, $null );
 	}
 
 	/**
@@ -92,7 +94,7 @@ class ExtensionInput extends StrictInput
 	 */
 	protected function alias( string $name ) : string
 	{
-		return $this->extension->prefix("{$this->section}{$name}");
+		return $this->extension->prefix( $this->section . $name );
 	}
 
 	/**

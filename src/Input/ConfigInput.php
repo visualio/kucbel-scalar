@@ -75,6 +75,6 @@ class ConfigInput extends StrictInput implements OutputInterface
 	 */
 	protected function alias( string $name ) : string
 	{
-		return "{$this->section}{$name}";
+		return $this->section . $name;
 	}
 }
