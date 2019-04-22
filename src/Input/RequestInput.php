@@ -3,6 +3,7 @@
 namespace Kucbel\Scalar\Input;
 
 use Nette\Http\IRequest;
+use Nette\InvalidArgumentException;
 
 class RequestInput extends Input
 {
@@ -29,8 +30,16 @@ class RequestInput extends Input
 	 */
 	function __construct( IRequest $request, int $source = null )
 	{
+		if( $source === null ) {
+			$source = $request->isMethod( IRequest::POST ) ? self::POST : self::QUERY;
+		}
+
+		if( $source !== self::POST and $source !== self::QUERY and $source !== self::HEADER ) {
+			throw new InvalidArgumentException("Source isn't valid.");
+		}
+
 		$this->request = $request;
-		$this->source = $source ?? ( $request->isMethod( IRequest::POST ) ? self::POST : self::QUERY );
+		$this->source = $source;
 	}
 
 	/**
@@ -39,14 +48,15 @@ class RequestInput extends Input
 	 */
 	function get( string $name )
 	{
-		if( $this->source === self::POST ) {
-			return $this->request->getPost( $name );
-		} elseif( $this->source === self::QUERY ) {
-			return $this->request->getQuery( $name );
-		} elseif( $this->source === self::HEADER ) {
-			return $this->request->getHeader( $name );
-		} else {
-			throw new InputException("Source #{$this->source} doesn't exist.");
+		switch( $this->source ) {
+			case self::POST:
+				return $this->request->getPost( $name );
+			case self::QUERY:
+				return $this->request->getQuery( $name );
+			case self::HEADER:
+				return $this->request->getHeader( $name );
+			default:
+				return null;
 		}
 	}
 }
