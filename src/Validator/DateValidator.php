@@ -5,7 +5,6 @@ namespace Kucbel\Scalar\Validator;
 use Kucbel\Scalar\Error;
 use Nette\InvalidArgumentException;
 use Nette\Utils\DateTime;
-use Throwable;
 
 /**
  * Class DateValidator
