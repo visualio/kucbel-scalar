@@ -20,7 +20,7 @@ class FloatValidator extends NumericValidator
 	function __construct( string $name, float $value )
 	{
 		$this->name = $name;
-		$this->value = $value;
+		$this->value = $value ? $value : 0.;
 	}
 
 	/**

@@ -95,8 +95,8 @@ class MixedValidator extends Validator
 		$value = $this->value;
 		$type = $this->detect();
 
-		if( $type === 'dec') {
-			$value = $value ? round( $value, self::$precision - floor( log10( $value ))) : 0;
+		if( $type === 'dec' and $value !== 0. ) {
+			$value = round( $value, self::$precision - floor( log10( $value )));
 		} elseif( $type === 'str' and $match = Strings::match( $value, '~^[+-]?([.][0-9]+|[0-9]+[.]?[0-9]*)([Ee][+-]?[0-9]{1,2})?$~') and strlen( Strings::replace( $match[1], '~^[0.]+|[0.]+$|[.]~', '')) <= self::$precision ) {
 			$type = 'dec';
 			$value = (float) $value;
