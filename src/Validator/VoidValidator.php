@@ -15,9 +15,11 @@ class VoidValidator extends Validator
 	}
 
 	/**
-	 * @inheritdoc
+	 * @param string $name
+	 * @param array $arguments
+	 * @return $this
 	 */
-	function __call( $method, $arguments )
+	function __call( $name, $arguments )
 	{
 		return $this;
 	}

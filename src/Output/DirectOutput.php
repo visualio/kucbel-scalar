@@ -7,7 +7,7 @@ use ArrayAccess;
 class DirectOutput extends Output
 {
 	/**
-	 * @var iterable | null
+	 * @var iterable | array | null
 	 */
 	private $values;
 

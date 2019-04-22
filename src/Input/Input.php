@@ -63,8 +63,8 @@ abstract class Input implements InputInterface
 	}
 
 	/**
-	 * @param string|null $name
-	 * @return string|null
+	 * @param string | null $name
+	 * @return string | null
 	 */
 	static function suffix( ?string $name ) : ?string
 	{
@@ -75,7 +75,7 @@ abstract class Input implements InputInterface
 		} elseif( $last === '.') {
 			return $name;
 		} else {
-			return $name . '.';
+			return "{$name}.";
 		}
 	}
 }

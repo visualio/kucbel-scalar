@@ -29,7 +29,7 @@ class EnvironmentInput extends StrictInput implements OutputInterface
 	 */
 	function get( string $name, $null = null )
 	{
-		$value = getenv( $this->alias( $name ));
+		$value = getenv( $this->format( $this->section . $name ));
 
 		return $value !== false ? $value : $null;
 	}
@@ -40,7 +40,7 @@ class EnvironmentInput extends StrictInput implements OutputInterface
 	 */
 	function set( string $name, $value )
 	{
-		$name = $this->alias( $name );
+		$name = $this->format( $this->section . $name );
 
 		if( $value === null ) {
 			$done = putenv( $name );
@@ -76,6 +76,15 @@ class EnvironmentInput extends StrictInput implements OutputInterface
 	 */
 	protected function alias( string $name ) : string
 	{
-		return strtoupper( str_replace('.', '_', $this->section . $name ));
+		return $this->format( $this->section . $name );
+	}
+
+	/**
+	 * @param string $name
+	 * @return string
+	 */
+	protected function format( string $name ) : string
+	{
+		return strtoupper( str_replace('.', '_', $name ));
 	}
 }

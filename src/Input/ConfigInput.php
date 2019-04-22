@@ -29,7 +29,7 @@ class ConfigInput extends StrictInput implements OutputInterface
 	 */
 	function get( string $name, $null = null )
 	{
-		$value = ini_get( $this->alias( $name ));
+		$value = ini_get( $this->section . $name );
 
 		return $value === '' ? $null : $value;
 	}
@@ -40,7 +40,7 @@ class ConfigInput extends StrictInput implements OutputInterface
 	 */
 	function set( string $name, $value )
 	{
-		$name = $this->alias( $name );
+		$name = $this->section . $name;
 
 		if( $value === null ) {
 			$done = ini_set( $name, '');
@@ -58,7 +58,7 @@ class ConfigInput extends StrictInput implements OutputInterface
 	}
 
 	/**
-	 * @param string|null $section
+	 * @param string | null $section
 	 * @return ConfigInput
 	 */
 	function section( ?string $section ) : self

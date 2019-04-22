@@ -14,7 +14,7 @@ class CompareOutput extends Output
 	private $input;
 
 	/**
-	 * @var iterable | null
+	 * @var iterable | array | null
 	 */
 	private $values;
 

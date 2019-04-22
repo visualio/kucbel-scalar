@@ -26,7 +26,7 @@ class InputFilter implements InputInterface
 	private $filter;
 
 	/**
-	 * FilterInput constructor.
+	 * InputFilter constructor.
 	 *
 	 * @param InputInterface $input
 	 * @param FilterInterface $filter
