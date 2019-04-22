@@ -103,17 +103,19 @@ class ScalarExtension extends CompilerExtension
 
 	/**
 	 * Compose
+	 *
+	 * @throws ReflectionException
 	 */
 	function loadConfiguration()
 	{
-		$default = new Input\DirectInput(['types' => $this->types ], $this->name );
-
-		$this->addTypes( $default );
-
 		$builder = $this->getContainerBuilder();
 
 		$builder->addDefinition( $trim = $this->prefix('filter.trim'))
 			->setType( Filter\TrimFilter::class );
+
+		$builder->addDefinition( $round = $this->prefix('filter.round'))
+			->setType( Filter\RoundFilter::class )
+			->setArguments([ 14 ]);
 
 		$builder->addDefinition( $this->prefix('filter.factory'))
 			->setType( Filter\FilterFactory::class );
@@ -128,23 +130,34 @@ class ScalarExtension extends CompilerExtension
 			->setType( Schema\SchemaFactory::class );
 
 		$this->filters[] = $this->aliases['@trim'] = "@$trim";
+		$this->filters[] = $this->aliases['@round'] = "@$round";
+
+		$this->loadParameters();
+	}
+
+	/**
+	 * @throws ReflectionException
+	 */
+	function loadParameters()
+	{
+		$input = new Input\DirectInput(['types' => $this->types ], $this->name );
+
+		$this->setTypes( $input );
+
+		$input = new Input\ExtensionInput( $this );
+
+		$this->setFilters( $input );
+		$this->setSchemas( $input );
+		$this->setTypes( $input );
+		$this->addFiles( $input );
+		$this->addInputs( $input );
 	}
 
 	/**
 	 * Compile
-	 *
-	 * @throws ReflectionException
 	 */
 	function beforeCompile()
 	{
-		$input = new Input\ExtensionInput( $this );
-
-		$this->addFiles( $input );
-		$this->addTypes( $input );
-		$this->addSchemas( $input );
-		$this->addInputs( $input );
-		$this->setFilters( $input );
-
 		$tests = [];
 
 		foreach( $this->types ?? [] as $name => $methods ) {
