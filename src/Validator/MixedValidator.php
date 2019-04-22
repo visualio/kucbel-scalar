@@ -15,6 +15,11 @@ use Traversable;
 class MixedValidator extends Validator
 {
 	/**
+	 * @var int
+	 */
+	static private $precision = 14;
+
+	/**
 	 * MixedValidator constructor.
 	 *
 	 * @param string $name
@@ -60,7 +65,7 @@ class MixedValidator extends Validator
 	function bool()
 	{
 		$value = $this->value;
-		$type = self::detect( $value );
+		$type = $this->detect();
 
 		if( $type === 'int' and ( $value === 1 or $value === 0 )) {
 			$type = 'bool';
@@ -74,9 +79,9 @@ class MixedValidator extends Validator
 		}
 
 		if( $type === 'null') {
-			$this->error( Error::TYPE_NULL );
+			throw new ValidatorException( $this->name, Error::TYPE_NULL );
 		} elseif( $type !== 'bool') {
-			$this->error( Error::TYPE_BOOL );
+			throw new ValidatorException( $this->name, Error::TYPE_BOOL );
 		}
 
 		return new BoolValidator( $this->name, $value );
@@ -88,9 +93,11 @@ class MixedValidator extends Validator
 	function float()
 	{
 		$value = $this->value;
-		$type = self::detect( $value );
+		$type = $this->detect();
 
-		if( $type === 'str' and $match = Strings::match( $value, '~^[+-]?([.][0-9]+|[0-9]+[.]?[0-9]*)([Ee][+-]?[0-9]{1,2})?$~') and strlen( Strings::replace( $match[1], '~^[0.]+|[0.]+$|[.]~', '')) <= 14 ) {
+		if( $type === 'dec') {
+			$value = $value ? round( $value, self::$precision - floor( log10( $value ))) : 0;
+		} elseif( $type === 'str' and $match = Strings::match( $value, '~^[+-]?([.][0-9]+|[0-9]+[.]?[0-9]*)([Ee][+-]?[0-9]{1,2})?$~') and strlen( Strings::replace( $match[1], '~^[0.]+|[0.]+$|[.]~', '')) <= self::$precision ) {
 			$type = 'dec';
 			$value = (float) $value;
 		} elseif( $type === 'date') {
@@ -99,9 +106,9 @@ class MixedValidator extends Validator
 		}
 
 		if( $type === 'null') {
-			$this->error( Error::TYPE_NULL );
+			throw new ValidatorException( $this->name, Error::TYPE_NULL );
 		} elseif( $type !== 'dec' and $type !== 'int') {
-			$this->error( Error::TYPE_FLOAT );
+			throw new ValidatorException( $this->name, Error::TYPE_FLOAT );
 		}
 
 		return new FloatValidator( $this->name, $value );
@@ -113,7 +120,7 @@ class MixedValidator extends Validator
 	function integer()
 	{
 		$value = $this->value;
-		$type = self::detect( $value );
+		$type = $this->detect();
 
 		if( $type === 'bool') {
 			$type = 'int';
@@ -130,9 +137,9 @@ class MixedValidator extends Validator
 		}
 
 		if( $type === 'null') {
-			$this->error( Error::TYPE_NULL );
+			throw new ValidatorException( $this->name, Error::TYPE_NULL );
 		} elseif( $type !== 'int') {
-			$this->error( Error::TYPE_INTEGER );
+			throw new ValidatorException( $this->name, Error::TYPE_INTEGER );
 		}
 
 		return new IntegerValidator( $this->name, $value );
@@ -144,7 +151,7 @@ class MixedValidator extends Validator
 	function string()
 	{
 		$value = $this->value;
-		$type = self::detect( $value );
+		$type = $this->detect();
 
 		if( $type === 'date') {
 			$type = 'str';
@@ -152,9 +159,9 @@ class MixedValidator extends Validator
 		}
 
 		if( $type === 'null') {
-			$this->error( Error::TYPE_NULL );
+			throw new ValidatorException( $this->name, Error::TYPE_NULL );
 		} elseif( $type !== 'str' and $type !== 'int' and $type !== 'dec') {
-			$this->error( Error::TYPE_STRING );
+			throw new ValidatorException( $this->name, Error::TYPE_STRING );
 		}
 
 		return new StringValidator( $this->name, $value );
@@ -166,20 +173,23 @@ class MixedValidator extends Validator
 	function date()
 	{
 		$value = $this->value;
-		$type = self::detect( $value );
+		$type = $this->detect();
+
+		if( $type === 'dec' and $value === floor( $value ) and $value >= PHP_INT_MIN and $value <= PHP_INT_MAX ) {
+			$type = 'int';
+			$value = (int) $value;
+		}
 
 		if( $type === 'null') {
-			$this->error( Error::TYPE_NULL );
-		} elseif( $type === 'arr' or $type === 'obj') {
-			$this->error( Error::TYPE_DATE );
-		} elseif( $type === 'dec' and $value !== floor( $value )) {
-			$this->error( Error::TYPE_DATE );
+			throw new ValidatorException( $this->name, Error::TYPE_NULL );
+		} elseif( $type !== 'date' and $type !== 'str' and $type !== 'int') {
+			throw new ValidatorException( $this->name, Error::TYPE_DATE );
 		}
 
 		try {
 			$value = DateTime::from( $value );
 		} catch( Throwable $ex ) {
-			$this->error( Error::TYPE_DATE );
+			throw new ValidatorException( $this->name, Error::TYPE_DATE );
 		}
 
 		return new DateValidator( $this->name, $value );
@@ -190,14 +200,10 @@ class MixedValidator extends Validator
 	 */
 	function array()
 	{
-		if( func_num_args() and func_get_arg(0) ) {
-			return $this->index();
-		}
-
-		$type = self::detect( $this->value );
+		$type = $this->detect();
 
 		if( $type === 'null') {
-			$this->error( Error::TYPE_NULL );
+			throw new ValidatorException( $this->name, Error::TYPE_NULL );
 		}
 
 		$list = [];
@@ -222,12 +228,12 @@ class MixedValidator extends Validator
 	 */
 	function index()
 	{
-		$type = self::detect( $this->value );
+		$type = $this->detect();
 
 		if( $type === 'null') {
-			$this->error( Error::TYPE_NULL );
+			throw new ValidatorException( $this->name, Error::TYPE_NULL );
 		} elseif( $type !== 'arr') {
-			$this->error( Error::TYPE_ARRAY );
+			throw new ValidatorException( $this->name, Error::TYPE_ARRAY );
 		}
 
 		$list = [];
@@ -243,12 +249,11 @@ class MixedValidator extends Validator
 	}
 
 	/**
-	 * @param mixed $value
 	 * @return string
 	 */
-	static protected function detect( $value ) : string 
+	protected function detect() : string
 	{
-		switch( gettype( $value )) {
+		switch( gettype( $this->value )) {
 			case 'NULL':
 				return 'null';
 			case 'boolean':
@@ -257,7 +262,7 @@ class MixedValidator extends Validator
 				return 'int';
 			case 'double':
 			case 'float':
-				return is_finite( $value ) ? 'dec' : 'wtf';
+				return is_finite( $this->value ) ? 'dec' : 'wtf';
 			case 'string':
 				return 'str';
 			case 'array':
@@ -268,10 +273,10 @@ class MixedValidator extends Validator
 		}
 
 		switch( true ) {
-			case $value instanceof DateTimeInterface:
+			case $this->value instanceof DateTimeInterface:
 				return 'date';
-			case $value instanceof Traversable:
-			case $value instanceof stdClass:
+			case $this->value instanceof Traversable:
+			case $this->value instanceof stdClass:
 				return 'arr';
 			default:
 				return 'obj';

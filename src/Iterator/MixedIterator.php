@@ -4,6 +4,8 @@ namespace Kucbel\Scalar\Iterator;
 
 use Kucbel\Scalar\Error;
 use Kucbel\Scalar\Validator\MixedValidator;
+use Kucbel\Scalar\Validator\ValidatorException;
+use Nette\InvalidArgumentException;
 
 /**
  * Class MixedIterator
@@ -28,54 +30,44 @@ class MixedIterator extends Iterator
 	}
 
 	/**
-	 * @param int $limit
+	 * @param int|null $min
+	 * @param int|null $max
 	 * @return $this
 	 */
-	function min( int $limit )
+	function count( ?int $min, ?int $max = 0 )
 	{
-		$count = count( $this->list );
-
-		if( $count < $limit ) {
-			$this->error( Error::ARR_LEN_GTE, ['min' => $limit ]);
+		if( $min !== null and $max !== null and $min > $max ) {
+			[ $min, $max ] = [ $max, $min ];
 		}
 
-		return $this;
-	}
-
-	/**
-	 * @param int $limit
-	 * @return $this
-	 */
-	function max( int $limit )
-	{
-		$count = count( $this->list );
-
-		if( $count > $limit ) {
-			$this->error( Error::ARR_LEN_LTE, ['max' => $limit ]);
+		if( $min === 0 ) {
+			$min = null;
 		}
 
-		return $this;
-	}
-
-	/**
-	 * @param int $min
-	 * @param int $max
-	 * @return $this
-	 */
-	function count( int $min, int $max = null )
-	{
-		$count = count( $this->list );
-
-		if( $min === $max or $max === null ) {
-			$equal = true;
-		} else {
-			$equal = false;
+		if( $min === null and $max === null ) {
+			throw new InvalidArgumentException("Enter value for either one or both parameters.");
 		}
 
-		if( $equal and $count !== $min ) {
-			$this->error( Error::ARR_LEN_EQ, ['len' => $min ]);
-		} elseif( !$equal and ( $count < $min or $count > $max )) {
-			$this->error( Error::ARR_LEN_RNG, ['min' => $min, 'max' => $max ]);
+		$num = count( $this->list );
+
+		if( $min !== null ) {
+			if( $min < 0 ) {
+				throw new InvalidArgumentException("Enter positive count limit.");
+			}
+
+			if( $num < $min ) {
+				throw new ValidatorException( $this->name, Error::ARR_COUNT, ['min' => $min, 'max' => $max ]);
+			}
+		}
+
+		if( $max !== null ) {
+			if( $max < 0 ) {
+				throw new InvalidArgumentException("Enter positive count limit.");
+			}
+
+			if( $num > $max ) {
+				throw new ValidatorException( $this->name, Error::ARR_COUNT, ['min' => $min, 'max' => $max ]);
+			}
 		}
 
 		return $this;

@@ -19,15 +19,6 @@ abstract class Validator implements ValidatorInterface
 	protected $value;
 
 	/**
-	 * @param int $code
-	 * @param array $values
-	 */
-	protected function error( int $code, array $values = null )
-	{
-		throw new ValidatorException( $this->name, $code, $values );
-	}
-
-	/**
 	 * @return mixed
 	 */
 	function fetch()

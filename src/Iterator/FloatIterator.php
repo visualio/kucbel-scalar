@@ -14,7 +14,7 @@ use Kucbel\Scalar\Validator\FloatValidator;
  *
  * @method float[] fetch()
  */
-class FloatIterator extends ScalarIterator
+class FloatIterator extends NumericIterator
 {
 	/**
 	 * FloatIterator constructor.
@@ -29,69 +29,41 @@ class FloatIterator extends ScalarIterator
 	}
 
 	/**
-	 * @param float ...$options
+	 * @param float ...$values
 	 * @return $this
 	 */
-	function equal( float ...$options )
+	function equal( float ...$values )
 	{
 		foreach( $this->list as $item ) {
-			$item->equal( ...$options );
+			$item->equal( ...$values );
 		}
 
 		return $this;
 	}
 
 	/**
-	 * @param float $limit
-	 * @param bool $equal
+	 * @param float|null $min
+	 * @param float|null $max
 	 * @return $this
 	 */
-	function max( float $limit, bool $equal = true )
+	function value( ?float $min, ?float $max )
 	{
 		foreach( $this->list as $item ) {
-			$item->max( $limit, $equal );
+			$item->value( $min, $max );
 		}
 
 		return $this;
 	}
 
 	/**
-	 * @param float $limit
-	 * @param bool $equal
+	 * @param int|null $min
+	 * @param int|null $max
 	 * @return $this
 	 */
-	function min( float $limit, bool $equal = true )
+	function point( ?int $min, ?int $max = 0 )
 	{
 		foreach( $this->list as $item ) {
-			$item->min( $limit, $equal );
-		}
-
-		return $this;
-	}
-
-	/**
-	 * @param float $min
-	 * @param float $max
-	 * @return $this
-	 */
-	function range( float $min, float $max )
-	{
-		foreach( $this->list as $item ) {
-			$item->range( $min, $max );
-		}
-
-		return $this;
-	}
-
-	/**
-	 * @param int $digit
-	 * @param int $point
-	 * @return $this
-	 */
-	function length( int $digit, int $point )
-	{
-		foreach( $this->list as $item ) {
-			$item->length( $digit, $point );
+			$item->point( $min, $max );
 		}
 
 		return $this;

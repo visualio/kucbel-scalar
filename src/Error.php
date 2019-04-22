@@ -22,124 +22,124 @@ class Error
 		TYPE_VOID		= 8,
 
 		SCA_EQUAL		= 21,
-		SCA_OPTION		= 22,
-		SCA_REGEX		= 23,
+		SCA_REGEX		= 22,
 
-		NUM_VAL_GTE		= 41,
-		NUM_VAL_GT		= 42,
-		NUM_VAL_LTE		= 43,
-		NUM_VAL_LT		= 44,
-		NUM_VAL_RNG		= 45,
+		NUM_VALUE		= 41,
+		NUM_DIGIT		= 42,
+		NUM_POINT		= 43,
 
-		NUM_DIGIT		= 61,
-		NUM_POINT		= 62,
+		STR_CHAR		= 61,
+		STR_LINE		= 62,
+		STR_IMPL		= 63,
+		STR_EMAIL		= 64,
+		STR_URL			= 65,
+		STR_DIR			= 66,
+		STR_FILE		= 67,
 
-		STR_LEN_GTE		= 81,
-		STR_LEN_GT		= 82,
-		STR_LEN_LTE		= 83,
-		STR_LEN_LT		= 84,
-		STR_LEN_RNG		= 85,
-		STR_LEN_EQ		= 86,
+		DATE_VALUE		= 81,
 
-		STR_EMAIL		= 101,
-		STR_URL			= 102,
-		STR_LINE		= 103,
-		STR_DIR			= 104,
-		STR_FILE		= 105,
-		STR_CLASS		= 106,
-		STR_INTER		= 107,
-
-		DATE_VAL_GTE	= 121,
-		DATE_VAL_GT		= 122,
-		DATE_VAL_LTE	= 123,
-		DATE_VAL_LT		= 124,
-		DATE_VAL_RNG	= 125,
-
-		ARR_LEN_GTE		= 141,
-		ARR_LEN_GT		= 142,
-		ARR_LEN_LTE		= 143,
-		ARR_LEN_LT		= 144,
-		ARR_LEN_RNG		= 145,
-		ARR_LEN_EQ		= 146,
-
-		ARR_UNIQUE		= 161;
+		ARR_COUNT		= 101,
+		ARR_UNIQUE		= 102;
 
 	/**
+	 * @param string $text
 	 * @param string $name
-	 * @param int $code
 	 * @param array $values
 	 * @return string
 	 */
-	static function createMessage( string $name, int $code, array $values = null ) : string
+	static function getMessage( string $text, string $name, array $values = null ) : string
 	{
-		$values = Error::getHints( $values ?? [] );
 		$values['name'] = $name;
+		$values = Error::getHints( $values );
 
-		$message = Error::getMessage( $code );
-		$message = Strings::replace( $message, '~\$([a-z]+)~', function( $match ) use( $values ) {
+		return Strings::replace( $text, '~\$([a-z]+)~', function( $match ) use( $values ) {
 			return $values[ $match[1] ] ?? '???';
 		});
-
-		return $message;
 	}
 
 	/**
 	 * @param int $code
+	 * @param array $values
 	 * @return string
 	 */
-	static function getMessage( int $code ) : string
+	static function getText( int $code, array $values = null ) : string
 	{
 		switch( $code ) {
-			case Error::TYPE_NULL:		return 'Parameter $name must be provided.';
-			case Error::TYPE_BOOL:		return 'Parameter $name must be a boolean.';
-			case Error::TYPE_FLOAT:		return 'Parameter $name must be a float.';
-			case Error::TYPE_INTEGER:	return 'Parameter $name must be an integer.';
-			case Error::TYPE_STRING:	return 'Parameter $name must be a string.';
-			case Error::TYPE_DATE:		return 'Parameter $name must be a date.';
-			case Error::TYPE_ARRAY:		return 'Parameter $name must be an array.';
-			case Error::TYPE_VOID:		return 'Parameter $name does not exist.';
+			case Error::TYPE_NULL:								return 'Parameter $name must be provided.';
+			case Error::TYPE_BOOL:								return 'Parameter $name must be a boolean.';
+			case Error::TYPE_FLOAT:								return 'Parameter $name must be a float.';
+			case Error::TYPE_INTEGER:							return 'Parameter $name must be an integer.';
+			case Error::TYPE_STRING:							return 'Parameter $name must be a string.';
+			case Error::TYPE_DATE:								return 'Parameter $name must be a date.';
+			case Error::TYPE_ARRAY:								return 'Parameter $name must be an array.';
+			case Error::TYPE_VOID:								return 'Parameter $name does not exist.';
 
-			case Error::SCA_EQUAL:		return 'Parameter $name must be equal to $val.';
-			case Error::SCA_OPTION:		return 'Parameter $name must be one the following $opt.';
-			case Error::SCA_REGEX:		return 'Parameter $name must match $regex pattern.';
+			case Error::SCA_REGEX:								return 'Parameter $name must match $exp pattern.';
+			case Error::SCA_EQUAL:
+				switch( isset( $values['opt'][1] )) {
+					case true:									return 'Parameter $name must be one the following $val.';
+					default:									return 'Parameter $name must be equal to $val.';
+				}
 
-			case Error::NUM_VAL_GTE:
-			case Error::DATE_VAL_GTE:	return 'Parameter $name must be equal to or greater than $min.';
-			case Error::NUM_VAL_GT:
-			case Error::DATE_VAL_GT:	return 'Parameter $name must be greater than $min.';
-			case Error::NUM_VAL_LTE:
-			case Error::DATE_VAL_LTE:	return 'Parameter $name must be equal to or less than $max.';
-			case Error::NUM_VAL_LT:
-			case Error::DATE_VAL_LT:	return 'Parameter $name must be less than $max.';
-			case Error::NUM_VAL_RNG:
-			case Error::DATE_VAL_RNG:	return 'Parameter $name must be between $min and $max.';
+			case Error::NUM_DIGIT:
+				switch( true ) {
+					case $values['min'] === $values['max']:		return 'Parameter $name must have exactly $min digits.';
+					case $values['max'] === null:				return 'Parameter $name must have at least $min digits.';
+					case $values['min'] === null:				return 'Parameter $name must have at most $max digits.';
+					default:									return 'Parameter $name must have between $min and $max digits.';
+				}
 
-			case Error::NUM_DIGIT:		return 'Parameter $name must have $dig or fewer digits.';
-			case Error::NUM_POINT:		return 'Parameter $name must have $dec or fewer decimal digits.';
+			case Error::NUM_POINT:
+				switch( true ) {
+					case $values['min'] === $values['max']:		return 'Parameter $name must have exactly $min decimal digits.';
+					case $values['max'] === null:				return 'Parameter $name must have at least $min decimal digits.';
+					case $values['min'] === null:				return 'Parameter $name must have at most $max decimal digits.';
+					default:									return 'Parameter $name must have between $min and $max decimal digits.';
+				}
 
-			case Error::STR_LEN_GTE:	return 'Parameter $name must be at least $min characters long.';
-			case Error::STR_LEN_GT:		return 'Parameter $name must be more then $min characters long.';
-			case Error::STR_LEN_LTE:	return 'Parameter $name must be at most $max characters long.';
-			case Error::STR_LEN_LT:		return 'Parameter $name must be fewer than $max characters long.';
-			case Error::STR_LEN_RNG:	return 'Parameter $name must be between $min and $max characters long.';
-			case Error::STR_LEN_EQ:		return 'Parameter $name must be exactly $len characters long.';
+			case Error::NUM_VALUE:
+			case Error::DATE_VALUE:
+				switch( true ) {
+					case $values['max'] === null:				return 'Parameter $name must be equal to or greater than $min.';
+					case $values['min'] === null:				return 'Parameter $name must be equal to or less than $max.';
+					default:									return 'Parameter $name must be between $min and $max.';
+				}
 
-			case Error::STR_EMAIL:		return 'Parameter $name must be an email.';
-			case Error::STR_URL:		return 'Parameter $name must be an url.';
-			case Error::STR_LINE:		return 'Parameter $name must be a single line.';
-			case Error::STR_DIR:		return 'Parameter $name must point to a directory.';
-			case Error::STR_FILE:		return 'Parameter $name must point to a file.';
-			case Error::STR_CLASS:		return 'Parameter $name must extend $class class.';
-			case Error::STR_INTER:		return 'Parameter $name must implement $inter interface.';
+			case Error::STR_CHAR:
+				switch( true ) {
+					case $values['min'] === $values['max']:		return 'Parameter $name must be exactly $min characters long.';
+					case $values['max'] === null:				return 'Parameter $name must be at least $min characters long.';
+					case $values['min'] === null:				return 'Parameter $name must be at most $max characters long.';
+					default:									return 'Parameter $name must be between $min and $max characters long.';
+				}
 
-			case Error::ARR_LEN_GTE:	return 'Parameter $name must contain at least $min values.';
-			case Error::ARR_LEN_GT:		return 'Parameter $name must contain more then $min values.';
-			case Error::ARR_LEN_LTE:	return 'Parameter $name must contain at most $max values.';
-			case Error::ARR_LEN_LT:		return 'Parameter $name must contain fewer that $max values.';
-			case Error::ARR_LEN_RNG:	return 'Parameter $name must contain between $min and $max values.';
-			case Error::ARR_LEN_EQ:		return 'Parameter $name must contain exactly $len values.';
+			case Error::STR_LINE:
+				switch( true ) {
+					case $values['min'] === $values['max']:		return 'Parameter $name must have exactly $min lines.';
+					case $values['max'] === null:				return 'Parameter $name must have at least $min lines.';
+					case $values['min'] === null:				return 'Parameter $name must have at most $max lines.';
+					default:									return 'Parameter $name must have between $min and $max lines.';
+				}
 
-			case Error::ARR_UNIQUE:		return 'Parameter $name must contain unique values.';
+			case Error::STR_IMPL:
+				switch( true ) {
+					case interface_exists( $values['type'] ):	return 'Parameter $name must implement $type interface.';
+					default:									return 'Parameter $name must extend $type class.';
+				}
+
+			case Error::STR_EMAIL:								return 'Parameter $name must be an email.';
+			case Error::STR_URL:								return 'Parameter $name must be an url.';
+			case Error::STR_DIR:								return 'Parameter $name must point to a directory.';
+			case Error::STR_FILE:								return 'Parameter $name must point to a file.';
+
+			case Error::ARR_UNIQUE:								return 'Parameter $name must contain unique values.';
+			case Error::ARR_COUNT:
+				switch( true ) {
+					case $values['min'] === $values['max']:		return 'Parameter $name must contain exactly $min values.';
+					case $values['max'] === null:				return 'Parameter $name must contain at least $min values.';
+					case $values['min'] === null:				return 'Parameter $name must contain at most $max values.';
+					default:									return 'Parameter $name must contain between $min and $max values.';
+				}
 
 			default:
 				throw new InvalidArgumentException("Error code $code doesn't exist.");

@@ -3,6 +3,7 @@
 namespace Kucbel\Scalar\Validator;
 
 use Kucbel\Scalar\Error;
+use Nette\InvalidArgumentException;
 
 /**
  * Class IntegerValidator
@@ -24,74 +25,41 @@ class IntegerValidator extends NumericValidator
 	}
 
 	/**
-	 * @param int ...$options
+	 * @param int ...$values
 	 * @return $this
 	 */
-	function equal( int ...$options )
+	function equal( int ...$values )
 	{
-		if( !in_array( $this->value, $options, true )) {
-			if( isset( $options[1] )) {
-				$this->error( Error::SCA_OPTION, ['opt' => $options ]);
-			} else {
-				$this->error( Error::SCA_EQUAL, ['val' => $options[0] ?? null ]);
-			}
+		if( !$values ) {
+			throw new InvalidArgumentException("Enter at least one parameter.");
+		}
+
+		if( !in_array( $this->value, $values, true )) {
+			throw new ValidatorException( $this->name, Error::SCA_EQUAL, ['val' => $values ]);
 		}
 
 		return $this;
 	}
 
 	/**
-	 * @param int $limit
-	 * @param bool $equal
+	 * @param int|null $min
+	 * @param int|null $max
 	 * @return $this
 	 */
-	function max( int $limit, bool $equal = true )
+	function value( ?int $min, ?int $max )
 	{
-		if( $equal and $this->value > $limit ) {
-			$this->error( Error::NUM_VAL_LTE, ['max' => $limit ]);
-		} elseif( !$equal and $this->value >= $limit ) {
-			$this->error( Error::NUM_VAL_LT, ['max' => $limit ]);
+		if( $min === null and $max === null ) {
+			throw new InvalidArgumentException("Enter value for either one or both parameters.");
+		}
+
+		if( $min !== null and $this->value < $min ) {
+			throw new ValidatorException( $this->name, Error::NUM_VALUE, ['min' => $min, 'max' => $max ]);
+		}
+
+		if( $max !== null and $this->value > $max ) {
+			throw new ValidatorException( $this->name, Error::NUM_VALUE, ['min' => $min, 'max' => $max ]);
 		}
 
 		return $this;
-	}
-
-	/**
-	 * @param int $limit
-	 * @param bool $equal
-	 * @return $this
-	 */
-	function min( int $limit, bool $equal = true )
-	{
-		if( $equal and $this->value < $limit ) {
-			$this->error( Error::NUM_VAL_GTE, ['min' => $limit ]);
-		} elseif( !$equal and $this->value <= $limit ) {
-			$this->error( Error::NUM_VAL_GT, ['min' => $limit ]);
-		}
-
-		return $this;
-	}
-
-	/**
-	 * @param int $min
-	 * @param int $max
-	 * @return $this
-	 */
-	function range( int $min, int $max )
-	{
-		if( $this->value < $min or $this->value > $max ) {
-			$this->error( Error::NUM_VAL_RNG, ['min' => $min, 'max' => $max ]);
-		}
-
-		return $this;
-	}
-
-	/**
-	 * @param int $digit
-	 * @return $this
-	 */
-	function length( int $digit )
-	{
-		return $this->digit( $digit );
 	}
 }

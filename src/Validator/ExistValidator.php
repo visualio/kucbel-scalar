@@ -18,9 +18,8 @@ class ExistValidator
 
 	/**
 	 * @param string $name
-	 * @return string
 	 */
-	function add( string $name ) : string
+	function add( string $name )
 	{
 		$schema = &$this->schema;
 
@@ -31,8 +30,6 @@ class ExistValidator
 		if( $schema === null ) {
 			$schema = null;
 		}
-
-		return $name;
 	}
 
 	/**
@@ -52,13 +49,13 @@ class ExistValidator
 
 			foreach( $config as $name => $value ) {
 				if( !array_key_exists( $name, $schema )) {
-					throw new ValidatorException("{$prefix}{$name}", Error::TYPE_VOID );
+					throw new ValidatorException( $prefix . $name, Error::TYPE_VOID );
 				}
 			}
 
 			foreach( $schema as $name => $value ) {
 				if( array_key_exists( $name, $config ) and is_array( $config[ $name ] ) and is_array( $value )) {
-					$suffix = Input::suffix("{$prefix}{$name}");
+					$suffix = Input::suffix( $prefix . $name );
 
 					$queue[] = [ $suffix, $config[ $name ], $value ];
 				}

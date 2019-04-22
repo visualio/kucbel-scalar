@@ -64,13 +64,13 @@ class ScalarExtension extends CompilerExtension
 		'float|null'	=> ['optional', 'float'],
 		'str'			=> ['string'],
 		'str|null'		=> ['optional', 'string'],
-		'str255'		=> ['string', ['length', 1, 255 ]],
-		'str255|null'	=> ['optional', 'string', ['length', 1, 255 ]],
+		'str255'		=> ['string', ['char', 255 ]],
+		'str255|null'	=> ['optional', 'string', ['char', 255 ]],
 		'date'			=> ['date'],
 		'date|null'		=> ['optional', 'date'],
 		'date|now'		=> [['optional', 'now'], 'date'],
-		'id'			=> ['integer', ['min', 1 ]],
-		'id|null'		=> ['optional', 'integer', ['min', 1 ]],
+		'id'			=> ['integer', ['value', 1, null ]],
+		'id|null'		=> ['optional', 'integer', ['value', 1, null ]],
 	];
 
 	/**

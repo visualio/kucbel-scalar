@@ -3,6 +3,7 @@
 namespace Kucbel\Scalar\Validator;
 
 use Kucbel\Scalar\Error;
+use Nette\InvalidArgumentException;
 use Nette\Utils\Strings;
 use Nette\Utils\Validators;
 
@@ -26,16 +27,60 @@ class StringValidator extends ScalarValidator
 	}
 
 	/**
-	 * @param string ...$options
+	 * @param string ...$values
 	 * @return $this
 	 */
-	function equal( string ...$options )
+	function equal( string ...$values )
 	{
-		if( !in_array( $this->value, $options, true )) {
-			if( isset( $options[1] )) {
-				$this->error( Error::SCA_OPTION, ['opt' => $options ]);
-			} else {
-				$this->error( Error::SCA_EQUAL, ['val' => $options[0] ?? null ]);
+		if( !$values ) {
+			throw new InvalidArgumentException("Enter at least one parameter.");
+		}
+
+		if( !in_array( $this->value, $values, true )) {
+			throw new ValidatorException( $this->name, Error::SCA_EQUAL, ['val' => $values ]);
+		}
+
+		return $this;
+	}
+
+	/**
+	 * @param int|null $min
+	 * @param int|null $max
+	 * @return $this
+	 */
+	function char( ?int $min, ?int $max = 1 )
+	{
+		if( $min !== null and $max !== null and $min > $max ) {
+			[ $min, $max ] = [ $max, $min ];
+		}
+
+		if( $min === 0 ) {
+			$min = null;
+		}
+
+		if( $min === null and $max === null ) {
+			throw new InvalidArgumentException("Enter value for either one or both parameters.");
+		}
+
+		$len = Strings::length( $this->value );
+
+		if( $min !== null ) {
+			if( $min < 0 ) {
+				throw new InvalidArgumentException("Enter positive length limit.");
+			}
+
+			if( $len < $min ) {
+				throw new ValidatorException( $this->name, Error::STR_CHAR, ['min' => $min, 'max' => $max ]);
+			}
+		}
+
+		if( $max !== null ) {
+			if( $max < 0 ) {
+				throw new InvalidArgumentException("Enter positive length limit.");
+			}
+
+			if( $len > $max ) {
+				throw new ValidatorException( $this->name, Error::STR_CHAR, ['min' => $min, 'max' => $max ]);
 			}
 		}
 
@@ -43,55 +88,67 @@ class StringValidator extends ScalarValidator
 	}
 
 	/**
-	 * @param int $limit
+	 * @param int|null $min
+	 * @param int|null $max
 	 * @return $this
 	 */
-	function max( int $limit )
+	function line( ?int $min, ?int $max = 1 )
 	{
-		$length = Strings::length( $this->value );
+		if( $min !== null and $max !== null and $min > $max ) {
+			[ $min, $max ] = [ $max, $min ];
+		}
 
-		if( $length > $limit ) {
-			$this->error( Error::STR_LEN_LTE, ['max' => $limit ]);
+		if( $min === 1 ) {
+			$min = null;
+		}
+
+		if( $min === null and $max === null ) {
+			throw new InvalidArgumentException("Enter value for either one or both parameters.");
+		}
+
+		$num = count( Strings::matchAll( $this->value, '~\r\n|\r|\n~')) + 1;
+
+		if( $min !== null ) {
+			if( $min < 1 ) {
+				throw new InvalidArgumentException("Enter positive count limit.");
+			}
+
+			if( $num < $min ) {
+				throw new ValidatorException( $this->name, Error::STR_LINE, ['min' => $min, 'max' => $max ]);
+			}
+		}
+
+		if( $max !== null ) {
+			if( $max < 1 ) {
+				throw new InvalidArgumentException("Enter positive count limit.");
+			}
+
+			if( $num > $max ) {
+				throw new ValidatorException( $this->name, Error::STR_LINE, ['min' => $min, 'max' => $max ]);
+			}
 		}
 
 		return $this;
 	}
 
 	/**
-	 * @param int $limit
+	 * @param string $type
+	 * @param bool $same
 	 * @return $this
 	 */
-	function min( int $limit )
+	function impl( string $type, bool $same = false )
 	{
-		$length = Strings::length( $this->value );
+		$value = ltrim( $this->value, '\\');
 
-		if( $length < $limit ) {
-			$this->error( Error::STR_LEN_GTE, ['min' => $limit ]);
+		if( !class_exists( $value )) {
+			throw new ValidatorException( $this->name, Error::STR_IMPL, ['type' => $type ]);
+		} elseif( $same and !is_a( $value, $type, true )) {
+			throw new ValidatorException( $this->name, Error::STR_IMPL, ['type' => $type ]);
+		} elseif( !$same and !is_subclass_of( $value, $type, true )) {
+			throw new ValidatorException( $this->name, Error::STR_IMPL, ['type' => $type ]);
 		}
 
-		return $this;
-	}
-
-	/**
-	 * @param int $min
-	 * @param int $max
-	 * @return $this
-	 */
-	function length( int $min, int $max = null )
-	{
-		$length = Strings::length( $this->value );
-
-		if( $min === $max or $max === null ) {
-			$equal = true;
-		} else {
-			$equal = false;
-		}
-
-		if( $equal and $length !== $min ) {
-			$this->error( Error::STR_LEN_EQ, ['len' => $min ]);
-		} elseif( !$equal and ( $length < $min or $length > $max )) {
-			$this->error( Error::STR_LEN_RNG, ['min' => $min, 'max' => $max ]);
-		}
+		$this->value = $value;
 
 		return $this;
 	}
@@ -102,7 +159,7 @@ class StringValidator extends ScalarValidator
 	function email()
 	{
 		if( !Validators::isEmail( $this->value )) {
-			$this->error( Error::STR_EMAIL );
+			throw new ValidatorException( $this->name, Error::STR_EMAIL );
 		}
 
 		return $this;
@@ -114,19 +171,7 @@ class StringValidator extends ScalarValidator
 	function url()
 	{
 		if( !Validators::isUrl( $this->value )) {
-			$this->error( Error::STR_URL );
-		}
-
-		return $this;
-	}
-
-	/**
-	 * @return $this
-	 */
-	function line()
-	{
-		if( Strings::match( $this->value, '~\R~u')) {
-			$this->error( Error::STR_LINE );
+			throw new ValidatorException( $this->name, Error::STR_URL );
 		}
 
 		return $this;
@@ -139,12 +184,10 @@ class StringValidator extends ScalarValidator
 	function dir( bool $real = false )
 	{
 		if( !is_dir( $this->value )) {
-			$this->error( Error::STR_DIR );
+			throw new ValidatorException( $this->name, Error::STR_DIR );
 		}
 
-		if( $real ) {
-			$this->path( Error::STR_DIR );
-		}
+		$this->path( $real, false );
 
 		return $this;
 	}
@@ -156,49 +199,30 @@ class StringValidator extends ScalarValidator
 	function file( bool $real = false )
 	{
 		if( !is_file( $this->value )) {
-			$this->error( Error::STR_FILE );
+			throw new ValidatorException( $this->name, Error::STR_FILE );
 		}
 
+		$this->path( $real, true );
+
+		return $this;
+	}
+
+	/**
+	 * @param bool $real
+	 * @param bool $file
+	 */
+	protected function path( bool $real, bool $file )
+	{
 		if( $real ) {
-			$this->path( Error::STR_FILE );
-		}
+			$value = realpath( $this->value );
 
-		return $this;
-	}
-
-	/**
-	 * @param int $code
-	 */
-	protected function path( int $code )
-	{
-		$value = realpath( $this->value );
-
-		if( $value === false ) {
-			$this->error( $code );
-		}
-
-		$this->value = str_replace('\\', '/', $value );
-	}
-
-	/**
-	 * @param string $class
-	 * @param bool $equal
-	 * @return $this
-	 */
-	function impl( string $class, bool $equal = false )
-	{
-		$value = ltrim( $this->value, '\\');
-
-		if( !class_exists( $value ) or !(( $equal and is_a( $value, $class, true )) or ( !$equal and is_subclass_of( $value, $class, true )))) {
-			if( interface_exists( $class )) {
-				$this->error( Error::STR_INTER, ['inter' => $class ]);
-			} else {
-				$this->error( Error::STR_CLASS, ['class' => $class ]);
+			if( $value === false ) {
+				throw new ValidatorException( $this->name, $file ? Error::STR_FILE : Error::STR_DIR );
 			}
+
+			$this->value = $value;
 		}
 
-		$this->value = $value;
-
-		return $this;
+		$this->value = str_replace('\\', '/', $this->value );
 	}
 }

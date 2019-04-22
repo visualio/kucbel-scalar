@@ -30,42 +30,14 @@ class DateIterator extends Iterator
 	}
 
 	/**
-	 * @param mixed $limit
-	 * @param bool $equal
+	 * @param mixed|null $min
+	 * @param mixed|null $max
 	 * @return $this
 	 */
-	function max( $limit, bool $equal = true )
+	function value( $min, $max )
 	{
 		foreach( $this->list as $item ) {
-			$item->max( $limit, $equal );
-		}
-
-		return $this;
-	}
-
-	/**
-	 * @param mixed $limit
-	 * @param bool $equal
-	 * @return $this
-	 */
-	function min( $limit, bool $equal = true )
-	{
-		foreach( $this->list as $item ) {
-			$item->min( $limit, $equal );
-		}
-
-		return $this;
-	}
-
-	/**
-	 * @param mixed $min
-	 * @param mixed $max
-	 * @return $this
-	 */
-	function range( $min, $max )
-	{
-		foreach( $this->list as $item ) {
-			$item->range( $min, $max );
+			$item->value( $min, $max );
 		}
 
 		return $this;

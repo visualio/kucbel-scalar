@@ -29,53 +29,55 @@ class StringIterator extends ScalarIterator
 	}
 
 	/**
-	 * @param string ...$options
+	 * @param string ...$values
 	 * @return $this
 	 */
-	function equal( string ...$options )
+	function equal( string ...$values )
 	{
 		foreach( $this->list as $item ) {
-			$item->equal( ...$options );
+			$item->equal( ...$values );
 		}
 
 		return $this;
 	}
 
 	/**
-	 * @param int $limit
+	 * @param int|null $min
+	 * @param int|null $max
 	 * @return $this
 	 */
-	function max( int $limit )
+	function char( ?int $min, ?int $max = 1 )
 	{
 		foreach( $this->list as $item ) {
-			$item->max( $limit );
+			$item->char( $min, $max );
 		}
 
 		return $this;
 	}
 
 	/**
-	 * @param int $limit
+	 * @param int|null $min
+	 * @param int|null $max
 	 * @return $this
 	 */
-	function min( int $limit )
+	function line( ?int $min, ?int $max = 1 )
 	{
 		foreach( $this->list as $item ) {
-			$item->min( $limit );
+			$item->line( $min, $max );
 		}
 
 		return $this;
 	}
 
 	/**
-	 * @param int $min
-	 * @param int $max
+	 * @param string $type
+	 * @param bool $same
 	 * @return $this
 	 */
-	function length( int $min, int $max = null )
+	function impl( string $type, bool $same = false )
 	{
 		foreach( $this->list as $item ) {
-			$item->length( $min, $max );
+			$item->impl( $type, $same );
 		}
 
 		return $this;
@@ -106,18 +108,6 @@ class StringIterator extends ScalarIterator
 	}
 
 	/**
-	 * @return $this
-	 */
-	function line()
-	{
-		foreach( $this->list as $item ) {
-			$item->line();
-		}
-
-		return $this;
-	}
-
-	/**
 	 * @param bool $real
 	 * @return $this
 	 */
@@ -138,20 +128,6 @@ class StringIterator extends ScalarIterator
 	{
 		foreach( $this->list as $item ) {
 			$item->file( $real );
-		}
-
-		return $this;
-	}
-
-	/**
-	 * @param string $class
-	 * @param bool $equal
-	 * @return $this
-	 */
-	function impl( string $class, bool $equal = false )
-	{
-		foreach( $this->list as $item ) {
-			$item->impl( $class, $equal );
 		}
 
 		return $this;

@@ -27,15 +27,6 @@ abstract class Iterator implements IteratorInterface
 	private $index = 0;
 
 	/**
-	 * @param int $code
-	 * @param array $values
-	 */
-	protected function error( int $code, array $values = null )
-	{
-		throw new ValidatorException( $this->name, $code, $values );
-	}
-
-	/**
 	 * @return array
 	 */
 	function fetch()
@@ -58,7 +49,7 @@ abstract class Iterator implements IteratorInterface
 		$value = $this->list[ $index ] ?? null;
 
 		if( $value === null ) {
-			$this->error( Error::ARR_LEN_GTE, ['min' => $index + 1 ]);
+			throw new ValidatorException( $this->name, Error::ARR_COUNT, ['min' => $index + 1, 'max' => null ]);
 		}
 
 		return $value;

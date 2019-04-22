@@ -14,7 +14,7 @@ use Kucbel\Scalar\Validator\IntegerValidator;
  *
  * @method int[] fetch()
  */
-class IntegerIterator extends ScalarIterator
+class IntegerIterator extends NumericIterator
 {
 	/**
 	 * IntegerIterator constructor.
@@ -29,68 +29,27 @@ class IntegerIterator extends ScalarIterator
 	}
 
 	/**
-	 * @param int ...$options
+	 * @param int ...$values
 	 * @return $this
 	 */
-	function equal( int ...$options )
+	function equal( int ...$values )
 	{
 		foreach( $this->list as $item ) {
-			$item->equal( ...$options );
+			$item->equal( ...$values );
 		}
 
 		return $this;
 	}
 
 	/**
-	 * @param int $limit
-	 * @param bool $equal
+	 * @param int|null $min
+	 * @param int|null $max
 	 * @return $this
 	 */
-	function max( int $limit, bool $equal = true )
+	function value( ?int $min, ?int $max )
 	{
 		foreach( $this->list as $item ) {
-			$item->max( $limit, $equal );
-		}
-
-		return $this;
-	}
-
-	/**
-	 * @param int $limit
-	 * @param bool $equal
-	 * @return $this
-	 */
-	function min( int $limit, bool $equal = true )
-	{
-		foreach( $this->list as $item ) {
-			$item->min( $limit, $equal );
-		}
-
-		return $this;
-	}
-
-	/**
-	 * @param int $min
-	 * @param int $max
-	 * @return $this
-	 */
-	function range( int $min, int $max )
-	{
-		foreach( $this->list as $item ) {
-			$item->range( $min, $max );
-		}
-
-		return $this;
-	}
-
-	/**
-	 * @param int $digit
-	 * @return $this
-	 */
-	function length( int $digit )
-	{
-		foreach( $this->list as $item ) {
-			$item->length( $digit );
+			$item->value( $min, $max );
 		}
 
 		return $this;

@@ -3,7 +3,9 @@
 namespace Kucbel\Scalar\Validator;
 
 use Kucbel\Scalar\Error;
+use Nette\InvalidArgumentException;
 use Nette\Utils\DateTime;
+use Throwable;
 
 /**
  * Class DateValidator
@@ -25,53 +27,30 @@ class DateValidator extends Validator
 	}
 
 	/**
-	 * @param mixed $limit
-	 * @param bool $equal
+	 * @param mixed|null $min
+	 * @param mixed|null $max
 	 * @return $this
 	 */
-	function max( $limit, bool $equal = true )
+	function value( $min, $max )
 	{
-		$limit = DateTime::from( $limit );
-
-		if( $equal and $this->value > $limit ) {
-			$this->error( Error::DATE_VAL_LTE, ['max'=> $limit ]);
-		} elseif( !$equal and $this->value >= $limit ) {
-			$this->error( Error::DATE_VAL_LT, ['max'=> $limit ]);
+		if( $min === null and $max === null ) {
+			throw new InvalidArgumentException("Enter value for either one or both parameters.");
 		}
 
-		return $this;
-	}
-
-	/**
-	 * @param mixed $limit
-	 * @param bool $equal
-	 * @return $this
-	 */
-	function min( $limit, bool $equal = true )
-	{
-		$limit = DateTime::from( $limit );
-
-		if( $equal and $this->value < $limit ) {
-			$this->error( Error::DATE_VAL_GTE, ['min'=> $limit ]);
-		} elseif( !$equal and $this->value <= $limit ) {
-			$this->error( Error::DATE_VAL_GT, ['min'=> $limit ]);
+		if( $min !== null ) {
+			$min = DateTime::from( $min );
 		}
 
-		return $this;
-	}
+		if( $max !== null ) {
+			$max = DateTime::from( $max );
+		}
 
-	/**
-	 * @param mixed $min
-	 * @param mixed $max
-	 * @return $this
-	 */
-	function range( $min, $max )
-	{
-		$min = DateTime::from( $min );
-		$max = DateTime::from( $max );
+		if( $min !== null and $this->value < $min ) {
+			throw new ValidatorException( $this->name, Error::DATE_VALUE, ['min' => $min, 'max' => $max ]);
+		}
 
-		if( $this->value < $min or $this->value > $max ) {
-			$this->error( Error::DATE_VAL_RNG, ['min' => $min, 'max' => $max ]);
+		if( $max !== null and $this->value > $max ) {
+			throw new ValidatorException( $this->name, Error::DATE_VALUE, ['min' => $min, 'max' => $max ]);
 		}
 
 		return $this;

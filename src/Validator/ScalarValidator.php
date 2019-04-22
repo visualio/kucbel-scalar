@@ -14,7 +14,7 @@ abstract class ScalarValidator extends Validator
 	function match( string $regex )
 	{
 		if( !Strings::match( $this->value, $regex )) {
-			$this->error( Error::SCA_REGEX, ['regex' => $regex ]);
+			throw new ValidatorException( $this->name, Error::SCA_REGEX, ['exp' => $regex ]);
 		}
 
 		return $this;
