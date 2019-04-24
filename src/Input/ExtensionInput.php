@@ -37,9 +37,8 @@ class ExtensionInput extends StrictInput
 	function __construct( CompilerExtension $extension, string $section = null )
 	{
 		$hash = spl_object_hash( $extension );
-		$that = self::$inputs[ $hash ] ?? null;
 
-		if( $that ) {
+		if( $that = self::$inputs[ $hash ] ?? null ) {
 			$validator = $that->validator;
 		} else {
 			$validator = new ExistValidator;
@@ -59,7 +58,7 @@ class ExtensionInput extends StrictInput
 	 */
 	function get( string $name, $null = null )
 	{
-		$this->validator->add( $name = $this->section . $name );
+		$this->validator->add( $name = "{$this->section}{$name}");
 
 		return $this->search( $this->extension->getConfig(), $name, $null );
 	}
@@ -79,13 +78,9 @@ class ExtensionInput extends StrictInput
 	/**
 	 * @throws ValidatorException
 	 */
-	function validate()
+	function match()
 	{
 		$this->validator->match( $this->extension->getConfig(), $this->extension->prefix(''));
-
-		$hash = spl_object_hash( $this->extension );
-
-		unset( self::$inputs[ $hash ] );
 	}
 
 	/**
@@ -94,16 +89,16 @@ class ExtensionInput extends StrictInput
 	 */
 	protected function alias( string $name ) : string
 	{
-		return $this->extension->prefix( $this->section . $name );
+		return $this->extension->prefix("{$this->section}{$name}");
 	}
 
 	/**
 	 * @throws ValidatorException
 	 */
-	static function compile()
+	static function close()
 	{
 		foreach( self::$inputs ?? [] as $input ) {
-			$input->validate();
+			$input->match();
 		}
 	}
 }

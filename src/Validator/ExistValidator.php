@@ -17,14 +17,30 @@ class ExistValidator
 	private $schema;
 
 	/**
+	 * ExistValidator constructor.
+	 *
+	 * @param string ...$names
+	 */
+	function __construct( string ...$names )
+	{
+		foreach( $names as $name ) {
+			$this->add( $name );
+		}
+	}
+
+	/**
 	 * @param string $name
 	 */
 	function add( string $name )
 	{
 		$schema = &$this->schema;
 
-		foreach( explode('.', $name ) as $part ) {
-			$schema = &$schema[ $part ];
+		if( strpos( $name, '.')) {
+			foreach( explode('.', $name ) as $part ) {
+				$schema = &$schema[ $part ];
+			}
+		} else {
+			$schema = &$schema[ $name ];
 		}
 
 		if( $schema === null ) {

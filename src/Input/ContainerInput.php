@@ -2,14 +2,26 @@
 
 namespace Kucbel\Scalar\Input;
 
+use Kucbel\Scalar\Validator\ExistValidator;
+use Kucbel\Scalar\Validator\ValidatorException;
 use Nette\DI\ContainerBuilder;
 
 class ContainerInput extends StrictInput
 {
 	/**
+	 * @var ContainerInput[] | null
+	 */
+	static private $inputs;
+
+	/**
 	 * @var ContainerBuilder
 	 */
-	private $builder;
+	private $container;
+
+	/**
+	 * @var ExistValidator
+	 */
+	private $validator;
 
 	/**
 	 * @var string | null
@@ -19,13 +31,24 @@ class ContainerInput extends StrictInput
 	/**
 	 * ContainerInput constructor.
 	 *
-	 * @param ContainerBuilder $builder
+	 * @param ContainerBuilder $container
 	 * @param string $section
 	 */
-	function __construct( ContainerBuilder $builder, string $section = null )
+	function __construct( ContainerBuilder $container, string $section = null )
 	{
-		$this->builder = $builder;
+		$hash = spl_object_hash( $container );
+
+		if( $that = self::$inputs[ $hash ] ?? null ) {
+			$validator = $that->validator;
+		} else {
+			$validator = new ExistValidator('appDir', 'wwwDir', 'debugMode', 'productionMode', 'consoleMode');
+		}
+
+		$this->container = $container;
+		$this->validator = $validator;
 		$this->section = self::suffix( $section );
+
+		self::$inputs[ $hash ] = $this;
 	}
 
 	/**
@@ -35,7 +58,9 @@ class ContainerInput extends StrictInput
 	 */
 	function get( string $name, $null = null )
 	{
-		return $this->search( $this->builder->parameters, $this->section . $name, $null );
+		$this->validator->add( $name = $this->section . $name );
+
+		return $this->search( $this->container->parameters, $name, $null );
 	}
 
 	/**
@@ -51,11 +76,29 @@ class ContainerInput extends StrictInput
 	}
 
 	/**
+	 * @throws ValidatorException
+	 */
+	function match()
+	{
+		$this->validator->match( $this->container->parameters, 'parameters');
+	}
+
+	/**
 	 * @param string $name
 	 * @return string
 	 */
 	protected function alias( string $name ) : string
 	{
 		return "parameters.{$this->section}{$name}";
+	}
+
+	/**
+	 * @throws ValidatorException
+	 */
+	static function close()
+	{
+		foreach( self::$inputs ?? [] as $input ) {
+			$input->match();
+		}
 	}
 }

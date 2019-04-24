@@ -186,7 +186,7 @@ class ScalarExtension extends CompilerExtension
 	 */
 	function afterCompile( ClassType $class )
 	{
-		Input\ExtensionInput::compile();
+		Input\ExtensionInput::close();
 	}
 
 	/**
