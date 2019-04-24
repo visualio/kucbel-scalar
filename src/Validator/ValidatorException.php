@@ -37,15 +37,6 @@ class ValidatorException extends Exception implements JsonSerializable
 	}
 
 	/**
-	 * @param string $text
-	 * @return string
-	 */
-	function getMessageFrom( string $text ) : string
-	{
-		return Error::getMessage( $text, $this->name, $this->values );
-	}
-
-	/**
 	 * @return string
 	 */
 	function getName() : string
