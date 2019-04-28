@@ -202,10 +202,8 @@ class MixedValidator extends Validator
 		$list = [];
 
 		if( $type === 'arr') {
-			$hint = strpos( $this->name, '.');
-
 			foreach( $this->value as $index => $value ) {
-				$name = $hint ? "{$this->name}.{$index}" : "{$this->name}[{$index}]";
+				$name = is_int( $index ) ? "{$this->name}[{$index}]" : "{$this->name}.{$index}";
 
 				$list[] = new MixedValidator( $name, $value );
 			}
@@ -230,10 +228,9 @@ class MixedValidator extends Validator
 		}
 
 		$list = [];
-		$hint = strpos( $this->name, '.');
 
 		foreach( $this->value as $index => $value ) {
-			$name = $hint ? "{$this->name}.{$index}" : "{$this->name}[{$index}]";
+			$name = is_int( $index ) ? "{$this->name}[{$index}]" : "{$this->name}.{$index}";
 
 			$list[] = new MixedValidator( $name, $index );
 		}
