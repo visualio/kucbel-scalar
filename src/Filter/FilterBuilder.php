@@ -32,6 +32,56 @@ class FilterBuilder
 	}
 
 	/**
+	 * @param string $type
+	 * @param string ...$types
+	 * @return $this
+	 */
+	function keep( string $type, string ...$types )
+	{
+		$types[] = $type;
+		$filters = [];
+
+		foreach( $this->filters as $filter ) {
+			foreach( $types as $type ) {
+				if( $filter instanceof $type ) {
+					$filters[] = $filter;
+
+					continue 2;
+				}
+			}
+		}
+
+		$this->filters = $filters;
+
+		return $this;
+	}
+
+	/**
+	 * @param string $type
+	 * @param string ...$types
+	 * @return $this
+	 */
+	function drop( string $type, string ...$types )
+	{
+		$types[] = $type;
+		$filters = [];
+
+		foreach( $this->filters as $filter ) {
+			foreach( $types as $type ) {
+				if( $filter instanceof $type ) {
+					continue 2;
+				}
+			}
+
+			$filters[] = $filter;
+		}
+
+		$this->filters = $filters;
+
+		return $this;
+	}
+
+	/**
 	 * @param FilterInterface ...$filters
 	 * @return $this
 	 */

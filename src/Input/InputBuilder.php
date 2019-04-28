@@ -56,6 +56,30 @@ class InputBuilder
 	}
 
 	/**
+	 * @param string $type
+	 * @param string ...$types
+	 * @return $this
+	 */
+	function keep( string $type, string ...$types )
+	{
+		$this->builder->keep( $type, ...$types );
+
+		return $this;
+	}
+
+	/**
+	 * @param string $type
+	 * @param string ...$types
+	 * @return $this
+	 */
+	function drop( string $type, string ...$types )
+	{
+		$this->builder->drop( $type, ...$types );
+
+		return $this;
+	}
+
+	/**
 	 * @param FilterInterface ...$filters
 	 * @return $this
 	 */
