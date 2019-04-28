@@ -60,7 +60,7 @@ class MixedValidator extends Validator
 	function bool()
 	{
 		$value = $this->value;
-		$type = $this->detect();
+		$type = self::detect( $value );
 
 		if( $type === 'int' and ( $value === 1 or $value === 0 )) {
 			$type = 'bool';
@@ -88,7 +88,7 @@ class MixedValidator extends Validator
 	function float()
 	{
 		$value = $this->value;
-		$type = $this->detect();
+		$type = self::detect( $value );
 
 		if( $type === 'str' and $match = Strings::match( $value, '~^[+-]?([.][0-9]+|[0-9]+[.]?[0-9]*)([Ee][+-]?[0-9]{1,2})?$~') and strlen( Strings::replace( $match[1], '~^[0.]+|[0.]+$|[.]~', '')) <= 14 ) {
 			$type = 'dec';
@@ -113,7 +113,7 @@ class MixedValidator extends Validator
 	function integer()
 	{
 		$value = $this->value;
-		$type = $this->detect();
+		$type = self::detect( $value );
 
 		if( $type === 'bool') {
 			$type = 'int';
@@ -144,7 +144,7 @@ class MixedValidator extends Validator
 	function string()
 	{
 		$value = $this->value;
-		$type = $this->detect();
+		$type = self::detect( $value );
 
 		if( $type === 'date') {
 			$type = 'str';
@@ -166,7 +166,7 @@ class MixedValidator extends Validator
 	function date()
 	{
 		$value = $this->value;
-		$type = $this->detect();
+		$type = self::detect( $value );
 
 		if( $type === 'dec' and $value === floor( $value ) and $value >= PHP_INT_MIN and $value <= PHP_INT_MAX ) {
 			$type = 'int';
@@ -193,7 +193,7 @@ class MixedValidator extends Validator
 	 */
 	function array()
 	{
-		$type = $this->detect();
+		$type = self::detect( $this->value );
 
 		if( $type === 'null') {
 			throw new ValidatorException( $this->name, Error::TYPE_NULL );
@@ -221,7 +221,7 @@ class MixedValidator extends Validator
 	 */
 	function index()
 	{
-		$type = $this->detect();
+		$type = self::detect( $this->value );
 
 		if( $type === 'null') {
 			throw new ValidatorException( $this->name, Error::TYPE_NULL );
@@ -242,11 +242,12 @@ class MixedValidator extends Validator
 	}
 
 	/**
+	 * @param mixed $value
 	 * @return string
 	 */
-	protected function detect() : string
+	static function detect( $value ) : string
 	{
-		switch( gettype( $this->value )) {
+		switch( gettype( $value )) {
 			case 'NULL':
 				return 'null';
 			case 'boolean':
@@ -255,7 +256,7 @@ class MixedValidator extends Validator
 				return 'int';
 			case 'double':
 			case 'float':
-				return is_finite( $this->value ) ? 'dec' : 'wtf';
+				return is_finite( $value ) ? 'dec' : 'wtf';
 			case 'string':
 				return 'str';
 			case 'array':
@@ -266,10 +267,10 @@ class MixedValidator extends Validator
 		}
 
 		switch( true ) {
-			case $this->value instanceof DateTimeInterface:
+			case $value instanceof DateTimeInterface:
 				return 'date';
-			case $this->value instanceof Traversable:
-			case $this->value instanceof stdClass:
+			case $value instanceof Traversable:
+			case $value instanceof stdClass:
 				return 'arr';
 			default:
 				return 'obj';
