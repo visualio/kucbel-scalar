@@ -5,6 +5,7 @@ namespace Kucbel\Scalar\Validator;
 use JsonSerializable;
 use Kucbel\Scalar\Error;
 use Kucbel\Scalar\Exception;
+use Nette\Utils\Strings;
 
 class ValidatorException extends Exception implements JsonSerializable
 {
@@ -31,7 +32,13 @@ class ValidatorException extends Exception implements JsonSerializable
 		$this->values = $values;
 
 		$text = Error::getText( $code, $values );
-		$text = Error::getMessage( $text, $name, $values );
+
+		$values['name'] = $name;
+		$values = Error::getHints( $values );
+
+		$text = Strings::replace( $text, '~\$([a-z]+)~', function( $match ) use( $values ) {
+			return $values[ $match[1] ] ?? '???';
+		});
 
 		parent::__construct( $text, $code );
 	}

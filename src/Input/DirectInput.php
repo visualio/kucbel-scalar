@@ -7,7 +7,7 @@ class DirectInput extends StrictInput
 	/**
 	 * @var array
 	 */
-	private $values;
+	private $array;
 
 	/**
 	 * @var string | null
@@ -17,12 +17,12 @@ class DirectInput extends StrictInput
 	/**
 	 * DirectInput constructor.
 	 *
-	 * @param array $values
+	 * @param array $array
 	 * @param string $alias
 	 */
-	function __construct( array $values, string $alias = null )
+	function __construct( array $array, string $alias = null )
 	{
-		$this->values = $values;
+		$this->array = $array;
 		$this->alias = self::suffix( $alias );
 	}
 
@@ -33,7 +33,7 @@ class DirectInput extends StrictInput
 	 */
 	function get( string $name, $null = null )
 	{
-		return $this->search( $this->values, $name, $null );
+		return $this->search( $this->array, $name, $null );
 	}
 
 	/**

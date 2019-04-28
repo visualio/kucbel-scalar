@@ -4,6 +4,7 @@ namespace Kucbel\Scalar\Input;
 
 use Kucbel\Scalar\Filter\FilterFactory;
 use Kucbel\Scalar\Validator\MixedValidator;
+use Nette\InvalidArgumentException;
 use Nette\SmartObject;
 
 class InputFactory
@@ -115,13 +116,14 @@ class InputFactory
 	}
 
 	/**
-	 * @param mixed $source
 	 * @param mixed ...$sources
 	 * @return InputInterface
 	 */
-	function pool( $source, ...$sources ) : InputInterface
+	function pool( ...$sources ) : InputInterface
 	{
-		array_unshift( $sources, $source );
+		if( !$sources ) {
+			throw new InvalidArgumentException("Enter at least one parameter.");
+		}
 
 		$index = 0;
 
@@ -158,13 +160,14 @@ class InputFactory
 	}
 
 	/**
-	 * @param mixed $source
 	 * @param mixed ...$sources
 	 * @return InputInterface
 	 */
-	function list( $source, ...$sources ) : InputInterface
+	function list( ...$sources ) : InputInterface
 	{
-		array_unshift( $sources, $source );
+		if( !$sources ) {
+			throw new InvalidArgumentException("Enter at least one parameter.");
+		}
 
 		foreach( $sources as $index => $source ) {
 			if( is_array( $source )) {

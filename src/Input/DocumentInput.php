@@ -36,9 +36,9 @@ class DocumentInput extends Input
 		if( $document->firstChild === null ) {
 			throw new InvalidArgumentException("Document isn't loaded.");
 		} elseif( $element and $element->ownerDocument !== $document ) {
-			throw new InvalidArgumentException("Element isn't attached.");
+			throw new InvalidArgumentException("Element isn't related.");
 		} elseif( $search and $search->document !== $document ) {
-			throw new InvalidArgumentException("Search isn't attached.");
+			throw new InvalidArgumentException("Search isn't related.");
 		}
 
 		if( $search === null ) {

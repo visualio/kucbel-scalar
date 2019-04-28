@@ -42,22 +42,6 @@ class Error
 		ARR_UNIQUE		= 102;
 
 	/**
-	 * @param string $text
-	 * @param string $name
-	 * @param array $values
-	 * @return string
-	 */
-	static function getMessage( string $text, string $name, array $values = null ) : string
-	{
-		$values['name'] = $name;
-		$values = Error::getHints( $values );
-
-		return Strings::replace( $text, '~\$([a-z]+)~', function( $match ) use( $values ) {
-			return $values[ $match[1] ] ?? '???';
-		});
-	}
-
-	/**
 	 * @param int $code
 	 * @param array $values
 	 * @return string
@@ -170,14 +154,11 @@ class Error
 		} elseif( is_string( $value )) {
 			$value = Strings::truncate( $value, 100 );
 
-			return "\"$value\"";
+			return "\"{$value}\"";
 		} elseif( is_array( $value )) {
 			return Strings::truncate( implode(', ', self::getHints( $value )), 100 );
 		} elseif( $value instanceof DateTimeInterface ) {
-			$date = $value->format('Y-m-d');
-			$time = $value->format('H:i:s');
-
-			return $time === '00:00:00' ? $date : "$date $time";
+			return $value->format('Y-m-d H:i:s');
 		} else {
 			return strtolower( gettype( $value ));
 		}
