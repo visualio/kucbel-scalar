@@ -9,9 +9,9 @@ use Nette\DI\CompilerExtension;
 class ExtensionInput extends StrictInput
 {
 	/**
-	 * @var ExtensionInput[] | null
+	 * @var ExistValidator[] | null
 	 */
-	static private $inputs;
+	static private $exists;
 
 	/**
 	 * @var CompilerExtension
@@ -38,17 +38,9 @@ class ExtensionInput extends StrictInput
 	{
 		$hash = spl_object_hash( $extension );
 
-		if( $that = self::$inputs[ $hash ] ?? null ) {
-			$validator = $that->validator;
-		} else {
-			$validator = new ExistValidator;
-		}
-
 		$this->extension = $extension;
-		$this->validator = $validator;
+		$this->validator = self::$exists[ $hash ] ?? self::$exists[ $hash ] = new ExistValidator;
 		$this->section = self::suffix( $section );
-
-		self::$inputs[ $hash ] = $this;
 	}
 
 	/**
@@ -58,7 +50,7 @@ class ExtensionInput extends StrictInput
 	 */
 	function get( string $name, $null = null )
 	{
-		$this->validator->add( $name = "{$this->section}{$name}");
+		$this->validator->add( $name = $this->section . $name );
 
 		return $this->search( $this->extension->getConfig(), $name, $null );
 	}
@@ -78,7 +70,7 @@ class ExtensionInput extends StrictInput
 	/**
 	 * @throws ValidatorException
 	 */
-	function match()
+	function match() : void
 	{
 		$this->validator->match( $this->extension->getConfig(), $this->extension->prefix(''));
 	}
@@ -89,16 +81,6 @@ class ExtensionInput extends StrictInput
 	 */
 	protected function alias( string $name ) : string
 	{
-		return $this->extension->prefix("{$this->section}{$name}");
-	}
-
-	/**
-	 * @throws ValidatorException
-	 */
-	static function close()
-	{
-		foreach( self::$inputs ?? [] as $input ) {
-			$input->match();
-		}
+		return $this->extension->prefix( $this->section . $name );
 	}
 }

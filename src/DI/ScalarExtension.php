@@ -10,7 +10,6 @@ use Kucbel\Scalar\Schema;
 use Kucbel\Scalar\Validator;
 use Nette\DI\CompilerExtension;
 use Nette\Neon\Neon;
-use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\PhpLiteral;
 use ReflectionClass;
 use ReflectionException;
@@ -132,14 +131,6 @@ class ScalarExtension extends CompilerExtension
 		$this->filters[] = $this->aliases['@trim'] = "@$trim";
 		$this->filters[] = $this->aliases['@round'] = "@$round";
 
-		$this->loadParameters();
-	}
-
-	/**
-	 * @throws ReflectionException
-	 */
-	function loadParameters()
-	{
 		$input = new Input\DirectInput(['types' => $this->types ], $this->name );
 
 		$this->setTypes( $input );
@@ -151,6 +142,8 @@ class ScalarExtension extends CompilerExtension
 		$this->setTypes( $input );
 		$this->addFiles( $input );
 		$this->addInputs( $input );
+
+		$input->match();
 	}
 
 	/**
@@ -158,7 +151,7 @@ class ScalarExtension extends CompilerExtension
 	 */
 	function beforeCompile()
 	{
-		$tests = [];
+		$tests = null;
 
 		foreach( $this->types ?? [] as $name => $methods ) {
 			$tests[ $name ] = $this->generator->compress( ...$methods );
@@ -176,17 +169,7 @@ class ScalarExtension extends CompilerExtension
 			->setArguments([ $tests ]);
 
 		$builder->getDefinition( $this->prefix('schema.factory'))
-			->setArguments(["@$type", $this->schemas ?? [] ]);
-	}
-
-	/**
-	 * Complete
-	 *
-	 * @param ClassType $class
-	 */
-	function afterCompile( ClassType $class )
-	{
-		Input\ExtensionInput::close();
+			->setArguments(["@$type", $this->schemas ]);
 	}
 
 	/**

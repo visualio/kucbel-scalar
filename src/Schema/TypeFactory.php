@@ -10,12 +10,12 @@ class TypeFactory
 	use SmartObject;
 
 	/**
-	 * @var TypeInterface[]
+	 * @var TypeInterface[] | null
 	 */
 	protected $types;
 
 	/**
-	 * @var string[]
+	 * @var string[] | null
 	 */
 	protected $tests;
 
@@ -24,7 +24,7 @@ class TypeFactory
 	 *
 	 * @param array $tests
 	 */
-	function __construct( array $tests )
+	function __construct( array $tests = null )
 	{
 		$this->tests = $tests;
 	}

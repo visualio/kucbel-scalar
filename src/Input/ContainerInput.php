@@ -9,9 +9,9 @@ use Nette\DI\ContainerBuilder;
 class ContainerInput extends StrictInput
 {
 	/**
-	 * @var ContainerInput[] | null
+	 * @var ExistValidator[] | null
 	 */
-	static private $inputs;
+	static private $exists;
 
 	/**
 	 * @var ContainerBuilder
@@ -38,17 +38,9 @@ class ContainerInput extends StrictInput
 	{
 		$hash = spl_object_hash( $container );
 
-		if( $that = self::$inputs[ $hash ] ?? null ) {
-			$validator = $that->validator;
-		} else {
-			$validator = new ExistValidator('appDir', 'wwwDir', 'debugMode', 'productionMode', 'consoleMode');
-		}
-
 		$this->container = $container;
-		$this->validator = $validator;
+		$this->validator = self::$exists[ $hash ] ?? self::$exists[ $hash ] = new ExistValidator('appDir', 'wwwDir', 'debugMode', 'productionMode', 'consoleMode');
 		$this->section = self::suffix( $section );
-
-		self::$inputs[ $hash ] = $this;
 	}
 
 	/**
@@ -78,7 +70,7 @@ class ContainerInput extends StrictInput
 	/**
 	 * @throws ValidatorException
 	 */
-	function match()
+	function match() : void
 	{
 		$this->validator->match( $this->container->parameters, 'parameters');
 	}
@@ -90,15 +82,5 @@ class ContainerInput extends StrictInput
 	protected function alias( string $name ) : string
 	{
 		return "parameters.{$this->section}{$name}";
-	}
-
-	/**
-	 * @throws ValidatorException
-	 */
-	static function close()
-	{
-		foreach( self::$inputs ?? [] as $input ) {
-			$input->match();
-		}
 	}
 }
