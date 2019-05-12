@@ -60,7 +60,7 @@ class Error
 
 			case Error::SCA_REGEX:								return 'Parameter $name must match $exp pattern.';
 			case Error::SCA_EQUAL:
-				switch( isset( $values['opt'][1] )) {
+				switch( isset( $values['val'][1] )) {
 					case true:									return 'Parameter $name must be one the following $val.';
 					default:									return 'Parameter $name must be equal to $val.';
 				}
@@ -84,6 +84,7 @@ class Error
 			case Error::NUM_VALUE:
 			case Error::DATE_VALUE:
 				switch( true ) {
+					case $values['min'] === $values['max']:		return 'Parameter $name must be equal to $min.';
 					case $values['max'] === null:				return 'Parameter $name must be equal to or greater than $min.';
 					case $values['min'] === null:				return 'Parameter $name must be equal to or less than $max.';
 					default:									return 'Parameter $name must be between $min and $max.';

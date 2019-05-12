@@ -140,11 +140,7 @@ class StringValidator extends ScalarValidator
 	{
 		$value = ltrim( $this->value, '\\');
 
-		if( !class_exists( $value )) {
-			throw new ValidatorException( $this->name, Error::STR_IMPL, ['type' => $type ]);
-		} elseif( $same and !is_a( $value, $type, true )) {
-			throw new ValidatorException( $this->name, Error::STR_IMPL, ['type' => $type ]);
-		} elseif( !$same and !is_subclass_of( $value, $type, true )) {
+		if( !class_exists( $value ) or (( $same and !is_a( $value, $type, true )) or ( !$same and !is_subclass_of( $value, $type, true )))) {
 			throw new ValidatorException( $this->name, Error::STR_IMPL, ['type' => $type ]);
 		}
 
