@@ -211,6 +211,8 @@ class ScalarExtension extends CompilerExtension
 		$tests = $input->create("types.$name")
 			->index()
 			->count( 1, null )
+			->string()
+			->match('~^[^.]+$~')
 			->fetch();
 
 		$type = [];
