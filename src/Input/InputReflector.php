@@ -2,7 +2,6 @@
 
 namespace Kucbel\Scalar\Input;
 
-use Nette\InvalidStateException;
 use Nette\SmartObject;
 use ReflectionClass;
 use ReflectionException;
@@ -57,34 +56,34 @@ class InputReflector
 	function getArgument( ReflectionClass $class ) : string
 	{
 		if( !$class->isInstantiable() ) {
-			throw new InvalidStateException("Class '{$class->getName()}' must be instantiable.");
+			throw new InputException("Class '{$class->getName()}' must be instantiable.");
 		}
 
 		$method = $class->hasMethod('__construct') ? $class->getMethod('__construct') : null;
 
 		if( !$method instanceof ReflectionMethod ) {
-			throw new InvalidStateException("Class '{$class->getName()}' must have a constructor.");
+			throw new InputException("Class '{$class->getName()}' must have a constructor.");
 		}
 
 		$param = $method->getParameters();
 		$param = reset( $param );
 
 		if( !$param instanceof ReflectionParameter ) {
-			throw new InvalidStateException("Method '{$class->getName()}::{$method->getName()}()' must have at least one parameter.");
+			throw new InputException("Method '{$class->getName()}::{$method->getName()}()' must have at least one parameter.");
 		}
 
 		$type = $param->hasType() ? $param->getType() : null;
 
 		if( !$type instanceof ReflectionType ) {
-			throw new InvalidStateException("Parameter '{$class->getName()}::\${$param->getName()}' must have type hint.");
+			throw new InputException("Parameter '{$class->getName()}::\${$param->getName()}' must have type hint.");
 		} elseif( $type->isBuiltin() ) {
-			throw new InvalidStateException("Parameter '{$class->getName()}::\${$param->getName()}' hint must be either class or interface.");
+			throw new InputException("Parameter '{$class->getName()}::\${$param->getName()}' hint must be either class or interface.");
 		}
 
 		$hint = new ReflectionClass( $type->getName() );
 
 		if( $hint->isTrait() ) {
-			throw new InvalidStateException("Parameter '{$class->getName()}::\${$param->getName()}' hint must be either class or interface.");
+			throw new InputException("Parameter '{$class->getName()}::\${$param->getName()}' hint must be either class or interface.");
 		}
 
 		return $hint->getName();

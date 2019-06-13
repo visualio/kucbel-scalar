@@ -12,19 +12,19 @@ class TypeGenerator
 	use SmartObject;
 
 	/**
-	 * @param array ...$methods
+	 * @param array ...$rules
 	 * @return Closure
 	 */
-	function create( array ...$methods ) : Closure
+	function create( array ...$rules ) : Closure
 	{
 		$closure = new Closure;
 		$closure->addParameter('mixed');
 		$closure->addBody('return $mixed');
 
-		foreach( $methods as $arguments ) {
-			$method = array_shift( $arguments );
+		foreach( $rules as $rule ) {
+			$method = array_shift( $rule );
 
-			$closure->addBody("->{$method}(...?)", [ $arguments ]);
+			$closure->addBody("->{$method}(...?)", [ $rule ]);
 		}
 
 		$closure->addBody('->fetch();');
@@ -33,12 +33,12 @@ class TypeGenerator
 	}
 
 	/**
-	 * @param array ...$methods
+	 * @param array ...$rules
 	 * @return string
 	 */
-	function compress( array ...$methods ) : string
+	function compress( array ...$rules ) : string
 	{
-		$closure = $this->create( ...$methods );
+		$closure = $this->create( ...$rules );
 
 		return Strings::replace("return $closure;", '~\n\t*(return|->|;|})~', '$1');
 	}

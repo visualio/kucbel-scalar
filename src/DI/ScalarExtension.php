@@ -7,6 +7,7 @@ use Kucbel\Scalar\Input;
 use Kucbel\Scalar\Input\InputInterface;
 use Kucbel\Scalar\Iterator;
 use Kucbel\Scalar\Schema;
+use Kucbel\Scalar\Schema\SchemaException;
 use Kucbel\Scalar\Validator;
 use Nette\DI\CompilerExtension;
 use Nette\Neon\Neon;
@@ -56,20 +57,22 @@ class ScalarExtension extends CompilerExtension
 	 */
 	private $types = [
 		'bool'			=> ['bool'],
-		'bool|null'		=> ['optional', 'bool'],
+		'bool|null'		=> ['optional', '@bool'],
 		'int'			=> ['integer'],
-		'int|null'		=> ['optional', 'integer'],
+		'int|null'		=> ['optional', '@int'],
 		'float'			=> ['float'],
-		'float|null'	=> ['optional', 'float'],
+		'float|null'	=> ['optional', '@float'],
 		'str'			=> ['string'],
-		'str|null'		=> ['optional', 'string'],
-		'str255'		=> ['string', ['char', 255 ]],
-		'str255|null'	=> ['optional', 'string', ['char', 255 ]],
+		'str|null'		=> ['optional', '@str'],
+		'str255'		=> ['@str', ['char', 255 ]],
+		'str255|null'	=> ['optional' ,'@str255'],
 		'date'			=> ['date'],
-		'date|null'		=> ['optional', 'date'],
-		'date|now'		=> [['optional', 'now'], 'date'],
+		'date|null'		=> ['optional', '@date'],
+		'date|now'		=> [['optional', 'now'], '@date'],
 		'id'			=> ['integer', ['value', 1, null ]],
-		'id|null'		=> ['optional', 'integer', ['value', 1, null ]],
+		'id|null'		=> ['optional', '@id'],
+		'ids'			=> ['array', ['count', 1, null ], '@id'],
+		'ids|null'		=> ['optional', '@ids'],
 	];
 
 	/**
@@ -153,8 +156,10 @@ class ScalarExtension extends CompilerExtension
 	{
 		$tests = null;
 
-		foreach( $this->types ?? [] as $name => $methods ) {
-			$tests[ $name ] = $this->generator->compress( ...$methods );
+		foreach( $this->types ?? [] as $name => $rules ) {
+			$rules = $this->getResolvedType($name, $rules );
+
+			$tests[ $name ] = $this->generator->compress( ...$rules );
 		}
 
 		$builder = $this->getContainerBuilder();
@@ -194,6 +199,7 @@ class ScalarExtension extends CompilerExtension
 			->index()
 			->string()
 			->match('~^[^.]+$~')
+			->match('~[a-z]~')
 			->fetch();
 
 		foreach( $types ?? [] as $type ) {
@@ -208,27 +214,31 @@ class ScalarExtension extends CompilerExtension
 	 */
 	function addType( InputInterface $input, string $name, string $alias = null )
 	{
+		$rules = [];
 		$tests = $input->create("types.$name")
 			->index()
 			->count( 1, null )
-			->string()
-			->match('~^[^.]+$~')
+			->integer()
 			->fetch();
 
-		$type = [];
-
 		foreach( $tests as $test ) {
-			$array = $input->create("types.$name.$test")
-				->array();
+			$mixed = $input->create("types.$name.$test");
+			$value = $mixed->fetch();
 
-			$array->first()
-				->string()
-				->equal( ...$this->methods );
+			if( is_string( $value ) and !strncmp( $value, '@', 1 )) {
+				$rules[] = [ $value ];
+			} else {
+				$array = $mixed->array();
 
-			$type[] = $array->fetch();
+				$array->first()
+					->string()
+					->equal( ...$this->methods );
+
+				$rules[] = $array->fetch();
+			}
 		}
 
-		$this->types[ $alias ?? $name ] = $type;
+		$this->types[ $alias ?? $name ] = $rules;
 	}
 
 	/**
@@ -238,6 +248,50 @@ class ScalarExtension extends CompilerExtension
 	function hasType( string $name )
 	{
 		return isset( $this->types[ $name ] );
+	}
+
+	/**
+	 * @param string $name
+	 * @param array $rules
+	 * @return array
+	 */
+	protected function getResolvedType( string $name, array $rules ) : array
+	{
+		$links = [ $name ];
+
+		for( $index = 0; isset( $rules[ $index ] ); $index++ ) {
+			$link = current( $rules[ $index ] );
+
+			if( strncmp( $link, '@', 1 )) {
+				continue;
+			}
+
+			$link = ltrim( $link, '@');
+
+			if( in_array( $link, $links, true )) {
+				unset( $links[0] );
+
+				$loop = implode("', '", $links );
+
+				throw new SchemaException("Type '$name' contains reference loop '$loop', '$link'.");
+			}
+
+			$type = $this->types[ $link ] ?? null;
+
+			if( !$type ) {
+				throw new SchemaException("Type '$name' contains invalid reference '$link");
+			}
+
+			$rules = array_merge(
+				array_slice( $rules, 0, $index ),
+				$type,
+				array_slice( $rules, $index + 1 ));
+
+			$links[] = $link;
+			$index--;
+		}
+
+		return $rules;
 	}
 
 	/**
@@ -262,6 +316,7 @@ class ScalarExtension extends CompilerExtension
 			->index()
 			->string()
 			->match('~^[^.]+$~')
+			->match('~[a-z]~')
 			->fetch();
 
 		foreach( $schemas ?? [] as $schema ) {
@@ -281,6 +336,7 @@ class ScalarExtension extends CompilerExtension
 			->index()
 			->string()
 			->match('~^[^.]+$~')
+			->match('~[a-z]~')
 			->fetch();
 
 		$schema = [];
@@ -318,6 +374,7 @@ class ScalarExtension extends CompilerExtension
 		return $input->create("schemas.$name.$type")
 			->string()
 			->match('~^[^.]+$~')
+			->match('~^[^@]+~')
 			->fetch();
 	}
 
@@ -332,7 +389,7 @@ class ScalarExtension extends CompilerExtension
 		do {
 			$alias = mt_rand( 1000, 9999 );
 			$alias = "{$type}_{$alias}";
-		} while( isset( $this->types[ $alias ] ));
+		} while( $this->hasType( $alias ));
 
 		$tests = $input->create("schemas.$name.$type")
 			->array()
@@ -405,7 +462,7 @@ class ScalarExtension extends CompilerExtension
 			$data = Neon::decode( file_get_contents( $file ));
 
 			if( !is_array( $data )) {
-				continue;
+				throw new SchemaException("File '$file' doesn't have correct format.");
 			}
 
 			$input = new Input\DirectInput( $data, $this->name );
@@ -436,7 +493,7 @@ class ScalarExtension extends CompilerExtension
 			->optional()
 			->array()
 			->string()
-			->match('~^@.~')
+			->match('~^@[^@]+.~')
 			->unique()
 			->fetch();
 
