@@ -514,4 +514,25 @@ class ScalarExtension extends CompilerExtension
 
 		return in_array( $this->aliases[ $name ] ?? $name, $this->filters ?? [], true );
 	}
+
+	/**
+	 * @param CompilerExtension $extension
+	 * @param array $files
+	 */
+	static function addExtension( CompilerExtension $extension, array $files )
+	{
+		if( !$extension->compiler ) {
+			throw new SchemaException("Extension isn't loaded.");
+		}
+
+		$scalar = current( $extension->compiler->getExtensions( self::class ));
+
+		if( !$scalar instanceof self ) {
+			throw new SchemaException("Extension isn't installed.");
+		}
+
+		$input = new Input\DirectInput(['files' => $files ], $extension->name );
+
+		$scalar->addFiles( $input );
+	}
 }
