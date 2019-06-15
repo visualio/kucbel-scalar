@@ -391,12 +391,9 @@ class ScalarExtension extends CompilerExtension
 			$alias = "{$type}_{$alias}";
 		} while( $this->hasType( $alias ));
 
-		$tests = $input->create("schemas.$name.$type")
-			->array()
-			->count( 1, null )
-			->fetch();
+		$rules = $input->get("schemas.$name.$type");
 
-		$input = new Input\DirectInput(['types' => [ $type => $tests ]], $this->name );
+		$input = new Input\DirectInput(['types' => [ $type => $rules ]], $this->name );
 
 		$this->addType( $input, $type, $alias );
 
