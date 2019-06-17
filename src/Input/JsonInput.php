@@ -4,20 +4,21 @@ namespace Kucbel\Scalar\Input;
 
 use Nette\Utils\Json;
 use Nette\Utils\JsonException;
+use stdClass;
 
 class JsonInput extends StrictInput
 {
 	/**
-	 * @var object
+	 * @var stdClass
 	 */
 	private $json;
 
 	/**
 	 * JsonInput constructor.
 	 *
-	 * @param object $json
+	 * @param stdClass $json
 	 */
-	function __construct( $json )
+	function __construct( stdClass $json )
 	{
 		$this->json = $json;
 	}
