@@ -4,7 +4,6 @@ namespace Kucbel\Scalar\Input;
 
 use Kucbel\Scalar\Filter\FilterFactory;
 use Kucbel\Scalar\Validator\MixedValidator;
-use Nette\InvalidArgumentException;
 use Nette\SmartObject;
 
 class InputFactory
@@ -96,7 +95,7 @@ class InputFactory
 
 		$type = is_object( $source ) ? get_class( $source ) : gettype( $source );
 
-		throw new InputException("Type '$type' doesn't have input assigned.");
+		throw new InputException("No input registered for '$type'.");
 	}
 
 	/**
@@ -122,7 +121,7 @@ class InputFactory
 	function pool( ...$sources ) : InputInterface
 	{
 		if( !$sources ) {
-			throw new InvalidArgumentException("Enter at least one parameter.");
+			throw new InputException("No source provided.");
 		}
 
 		$index = 0;
@@ -166,7 +165,7 @@ class InputFactory
 	function list( ...$sources ) : InputInterface
 	{
 		if( !$sources ) {
-			throw new InvalidArgumentException("Enter at least one parameter.");
+			throw new InputException("No source provided.");
 		}
 
 		foreach( $sources as $index => $source ) {

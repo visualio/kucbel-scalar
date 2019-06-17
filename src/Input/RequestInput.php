@@ -35,7 +35,7 @@ class RequestInput extends Input
 		}
 
 		if( $source !== self::POST and $source !== self::QUERY and $source !== self::HEADER ) {
-			throw new InvalidArgumentException("Source isn't valid.");
+			throw new InvalidArgumentException("Invalid source option.");
 		}
 
 		$this->request = $request;

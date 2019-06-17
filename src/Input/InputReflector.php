@@ -65,8 +65,7 @@ class InputReflector
 			throw new InputException("Class '{$class->getName()}' must have a constructor.");
 		}
 
-		$param = $method->getParameters();
-		$param = reset( $param );
+		$param = current( $method->getParameters() );
 
 		if( !$param instanceof ReflectionParameter ) {
 			throw new InputException("Method '{$class->getName()}::{$method->getName()}()' must have at least one parameter.");
