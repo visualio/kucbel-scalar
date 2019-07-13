@@ -7,22 +7,22 @@ use DOMElement;
 use DOMXPath;
 use Nette\InvalidArgumentException;
 
-class DocumentInput extends Input
+class DocumentInput extends Input implements DetectInterface
 {
 	/**
 	 * @var DOMDocument
 	 */
-	private $document;
+	protected $document;
 
 	/**
 	 * @var DOMElement
 	 */
-	private $element;
+	protected $element;
 
 	/**
 	 * @var DOMXPath
 	 */
-	private $search;
+	protected $search;
 
 	/**
 	 * DocumentInput constructor.
@@ -67,7 +67,7 @@ class DocumentInput extends Input
 		}
 
 		if( $query->length === 1 ) {
-			return $query->item(0)->nodeValue;
+			return $query->item( 0 )->nodeValue;
 		} elseif( $query->length > 1 ) {
 			$list = null;
 
@@ -79,5 +79,14 @@ class DocumentInput extends Input
 		} else {
 			return null;
 		}
+	}
+
+	/**
+	 * @param mixed $source
+	 * @return bool
+	 */
+	static function handle( $source ) : bool
+	{
+		return $source instanceof DOMDocument;
 	}
 }

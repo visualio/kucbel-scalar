@@ -22,15 +22,14 @@ class InputFactory
 	protected $factory;
 
 	/**
-	 * @var array
+	 * @var DetectInterface[]
 	 */
 	protected $inputs = [
-		ComponentInput::class	=> 'Nette\Application\UI\Component',
-		RequestInput::class		=> 'Nette\Http\IRequest',
-		ConsoleInput::class		=> 'Symfony\Component\Console\Input\InputInterface',
-		JsonInput::class		=> 'stdClass',
-		ArrayInput::class		=> 'ArrayAccess',
-		DocumentInput::class	=> 'DOMDocument',
+		ComponentInput::class,
+		RequestInput::class,
+		ConsoleInput::class,
+		DocumentInput::class,
+		MixedInput::class,
 	];
 
 	/**
@@ -64,7 +63,7 @@ class InputFactory
 		$this->factory = $factory;
 
 		if( $inputs ) {
-			$this->inputs = $inputs + $this->inputs;
+			$this->inputs = $inputs;
 		}
 
 		if( $filters ) {
@@ -87,8 +86,8 @@ class InputFactory
 			return $source;
 		}
 
-		foreach( $this->inputs as $input => $check ) {
-			if( $source instanceof $check ) {
+		foreach( $this->inputs as $input ) {
+			if( $input::handle( $source )) {
 				return new $input( $source, ...$options );
 			}
 		}
@@ -127,7 +126,7 @@ class InputFactory
 		$index = 0;
 
 		foreach( $sources as $index => $source ) {
-			if( is_array( $source )) {
+			if( is_array( $source ) and array_key_exists( 0, $source )) {
 				$input = $this->wrap( ...$source );
 			} else {
 				$input = $this->wrap( $source );
@@ -169,7 +168,7 @@ class InputFactory
 		}
 
 		foreach( $sources as $index => $source ) {
-			if( is_array( $source )) {
+			if( is_array( $source ) and array_key_exists( 0,$source )) {
 				$input = $this->wrap( ...$source );
 			} else {
 				$input = $this->wrap( $source );

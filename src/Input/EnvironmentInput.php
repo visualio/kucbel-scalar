@@ -7,10 +7,7 @@ use Kucbel\Scalar\Output\OutputInterface;
 
 class EnvironmentInput extends StrictInput implements OutputInterface
 {
-	/**
-	 * @var string | null
-	 */
-	private $section;
+	use InputSection;
 
 	/**
 	 * EnvironmentInput constructor.
@@ -56,18 +53,6 @@ class EnvironmentInput extends StrictInput implements OutputInterface
 		if( $done === false ) {
 			throw new OutputException("Unable to modify environment value.");
 		}
-	}
-
-	/**
-	 * @param string $section
-	 * @return EnvironmentInput
-	 */
-	function section( ?string $section ) : self
-	{
-		$that = clone $this;
-		$that->section = self::suffix( $section );
-
-		return $that;
 	}
 
 	/**

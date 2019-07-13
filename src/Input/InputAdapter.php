@@ -2,6 +2,7 @@
 
 namespace Kucbel\Scalar\Input;
 
+use Nette\InvalidArgumentException;
 use Nette\SmartObject;
 
 abstract class InputAdapter implements InputInterface
@@ -21,6 +22,11 @@ abstract class InputAdapter implements InputInterface
 	/**
 	 * @var int
 	 */
+	protected $count;
+
+	/**
+	 * @var int
+	 */
 	protected $mode = self::QUERY;
 
 	/**
@@ -30,7 +36,12 @@ abstract class InputAdapter implements InputInterface
 	 */
 	function __construct( InputInterface ...$inputs )
 	{
+		if( !$inputs ) {
+			throw new InvalidArgumentException('No inputs provided.');
+		}
+
 		$this->inputs = $inputs;
+		$this->count = count( $inputs );
 	}
 
 	/**

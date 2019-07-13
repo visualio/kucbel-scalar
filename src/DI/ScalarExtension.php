@@ -10,10 +10,10 @@ use Kucbel\Scalar\Schema;
 use Kucbel\Scalar\Schema\SchemaException;
 use Kucbel\Scalar\Validator;
 use Nette\DI\CompilerExtension;
-use Nette\Neon\Neon;
+use Nette\FileNotFoundException;
+use Nette\Neon\Exception as NeonException;
 use Nette\PhpGenerator\PhpLiteral;
 use ReflectionClass;
-use ReflectionException;
 
 class ScalarExtension extends CompilerExtension
 {
@@ -91,13 +91,13 @@ class ScalarExtension extends CompilerExtension
 			Iterator\IntegerIterator::class,	Iterator\MixedIterator::class,		Iterator\StringIterator::class,
 		]);
 
-		$ignore = array_map( $deflect, [
+		$ignores = array_map( $deflect, [
 			Filter\FilterInterface::class,
 			Iterator\IteratorInterface::class,
 			Validator\ValidatorInterface::class,
 		]);
 
-		$this->reflector = new Input\InputReflector( ...$ignore );
+		$this->reflector = new Input\InputReflector( ...$ignores );
 		$this->generator = new Schema\TypeGenerator;
 
 		$this->methods = $this->reflector->getMethods( ...$classes );
@@ -106,7 +106,7 @@ class ScalarExtension extends CompilerExtension
 	/**
 	 * Compose
 	 *
-	 * @throws ReflectionException
+	 * @throws NeonException
 	 */
 	function loadConfiguration()
 	{
@@ -134,17 +134,17 @@ class ScalarExtension extends CompilerExtension
 		$this->filters[] = $this->aliases['@trim'] = "@$trim";
 		$this->filters[] = $this->aliases['@round'] = "@$round";
 
-		$input = new Input\DirectInput(['types' => $this->types ], $this->name );
+		$input = new Input\MixedInput(['types' => $this->types ], $this->name );
 
 		$this->setTypes( $input );
 
 		$input = new Input\ExtensionInput( $this );
 
+		$this->setInputs( $input );
 		$this->setFilters( $input );
 		$this->setSchemas( $input );
 		$this->setTypes( $input );
 		$this->addFiles( $input );
-		$this->addInputs( $input );
 
 		$input->match();
 	}
@@ -393,7 +393,7 @@ class ScalarExtension extends CompilerExtension
 
 		$rules = $input->get("schemas.$name.$type");
 
-		$input = new Input\DirectInput(['types' => [ $type => $rules ]], $this->name );
+		$input = new Input\MixedInput(['types' => [ $type => $rules ]], $this->name );
 
 		$this->addType( $input, $type, $alias );
 
@@ -402,7 +402,6 @@ class ScalarExtension extends CompilerExtension
 
 	/**
 	 * @param InputInterface $input
-	 * @throws ReflectionException
 	 */
 	function setInputs( InputInterface $input )
 	{
@@ -415,7 +414,6 @@ class ScalarExtension extends CompilerExtension
 
 	/**
 	 * @param InputInterface $input
-	 * @throws ReflectionException
 	 */
 	function addInputs( InputInterface $input )
 	{
@@ -423,12 +421,14 @@ class ScalarExtension extends CompilerExtension
 			->optional()
 			->array()
 			->string()
-			->impl( InputInterface::class )
+			->impl( Input\DetectInterface::class )
 			->unique()
 			->fetch();
 
 		foreach( $classes ?? [] as $class ) {
-			$this->inputs[ $class ] = $this->reflector->getArgument( new ReflectionClass( $class ));
+			if( !in_array( $class, $this->inputs ?? [], true )) {
+				$this->inputs[] = $class;
+			}
 		}
 	}
 
@@ -438,11 +438,12 @@ class ScalarExtension extends CompilerExtension
 	 */
 	function hasInput( string $class ) : bool
 	{
-		return isset( $this->inputs[ $class ] );
+		return in_array( $class, $this->inputs ?? [], true );
 	}
 
 	/**
 	 * @param InputInterface $input
+	 * @throws NeonException
 	 */
 	function addFiles( InputInterface $input )
 	{
@@ -456,13 +457,13 @@ class ScalarExtension extends CompilerExtension
 			->fetch();
 
 		foreach( $files ?? [] as $file ) {
-			$data = Neon::decode( file_get_contents( $file ));
+			$neon = @file_get_contents( $file );
 
-			if( !is_array( $data )) {
-				throw new SchemaException("File '$file' doesn't have correct format.");
+			if( $neon === false ) {
+				throw new FileNotFoundException("File '$file' isn't readable.");
 			}
 
-			$input = new Input\DirectInput( $data, $this->name );
+			$input = Input\MixedInput::neon( $neon, $this->name );
 
 			$this->addTypes( $input );
 			$this->addSchemas( $input );
@@ -515,11 +516,12 @@ class ScalarExtension extends CompilerExtension
 	/**
 	 * @param CompilerExtension $extension
 	 * @param array $files
+	 * @throws NeonException
 	 */
 	static function addExtension( CompilerExtension $extension, array $files )
 	{
 		if( !$extension->compiler ) {
-			throw new SchemaException("Extension isn't loaded.");
+			throw new SchemaException("Extension isn't attached.");
 		}
 
 		$scalar = current( $extension->compiler->getExtensions( self::class ));
@@ -528,7 +530,7 @@ class ScalarExtension extends CompilerExtension
 			throw new SchemaException("Extension isn't installed.");
 		}
 
-		$input = new Input\DirectInput(['files' => $files ], $extension->name );
+		$input = new Input\MixedInput(['files' => $files ], $extension->name );
 
 		$scalar->addFiles( $input );
 	}

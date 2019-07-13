@@ -4,10 +4,6 @@ namespace Kucbel\Scalar\Input;
 
 use Nette\SmartObject;
 use ReflectionClass;
-use ReflectionException;
-use ReflectionMethod;
-use ReflectionParameter;
-use ReflectionType;
 
 class InputReflector
 {
@@ -35,57 +31,17 @@ class InputReflector
 	/**
 	 * InputReflector constructor.
 	 *
-	 * @param ReflectionClass ...$ignore
+	 * @param ReflectionClass ...$ignores
 	 */
-	function __construct( ReflectionClass ...$ignore )
+	function __construct( ReflectionClass ...$ignores )
 	{
-		if( $ignore ) {
-			$methods = $this->getMethods( ...$ignore );
+		if( $ignores ) {
+			$methods = $this->getMethods( ...$ignores );
 
-			if( $methods ) {
-				array_push( $this->ignore, ...$methods );
+			foreach( $methods as $method ) {
+				$this->ignore[ $method ] = $method;
 			}
 		}
-	}
-
-	/**
-	 * @param ReflectionClass $class
-	 * @return string
-	 * @throws ReflectionException
-	 */
-	function getArgument( ReflectionClass $class ) : string
-	{
-		if( !$class->isInstantiable() ) {
-			throw new InputException("Class '{$class->getName()}' must be instantiable.");
-		}
-
-		$method = $class->hasMethod('__construct') ? $class->getMethod('__construct') : null;
-
-		if( !$method instanceof ReflectionMethod ) {
-			throw new InputException("Class '{$class->getName()}' must have a constructor.");
-		}
-
-		$param = current( $method->getParameters() );
-
-		if( !$param instanceof ReflectionParameter ) {
-			throw new InputException("Method '{$class->getName()}::{$method->getName()}()' must have at least one parameter.");
-		}
-
-		$type = $param->hasType() ? $param->getType() : null;
-
-		if( !$type instanceof ReflectionType ) {
-			throw new InputException("Parameter '{$class->getName()}::\${$param->getName()}' must have type hint.");
-		} elseif( $type->isBuiltin() ) {
-			throw new InputException("Parameter '{$class->getName()}::\${$param->getName()}' hint must be either class or interface.");
-		}
-
-		$hint = new ReflectionClass( $type->getName() );
-
-		if( $hint->isTrait() ) {
-			throw new InputException("Parameter '{$class->getName()}::\${$param->getName()}' hint must be either class or interface.");
-		}
-
-		return $hint->getName();
 	}
 
 	/**
@@ -94,21 +50,23 @@ class InputReflector
 	 */
 	function getMethods( ReflectionClass ...$classes ) : array
 	{
-		$names = [];
+		$methods = [];
 
 		foreach( $classes as $class ) {
 			foreach( $class->getMethods() as $method ) {
 				if( $method->isPublic() and !$method->isStatic() ) {
-					$names[] = $method->getName();
+					$name = $method->getName();
+
+					$methods[ $name ] = $name;
 				}
 			}
 		}
 
-		$names = array_unique( $names );
-		$names = array_diff( $names, $this->ignore );
+		$methods = array_diff_key( $methods, $this->ignore );
+		$methods = array_values( $methods );
 
-		sort( $names );
+		sort( $methods );
 
-		return $names;
+		return $methods;
 	}
 }

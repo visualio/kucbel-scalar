@@ -2,31 +2,17 @@
 
 namespace Kucbel\Scalar\Input;
 
-use Kucbel\Scalar\Validator\ExistValidator;
 use Kucbel\Scalar\Validator\ValidatorException;
 use Nette\DI\CompilerExtension;
 
 class ExtensionInput extends StrictInput
 {
-	/**
-	 * @var ExistValidator[] | null
-	 */
-	static private $exists;
+	use InputSearch, InputSection, InputValidate;
 
 	/**
 	 * @var CompilerExtension
 	 */
-	private $extension;
-
-	/**
-	 * @var ExistValidator
-	 */
-	private $validator;
-
-	/**
-	 * @var string | null
-	 */
-	private $section;
+	protected $extension;
 
 	/**
 	 * ExtensionInput constructor.
@@ -36,10 +22,8 @@ class ExtensionInput extends StrictInput
 	 */
 	function __construct( CompilerExtension $extension, string $section = null )
 	{
-		$hash = spl_object_hash( $extension );
-
 		$this->extension = $extension;
-		$this->validator = self::$exists[ $hash ] ?? self::$exists[ $hash ] = new ExistValidator;
+		$this->validator = self::validate( $extension );
 		$this->section = self::suffix( $section );
 	}
 
@@ -50,21 +34,12 @@ class ExtensionInput extends StrictInput
 	 */
 	function get( string $name, $null = null )
 	{
-		$this->validator->add( $name = $this->section . $name );
+		$name = $this->section . $name;
+		$value = $this->extension->getConfig();
 
-		return $this->search( $this->extension->getConfig(), $name, $null );
-	}
+		$this->validator->add( $name );
 
-	/**
-	 * @param string $section
-	 * @return ExtensionInput
-	 */
-	function section( ?string $section ) : self
-	{
-		$that = clone $this;
-		$that->section = self::suffix( $section );
-
-		return $that;
+		return $this->search( $name, $value ) ? $value : $null;
 	}
 
 	/**

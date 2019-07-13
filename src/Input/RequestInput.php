@@ -5,7 +5,7 @@ namespace Kucbel\Scalar\Input;
 use Nette\Http\IRequest;
 use Nette\InvalidArgumentException;
 
-class RequestInput extends Input
+class RequestInput extends Input implements DetectInterface
 {
 	const
 		POST	= 1,
@@ -15,12 +15,12 @@ class RequestInput extends Input
 	/**
 	 * @var IRequest
 	 */
-	private $request;
+	protected $request;
 
 	/**
 	 * @var int
 	 */
-	private $source;
+	protected $source;
 
 	/**
 	 * RequestInput constructor.
@@ -35,7 +35,7 @@ class RequestInput extends Input
 		}
 
 		if( $source !== self::POST and $source !== self::QUERY and $source !== self::HEADER ) {
-			throw new InvalidArgumentException("Invalid source option.");
+			throw new InvalidArgumentException("Unknown source.");
 		}
 
 		$this->request = $request;
@@ -58,5 +58,14 @@ class RequestInput extends Input
 			default:
 				return null;
 		}
+	}
+
+	/**
+	 * @param mixed $source
+	 * @return bool
+	 */
+	static function handle( $source ) : bool
+	{
+		return $source instanceof IRequest;
 	}
 }

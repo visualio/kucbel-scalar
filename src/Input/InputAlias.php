@@ -2,18 +2,12 @@
 
 namespace Kucbel\Scalar\Input;
 
-use Kucbel\Scalar\Filter\FilterInterface;
 use Kucbel\Scalar\Validator\MixedValidator;
 use Nette\SmartObject;
 
-class InputFilter implements InputInterface
+class InputAlias implements InputInterface
 {
 	use SmartObject;
-
-	const
-		NONE	= 0,
-		WRAP	= 0b1,
-		EACH	= 0b10;
 
 	/**
 	 * @var InputInterface
@@ -21,20 +15,20 @@ class InputFilter implements InputInterface
 	protected $input;
 
 	/**
-	 * @var FilterInterface
+	 * @var array
 	 */
-	protected $filter;
+	protected $names;
 
 	/**
-	 * InputFilter constructor.
+	 * InputAlias constructor.
 	 *
 	 * @param InputInterface $input
-	 * @param FilterInterface $filter
+	 * @param array $names
 	 */
-	function __construct( InputInterface $input, FilterInterface $filter )
+	function __construct( InputInterface $input, array $names )
 	{
 		$this->input = $input;
-		$this->filter = $filter;
+		$this->names = $names;
 	}
 
 	/**
@@ -43,10 +37,7 @@ class InputFilter implements InputInterface
 	 */
 	function create( string $name ) : MixedValidator
 	{
-		$mixed = $this->input->create( $name );
-		$mixed->clear( $this->filter );
-
-		return $mixed;
+		return $this->input->create( $this->names[ $name ] ?? $name );
 	}
 
 	/**
@@ -55,7 +46,7 @@ class InputFilter implements InputInterface
 	 */
 	function get( string $name )
 	{
-		return $this->filter->clear( $this->input->get( $name ));
+		return $this->input->get( $this->names[ $name ] ?? $name );
 	}
 
 	/**

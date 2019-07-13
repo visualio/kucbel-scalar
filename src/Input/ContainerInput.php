@@ -2,31 +2,22 @@
 
 namespace Kucbel\Scalar\Input;
 
-use Kucbel\Scalar\Validator\ExistValidator;
 use Kucbel\Scalar\Validator\ValidatorException;
 use Nette\DI\ContainerBuilder;
 
 class ContainerInput extends StrictInput
 {
+	use InputSearch, InputSection, InputValidate;
+
 	/**
-	 * @var ExistValidator[] | null
+	 * @var string[]
 	 */
-	static private $exists;
+	protected static $ignore = ['appDir', 'wwwDir', 'debugMode', 'productionMode', 'consoleMode'];
 
 	/**
 	 * @var ContainerBuilder
 	 */
-	private $container;
-
-	/**
-	 * @var ExistValidator
-	 */
-	private $validator;
-
-	/**
-	 * @var string | null
-	 */
-	private $section;
+	protected $container;
 
 	/**
 	 * ContainerInput constructor.
@@ -36,10 +27,8 @@ class ContainerInput extends StrictInput
 	 */
 	function __construct( ContainerBuilder $container, string $section = null )
 	{
-		$hash = spl_object_hash( $container );
-
 		$this->container = $container;
-		$this->validator = self::$exists[ $hash ] ?? self::$exists[ $hash ] = new ExistValidator('appDir', 'wwwDir', 'debugMode', 'productionMode', 'consoleMode');
+		$this->validator = self::validate( $container );
 		$this->section = self::suffix( $section );
 	}
 
@@ -50,21 +39,12 @@ class ContainerInput extends StrictInput
 	 */
 	function get( string $name, $null = null )
 	{
-		$this->validator->add( $name = $this->section . $name );
+		$name = $this->section . $name;
+		$value = $this->container->parameters;
 
-		return $this->search( $this->container->parameters, $name, $null );
-	}
+		$this->validator->add( $name );
 
-	/**
-	 * @param string $section
-	 * @return ContainerInput
-	 */
-	function section( ?string $section ) : self
-	{
-		$that = clone $this;
-		$that->section = self::suffix( $section );
-
-		return $that;
+		return $this->search( $name, $value ) ? $value : $null;
 	}
 
 	/**

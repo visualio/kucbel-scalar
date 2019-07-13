@@ -7,10 +7,7 @@ use Kucbel\Scalar\Output\OutputInterface;
 
 class ConfigInput extends StrictInput implements OutputInterface
 {
-	/**
-	 * @var string | null
-	 */
-	private $section;
+	use InputSection;
 
 	/**
 	 * ConfigInput constructor.
@@ -55,18 +52,6 @@ class ConfigInput extends StrictInput implements OutputInterface
 		if( $done === false ) {
 			throw new OutputException("Unable to modify configuration value.");
 		}
-	}
-
-	/**
-	 * @param string | null $section
-	 * @return ConfigInput
-	 */
-	function section( ?string $section ) : self
-	{
-		$that = clone $this;
-		$that->section = self::suffix( $section );
-
-		return $that;
 	}
 
 	/**

@@ -4,12 +4,12 @@ namespace Kucbel\Scalar\Input;
 
 use Nette\Application\UI\Component;
 
-class ComponentInput extends Input
+class ComponentInput extends Input implements DetectInterface
 {
 	/**
 	 * @var Component
 	 */
-	private $component;
+	protected $component;
 
 	/**
 	 * ComponentInput constructor.
@@ -28,5 +28,14 @@ class ComponentInput extends Input
 	function get( string $name )
 	{
 		return $this->component->getParameter( $name );
+	}
+
+	/**
+	 * @param mixed $source
+	 * @return bool
+	 */
+	static function handle( $source ) : bool
+	{
+		return $source instanceof Component;
 	}
 }

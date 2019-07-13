@@ -3,26 +3,10 @@
 namespace Kucbel\Scalar\Input;
 
 use Kucbel\Scalar\Validator\MixedValidator;
+use Nette\InvalidStateException;
 
 class InputPool extends InputAdapter
 {
-	/**
-	 * @var int
-	 */
-	protected $index;
-
-	/**
-	 * InputPool constructor.
-	 *
-	 * @param InputInterface ...$inputs
-	 */
-	function __construct( InputInterface ...$inputs )
-	{
-		parent::__construct( ...$inputs );
-
-		$this->index = count( $inputs ) - 1;
-	}
-
 	/**
 	 * @param string $name
 	 * @return MixedValidator
@@ -30,7 +14,7 @@ class InputPool extends InputAdapter
 	function create( string $name ) : MixedValidator
 	{
 		foreach( $this->inputs as $index => $input ) {
-			if( $this->index === $index ) {
+			if( $this->count === $index + 1 ) {
 				return $input->create( $name );
 			} elseif( $this->mode & self::CHECK ) {
 				if( $input->get( $name ) !== null ) {
@@ -45,7 +29,7 @@ class InputPool extends InputAdapter
 			}
 		}
 
-		return new MixedValidator( $name, null );
+		throw new InvalidStateException;
 	}
 
 	/**
@@ -55,7 +39,7 @@ class InputPool extends InputAdapter
 	function get( string $name )
 	{
 		foreach( $this->inputs as $index => $input ) {
-			if( $this->index === $index ) {
+			if( $this->count === $index + 1 ) {
 				return $input->get( $name );
 			} elseif( $this->mode & self::CHECK ) {
 				if(( $value = $input->get( $name )) !== null ) {
@@ -70,6 +54,6 @@ class InputPool extends InputAdapter
 			}
 		}
 
-		return null;
+		throw new InvalidStateException;
 	}
 }

@@ -37,32 +37,6 @@ abstract class Input implements InputInterface
 	}
 
 	/**
-	 * @param array $values
-	 * @param string $name
-	 * @param mixed $null
-	 * @return mixed
-	 */
-	protected function search( array $values, string $name, $null = null )
-	{
-		if( strpos( $name, '.')) {
-			foreach( explode('.', $name ) as $part ) {
-				if( is_array( $values ) and array_key_exists( $part, $values )) {
-					$values = $values[ $part ];
-				} else {
-					$values = $null;
-					break;
-				}
-			}
-		} elseif( array_key_exists( $name, $values )) {
-			$values = $values[ $name ];
-		} else {
-			$values = $null;
-		}
-
-		return $values;
-	}
-
-	/**
 	 * @param string | null $name
 	 * @return string | null
 	 */

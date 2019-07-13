@@ -4,12 +4,12 @@ namespace Kucbel\Scalar\Input;
 
 use Symfony\Component\Console\Input\InputInterface;
 
-class ConsoleInput extends Input
+class ConsoleInput extends Input implements DetectInterface
 {
 	/**
 	 * @var InputInterface
 	 */
-	private $input;
+	protected $input;
 
 	/**
 	 * ConsoleInput constructor.
@@ -34,5 +34,14 @@ class ConsoleInput extends Input
 		} else {
 			return null;
 		}
+	}
+
+	/**
+	 * @param mixed $source
+	 * @return bool
+	 */
+	static function handle( $source ) : bool
+	{
+		return $source instanceof InputInterface;
 	}
 }
