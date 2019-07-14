@@ -22,13 +22,14 @@ class InputFactory
 	protected $factory;
 
 	/**
-	 * @var DetectInterface[]
+	 * @var array
 	 */
 	protected $inputs = [
 		ComponentInput::class,
 		RequestInput::class,
 		ConsoleInput::class,
 		DocumentInput::class,
+		ArrayInput::class,
 		MixedInput::class,
 	];
 

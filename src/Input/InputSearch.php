@@ -2,8 +2,6 @@
 
 namespace Kucbel\Scalar\Input;
 
-use ArrayAccess;
-
 trait InputSearch
 {
 	/**
@@ -38,10 +36,6 @@ trait InputSearch
 
 			return true;
 		} elseif( is_array( $value ) and array_key_exists( $name, $value )) {
-			$value = $value[ $name ];
-
-			return true;
-		} elseif( $value instanceof ArrayAccess and isset( $value[ $name ] )) {
 			$value = $value[ $name ];
 
 			return true;
