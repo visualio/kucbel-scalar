@@ -10,11 +10,6 @@ class ContainerInput extends StrictInput
 	use InputSearch, InputSection, InputValidate;
 
 	/**
-	 * @var string[]
-	 */
-	protected static $ignore = ['appDir', 'wwwDir', 'debugMode', 'productionMode', 'consoleMode'];
-
-	/**
 	 * @var ContainerBuilder
 	 */
 	protected $container;
@@ -27,6 +22,10 @@ class ContainerInput extends StrictInput
 	 */
 	function __construct( ContainerBuilder $container, string $section = null )
 	{
+		if( !self::$ignore ) {
+			array_push( self::$ignore, 'appDir', 'wwwDir', 'debugMode', 'productionMode', 'consoleMode');
+		}
+
 		$this->container = $container;
 		$this->validator = self::validate( $container );
 		$this->section = self::suffix( $section );
