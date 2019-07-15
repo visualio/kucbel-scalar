@@ -2,7 +2,7 @@
 
 namespace Kucbel\Scalar\Input;
 
-class VoidInput extends Input
+class VoidInput extends Input implements DetectInterface
 {
 	/**
 	 * @param string $name
@@ -20,5 +20,14 @@ class VoidInput extends Input
 	function get( string $name )
 	{
 		return null;
+	}
+
+	/**
+	 * @param mixed $source
+	 * @return bool
+	 */
+	static function handle( $source ) : bool
+	{
+		return $source ? false : true;
 	}
 }
