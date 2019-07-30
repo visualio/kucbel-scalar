@@ -10,9 +10,9 @@ use Kucbel\Scalar\Schema;
 use Kucbel\Scalar\Schema\SchemaException;
 use Kucbel\Scalar\Validator;
 use Nette\DI\CompilerExtension;
-use Nette\FileNotFoundException;
 use Nette\Neon\Exception as NeonException;
 use Nette\PhpGenerator\PhpLiteral;
+use Nette\Utils\JsonException;
 use ReflectionClass;
 
 class ScalarExtension extends CompilerExtension
@@ -444,6 +444,7 @@ class ScalarExtension extends CompilerExtension
 	/**
 	 * @param InputInterface $input
 	 * @throws NeonException
+	 * @throws JsonException
 	 */
 	function addFiles( InputInterface $input )
 	{
@@ -451,19 +452,13 @@ class ScalarExtension extends CompilerExtension
 			->optional()
 			->array()
 			->string()
-			->match('~[.]neon$~')
+			->match('~[.](neon|json)$~')
 			->file( true )
 			->unique()
 			->fetch();
 
 		foreach( $files ?? [] as $file ) {
-			$neon = @file_get_contents( $file );
-
-			if( $neon === false ) {
-				throw new FileNotFoundException("File '$file' isn't readable.");
-			}
-
-			$input = Input\MixedInput::neon( $neon, $this->name );
+			$input = Input\MixedInput::file( $file, $this->name );
 
 			$this->addTypes( $input );
 			$this->addSchemas( $input );

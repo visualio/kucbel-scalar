@@ -2,6 +2,7 @@
 
 namespace Kucbel\Scalar\Input;
 
+use Nette\FileNotFoundException;
 use Nette\Neon\Exception as NeonException;
 use Nette\Neon\Neon;
 use Nette\Utils\Json;
@@ -92,5 +93,37 @@ class MixedInput extends StrictInput implements DetectInterface
 		}
 
 		return new static( Json::decode( $json ), $alias );
+	}
+
+	/**
+	 * @param string $file
+	 * @param string $alias
+	 * @return MixedInput
+	 * @throws JsonException
+	 * @throws NeonException
+	 */
+	static function file( string $file, string $alias = null ) : self
+	{
+		$read = strrpos( $file, '.');
+
+		if( !$read ) {
+			throw new InputException("File '{$file}' doesn't have an extension.");
+		}
+
+		$type = substr( $file, $read + 1 );
+		$data = @file_get_contents( $file );
+
+		if( $data === false ) {
+			throw new FileNotFoundException("File '{$file}' isn't readable.");
+		}
+
+		switch( $type ) {
+			case 'neon':
+				return self::neon( $data, $alias );
+			case 'json':
+				return self::json( $data, $alias );
+			default:
+				throw new InputException("File '{$file}' isn't supported.");
+		}
 	}
 }
