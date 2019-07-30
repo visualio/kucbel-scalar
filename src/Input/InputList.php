@@ -37,6 +37,31 @@ class InputList extends InputAdapter
 			}
 		}
 
-		return $values;
+		if( $this->mode & self::MERGE ) {
+			return $values ? $this->merge( $values ) : $values;
+		} else {
+			return $values;
+		}
+	}
+
+	/**
+	 * @param array $values
+	 * @return array
+	 */
+	protected function merge( array $values ) : array
+	{
+		$merges = null;
+
+		foreach( $values as $value ) {
+			if( is_iterable( $value )) {
+				foreach( $value as $each ) {
+					$merges[] = $each;
+				}
+			} else {
+				$merges[] = $value;
+			}
+		}
+
+		return $merges;
 	}
 }

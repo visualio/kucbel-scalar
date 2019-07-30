@@ -48,7 +48,7 @@ class InputFactory
 	 */
 	protected $adapters = [
 		self::POOL		=> InputAdapter::QUERY,
-		self::LIST		=> InputAdapter::QUERY,
+		self::LIST		=> InputAdapter::QUERY | InputAdapter::MERGE,
 	];
 
 	/**
