@@ -66,4 +66,13 @@ class InputFilter implements InputInterface
 	{
 		return $this->input->has( $name );
 	}
+
+	/**
+	 * @param InputInterface $input
+	 * @return InputInterface
+	 */
+	static function unpack( InputInterface $input ) : InputInterface
+	{
+		return $input instanceof self ? $input->input : null;
+	}
 }
