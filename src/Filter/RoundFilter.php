@@ -2,8 +2,12 @@
 
 namespace Kucbel\Scalar\Filter;
 
-class RoundFilter extends Filter
+use Nette\SmartObject;
+
+class RoundFilter implements FilterInterface
 {
+	use SmartObject;
+
 	/**
 	 * @var int
 	 */

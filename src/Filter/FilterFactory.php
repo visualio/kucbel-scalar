@@ -53,6 +53,14 @@ class FilterFactory
 	}
 
 	/**
+	 * @return bool
+	 */
+	function has() : bool
+	{
+		return isset( $this->filters[0] );
+	}
+
+	/**
 	 * @return FilterBuilder
 	 */
 	function setup() : FilterBuilder

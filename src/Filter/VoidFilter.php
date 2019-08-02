@@ -2,8 +2,12 @@
 
 namespace Kucbel\Scalar\Filter;
 
-class VoidFilter extends Filter
+use Nette\SmartObject;
+
+class VoidFilter implements FilterInterface
 {
+	use SmartObject;
+
 	/**
 	 * @param mixed $value
 	 * @return mixed

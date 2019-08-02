@@ -3,10 +3,13 @@
 namespace Kucbel\Scalar\Filter;
 
 use Nette\InvalidArgumentException;
+use Nette\SmartObject;
 use Nette\Utils\Strings;
 
-class TrimFilter extends Filter
+class TrimFilter implements FilterInterface
 {
+	use SmartObject;
+
 	const
 		STRING	= 0b1,
 		ARRAY	= 0b10,

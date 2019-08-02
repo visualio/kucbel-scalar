@@ -2,8 +2,12 @@
 
 namespace Kucbel\Scalar\Filter;
 
-class FilterPool extends Filter
+use Nette\SmartObject;
+
+class FilterPool implements FilterInterface
 {
+	use SmartObject;
+
 	/**
 	 * @var FilterInterface[]
 	 */

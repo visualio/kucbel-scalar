@@ -2,8 +2,12 @@
 
 namespace Kucbel\Scalar\Filter;
 
-class CallFilter extends Filter
+use Nette\SmartObject;
+
+class CallFilter implements FilterInterface
 {
+	use SmartObject;
+
 	/**
 	 * @var callable
 	 */
