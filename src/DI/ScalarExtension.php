@@ -84,7 +84,7 @@ class ScalarExtension extends CompilerExtension
 			return new ReflectionClass( $class );
 		};
 
-		$classes = array_map( $deflect, [
+		$imports = array_map( $deflect, [
 			Validator\BoolValidator::class,		Validator\DateValidator::class,		Validator\FloatValidator::class,
 			Validator\IntegerValidator::class,	Validator\MixedValidator::class,	Validator\StringValidator::class,
 			Iterator\BoolIterator::class,		Iterator\DateIterator::class,		Iterator\FloatIterator::class,
@@ -100,13 +100,14 @@ class ScalarExtension extends CompilerExtension
 		$this->reflector = new Input\InputReflector( ...$ignores );
 		$this->generator = new Schema\TypeGenerator;
 
-		$this->methods = $this->reflector->getMethods( ...$classes );
+		$this->methods = $this->reflector->getMethods( ...$imports );
 	}
 
 	/**
 	 * Compose
 	 *
 	 * @throws NeonException
+	 * @throws JsonException
 	 */
 	function loadConfiguration()
 	{
@@ -124,6 +125,9 @@ class ScalarExtension extends CompilerExtension
 
 		$builder->addDefinition( $this->prefix('input.factory'))
 			->setType( Input\InputFactory::class );
+
+		$builder->addDefinition( $this->prefix('assert.factory'))
+			->setType( Schema\AssertFactory::class );
 
 		$builder->addDefinition( $this->prefix('type.factory'))
 			->setType( Schema\TypeFactory::class );
