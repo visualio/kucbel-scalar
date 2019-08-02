@@ -55,6 +55,6 @@ class InputAlias implements InputInterface
 	 */
 	function has( string $name ) : bool
 	{
-		return $this->input->has( $name );
+		return $this->input->has( $this->names[ $name ] ?? $name );
 	}
 }

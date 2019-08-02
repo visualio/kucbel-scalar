@@ -2,7 +2,7 @@
 
 namespace Kucbel\Scalar\Input;
 
-trait InputSection
+trait SectionMethod
 {
 	/**
 	 * @var string | null

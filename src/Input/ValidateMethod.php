@@ -5,7 +5,7 @@ namespace Kucbel\Scalar\Input;
 use Kucbel\Scalar\Validator\ExistValidator;
 use Kucbel\Scalar\Validator\ValidatorException;
 
-trait InputValidate
+trait ValidateMethod
 {
 	/**
 	 * @var string[]

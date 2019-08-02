@@ -10,7 +10,7 @@ use Nette\Utils\JsonException;
 
 class MixedInput extends StrictInput implements DetectInterface
 {
-	use InputSearch, InputSection;
+	use SearchMethod, SectionMethod;
 
 	/**
 	 * @var mixed

@@ -2,7 +2,7 @@
 
 namespace Kucbel\Scalar\Input;
 
-trait InputSearch
+trait SearchMethod
 {
 	/**
 	 * @param string $name

@@ -7,7 +7,7 @@ use Kucbel\Scalar\Output\OutputInterface;
 
 class ConfigInput extends StrictInput implements OutputInterface
 {
-	use InputSection;
+	use SectionMethod;
 
 	/**
 	 * ConfigInput constructor.

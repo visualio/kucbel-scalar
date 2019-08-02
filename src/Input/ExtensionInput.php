@@ -7,7 +7,7 @@ use Nette\DI\CompilerExtension;
 
 class ExtensionInput extends StrictInput
 {
-	use InputSearch, InputSection, InputValidate;
+	use SearchMethod, SectionMethod, ValidateMethod;
 
 	/**
 	 * @var CompilerExtension
