@@ -2,32 +2,33 @@
 
 namespace Kucbel\Scalar\Output;
 
-use ArrayAccess;
-use DateTimeInterface;
 use Kucbel\Scalar\Input\InputInterface;
+use Nette\SmartObject;
 
-class CompareOutput extends Output
+class CompareOutput implements OutputInterface
 {
+	use SmartObject;
+
 	/**
 	 * @var InputInterface
 	 */
-	private $input;
+	protected $input;
 
 	/**
-	 * @var iterable | array | null
+	 * @var OutputInterface
 	 */
-	private $values;
+	protected $output;
 
 	/**
 	 * CompareOutput constructor.
 	 *
 	 * @param InputInterface $input
-	 * @param ArrayAccess $values
+	 * @param OutputInterface $output
 	 */
-	function __construct( InputInterface $input, ArrayAccess $values = null )
+	function __construct( InputInterface $input, OutputInterface $output )
 	{
 		$this->input = $input;
-		$this->values = $values;
+		$this->output = $output;
 	}
 
 	/**
@@ -39,16 +40,8 @@ class CompareOutput extends Output
 		$exist = $this->input->get( $name );
 
 		if( !$this->equal( $exist, $value )) {
-			$this->values[ $name ] = $value;
+			$this->output->set( $name, $value );
 		}
-	}
-
-	/**
-	 * @return iterable | array | null
-	 */
-	function fetch() : ?iterable
-	{
-		return $this->values;
 	}
 
 	/**
@@ -58,7 +51,7 @@ class CompareOutput extends Output
 	 */
 	protected function equal( $old, $new ) : bool
 	{
-		if( $old instanceof DateTimeInterface and $new instanceof DateTimeInterface ) {
+		if( is_object( $old ) and is_object( $new )) {
 			return $old == $new;
 		} else {
 			return $old === $new;

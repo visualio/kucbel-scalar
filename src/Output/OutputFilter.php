@@ -3,9 +3,12 @@
 namespace Kucbel\Scalar\Output;
 
 use Kucbel\Scalar\Filter\FilterInterface;
+use Nette\SmartObject;
 
-class OutputFilter extends Output
+class OutputFilter implements OutputInterface
 {
+	use SmartObject;
+
 	/**
 	 * @var OutputInterface
 	 */

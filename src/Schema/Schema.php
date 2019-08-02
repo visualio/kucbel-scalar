@@ -4,8 +4,8 @@ namespace Kucbel\Scalar\Schema;
 
 use Kucbel\Scalar\Input\InputInterface;
 use Kucbel\Scalar\Input\VoidInput;
+use Kucbel\Scalar\Output\ArrayOutput;
 use Kucbel\Scalar\Output\CompareOutput;
-use Kucbel\Scalar\Output\DirectOutput;
 use Kucbel\Scalar\Output\OutputInterface;
 use Nette\SmartObject;
 
@@ -73,7 +73,7 @@ class Schema
 	 */
 	function diff( InputInterface $input ) : ?iterable
 	{
-		$this->write( $output = new CompareOutput( $input ));
+		$this->write( new CompareOutput( $input, $output = new ArrayOutput ));
 
 		return $output->fetch();
 	}
@@ -85,12 +85,10 @@ class Schema
 	function fetch( bool $all = false ) : ?iterable
 	{
 		if( $all ) {
-			$output = new DirectOutput;
+			$this->write( $output = new ArrayOutput );
 		} else {
-			$output = new CompareOutput( new VoidInput );
+			$this->write( new CompareOutput( new VoidInput, $output = new ArrayOutput ));
 		}
-
-		$this->write( $output );
 
 		return $output->fetch();
 	}

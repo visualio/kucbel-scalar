@@ -3,16 +3,19 @@
 namespace Kucbel\Scalar\Output;
 
 use ArrayAccess;
+use Nette\SmartObject;
 
-class DirectOutput extends Output
+class ArrayOutput implements OutputInterface
 {
+	use SmartObject;
+
 	/**
 	 * @var iterable | array | null
 	 */
-	private $values;
+	protected $values;
 
 	/**
-	 * DirectOutput constructor.
+	 * ArrayOutput constructor.
 	 *
 	 * @param ArrayAccess $values
 	 */
