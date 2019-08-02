@@ -2,25 +2,24 @@
 
 namespace Kucbel\Scalar\Schema;
 
-use Closure;
 use Kucbel\Scalar\Validator\MixedValidator;
 use Nette\SmartObject;
 
-class Type implements TypeInterface
+class CallType implements TypeInterface
 {
 	use SmartObject;
 
 	/**
-	 * @var Closure
+	 * @var callable
 	 */
 	private $test;
 
 	/**
-	 * Type constructor.
+	 * CallType constructor.
 	 *
-	 * @param Closure $test
+	 * @param callable $test
 	 */
-	function __construct( Closure $test )
+	function __construct( callable $test )
 	{
 		$this->test = $test;
 	}

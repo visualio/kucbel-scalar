@@ -36,6 +36,10 @@ class TypeFactory
 	 */
 	function add( string $name, TypeInterface $type )
 	{
+		if( $this->has( $name )) {
+			throw new SchemaException("Type '$name' already exists.");
+		}
+
 		$this->types[ $name ] = $type;
 
 		return $this;
@@ -77,6 +81,6 @@ class TypeFactory
 			throw new SchemaException("Type '$name' didn't compile.", null, $ex );
 		}
 
-		return new Type( $test );
+		return new CallType( $test );
 	}
 }
