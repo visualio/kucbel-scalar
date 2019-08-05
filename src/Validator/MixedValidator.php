@@ -252,7 +252,6 @@ class MixedValidator extends Validator
 			case 'integer':
 				return 'int';
 			case 'double':
-			case 'float':
 				return is_finite( $value ) ? 'dec' : 'wtf';
 			case 'string':
 				return 'str';

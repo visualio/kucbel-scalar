@@ -93,7 +93,7 @@ class InputFactory
 			}
 		}
 
-		$type = is_object( $source ) ? get_class( $source ) : gettype( $source );
+		$type = is_object( $source ) ? get_class( $source ) : strtolower( gettype( $source ));
 
 		throw new InputException("No input registered for '$type'.");
 	}
