@@ -10,8 +10,8 @@ use Kucbel\Scalar\Schema;
 use Kucbel\Scalar\Schema\SchemaException;
 use Kucbel\Scalar\Validator;
 use Nette\DI\CompilerExtension;
+use Nette\DI\Definitions\ServiceDefinition;
 use Nette\Neon\Exception as NeonException;
-use Nette\PhpGenerator\PhpLiteral;
 use Nette\Utils\JsonException;
 use ReflectionClass;
 
@@ -169,7 +169,7 @@ class ScalarExtension extends CompilerExtension
 		$builder = $this->getContainerBuilder();
 
 		$builder->getDefinition( $filter = $this->prefix('filter.factory'))
-			->setArguments( $this->filters ?? [ new PhpLiteral('') ]);
+			->setArguments([ $this->filters ]);
 
 		$builder->getDefinition( $this->prefix('input.factory'))
 			->setArguments(["@$filter", $this->inputs, null, null ]);
@@ -516,6 +516,7 @@ class ScalarExtension extends CompilerExtension
 	 * @param CompilerExtension $extension
 	 * @param array $files
 	 * @throws NeonException
+	 * @throws JsonException
 	 */
 	static function addExtension( CompilerExtension $extension, array $files )
 	{

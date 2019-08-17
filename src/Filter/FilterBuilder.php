@@ -16,9 +16,9 @@ class FilterBuilder
 	/**
 	 * FilterBuilder constructor.
 	 *
-	 * @param FilterInterface ...$filters
+	 * @param FilterInterface[] $filters
 	 */
-	function __construct( FilterInterface ...$filters )
+	function __construct( array $filters )
 	{
 		$this->filters = $filters;
 	}

@@ -31,12 +31,12 @@ class InputReflector
 	/**
 	 * InputReflector constructor.
 	 *
-	 * @param ReflectionClass ...$ignores
+	 * @param ReflectionClass ...$classes
 	 */
-	function __construct( ReflectionClass ...$ignores )
+	function __construct( ReflectionClass ...$classes )
 	{
-		if( $ignores ) {
-			$methods = $this->getMethods( ...$ignores );
+		if( $classes ) {
+			$methods = $this->getMethods( ...$classes );
 
 			foreach( $methods as $method ) {
 				$this->ignore[ $method ] = $method;

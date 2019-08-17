@@ -18,11 +18,11 @@ class FilterFactory
 	/**
 	 * FilterFactory constructor.
 	 *
-	 * @param FilterInterface ...$filters
+	 * @param FilterInterface[] $filters
 	 */
-	function __construct( FilterInterface ...$filters )
+	function __construct( array $filters = null )
 	{
-		$this->filters = $filters;
+		$this->filters = $filters ?? [];
 	}
 
 	/**
@@ -65,6 +65,6 @@ class FilterFactory
 	 */
 	function setup() : FilterBuilder
 	{
-		return new FilterBuilder( ...$this->filters );
+		return new FilterBuilder( $this->filters );
 	}
 }
