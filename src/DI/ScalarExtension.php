@@ -168,17 +168,18 @@ class ScalarExtension extends CompilerExtension
 
 		$builder = $this->getContainerBuilder();
 
-		$builder->getDefinition( $filter = $this->prefix('filter.factory'))
-			->setArguments([ $this->filters ]);
+		/** @var ServiceDefinition $service */
+		$service = $builder->getDefinition( $filter = $this->prefix('filter.factory'));
+		$service->setArguments([ $this->filters ]);
 
-		$builder->getDefinition( $this->prefix('input.factory'))
-			->setArguments(["@$filter", $this->inputs, null, null ]);
+		$service = $builder->getDefinition( $this->prefix('input.factory'));
+		$service->setArguments(["@$filter", $this->inputs, null, null ]);
 
-		$builder->getDefinition( $type = $this->prefix('type.factory'))
-			->setArguments([ $tests ]);
+		$service = $builder->getDefinition( $type = $this->prefix('type.factory'));
+		$service->setArguments([ $tests ]);
 
-		$builder->getDefinition( $this->prefix('schema.factory'))
-			->setArguments(["@$type", $this->schemas ]);
+		$service = $builder->getDefinition( $this->prefix('schema.factory'));
+		$service->setArguments(["@$type", $this->schemas ]);
 	}
 
 	/**
