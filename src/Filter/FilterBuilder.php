@@ -28,7 +28,7 @@ class FilterBuilder
 	 */
 	function close() : FilterFactory
 	{
-		return new FilterFactory( ...$this->filters );
+		return new FilterFactory( $this->filters );
 	}
 
 	/**
