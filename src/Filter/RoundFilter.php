@@ -30,7 +30,7 @@ class RoundFilter implements FilterInterface
 	function clear( $value )
 	{
 		if( $value and is_float( $value )) {
-			$value = round( $value, $this->digit - floor( log10( $value )));
+			$value = round( $value, $this->digit - floor( log10( abs( $value ))));
 		}
 
 		return $value;
