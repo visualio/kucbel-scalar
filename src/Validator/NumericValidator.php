@@ -33,7 +33,7 @@ abstract class NumericValidator extends ScalarValidator
 				throw new InvalidArgumentException("Enter positive length limit.");
 			}
 
-			if( $val < pow( 10, $min - 1 )) {
+			if( $val < 10 ** ( $min - 1 )) {
 				throw new ValidatorException( $this->name, Error::NUM_DIGIT, ['min' => $min, 'max' => $max ]);
 			}
 		}
@@ -43,7 +43,7 @@ abstract class NumericValidator extends ScalarValidator
 				throw new InvalidArgumentException("Enter positive length limit.");
 			}
 
-			if( $val >= pow( 10, $max )) {
+			if( $val >= 10 ** $max ) {
 				throw new ValidatorException( $this->name, Error::NUM_DIGIT, ['min' => $min, 'max' => $max ]);
 			}
 		}

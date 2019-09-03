@@ -86,9 +86,7 @@ class FloatValidator extends NumericValidator
 				throw new InvalidArgumentException("Enter positive length limit.");
 			}
 
-			$val = $this->value * pow( 10, $min - 1 );
-
-			if( ceil( $val ) === floor( $val )) {
+			if( $this->value === round( $this->value, $min - 1 )) {
 				throw new ValidatorException( $this->name, Error::NUM_POINT, ['min' => $min, 'max' => $max ]);
 			}
 		}
