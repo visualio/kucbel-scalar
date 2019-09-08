@@ -16,6 +16,11 @@ class FilterFactory
 	protected $filters;
 
 	/**
+	 * @var FilterInterface | null
+	 */
+	protected $default;
+
+	/**
 	 * FilterFactory constructor.
 	 *
 	 * @param FilterInterface[] $filters
@@ -48,7 +53,7 @@ class FilterFactory
 		} elseif( isset( $this->filters[0] )) {
 			return $this->filters[0];
 		} else {
-			return new VoidFilter;
+			return $this->default ?? $this->default = new VoidFilter;
 		}
 	}
 

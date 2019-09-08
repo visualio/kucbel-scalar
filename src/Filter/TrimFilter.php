@@ -29,11 +29,11 @@ class TrimFilter implements FilterInterface
 	 */
 	function __construct( int $mode = self::STRING | self::ARRAY | self::EMPTY )
 	{
-		if( $mode & self::SPACE and !( $mode & self::STRING )) {
+		if( $mode & self::SPACE and ~ $mode & self::STRING ) {
 			throw new InvalidArgumentException('String filter must be enabled.');
 		}
 
-		if( $mode & self::BREAK and !( $mode & self::SPACE )) {
+		if( $mode & self::BREAK and ~ $mode & self::SPACE ) {
 			throw new InvalidArgumentException('Space filter must be enabled.');
 		}
 

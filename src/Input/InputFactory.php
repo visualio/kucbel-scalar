@@ -150,7 +150,7 @@ class InputFactory
 		} else {
 			$input = $sources[0];
 
-			if( $this->filters[ self::POOL ] & InputFilter::WRAP and !( $this->filters[ self::POOL ] & InputFilter::EACH )) {
+			if( $this->filters[ self::POOL ] & InputFilter::WRAP and ~ $this->filters[ self::POOL ] & InputFilter::EACH ) {
 				$input = $this->factory->create( $input );
 			}
 		}

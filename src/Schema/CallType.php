@@ -12,16 +12,16 @@ class CallType implements TypeInterface
 	/**
 	 * @var callable
 	 */
-	private $test;
+	private $callback;
 
 	/**
 	 * CallType constructor.
 	 *
-	 * @param callable $test
+	 * @param callable $callback
 	 */
-	function __construct( callable $test )
+	function __construct( callable $callback )
 	{
-		$this->test = $test;
+		$this->callback = $callback;
 	}
 
 	/**
@@ -30,6 +30,6 @@ class CallType implements TypeInterface
 	 */
 	function fetch( MixedValidator $column )
 	{
-		return call_user_func( $this->test, $column );
+		return call_user_func( $this->callback, $column );
 	}
 }
