@@ -30,6 +30,6 @@ class CallType implements TypeInterface
 	 */
 	function fetch( MixedValidator $column )
 	{
-		return call_user_func( $this->callback, $column );
+		return ( $this->callback )( $column );
 	}
 }

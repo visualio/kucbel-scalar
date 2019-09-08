@@ -36,8 +36,8 @@ class CallFilter implements FilterInterface
 	 */
 	function clear( $value )
 	{
-		if( call_user_func( $this->condition, $value )) {
-			$value = call_user_func( $this->callback, $value );
+		if(( $this->condition )( $value )) {
+			$value = ( $this->callback )( $value );
 		}
 
 		return $value;
@@ -52,7 +52,7 @@ class CallFilter implements FilterInterface
 		if( isset( $conditions[1] )) {
 			return function( $value ) use( $conditions ) {
 				foreach( $conditions as $condition ) {
-					if( call_user_func( $condition, $value )) {
+					if( $condition( $value )) {
 						return true;
 					}
 				}
