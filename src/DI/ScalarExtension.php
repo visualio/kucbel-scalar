@@ -64,7 +64,7 @@ class ScalarExtension extends CompilerExtension
 		'float|null'	=> ['optional', '@float'],
 		'str'			=> ['string'],
 		'str|null'		=> ['optional', '@str'],
-		'str255'		=> ['@str', ['char', 255 ]],
+		'str255'		=> ['@str', ['length', 255 ]],
 		'str255|null'	=> ['optional' ,'@str255'],
 		'date'			=> ['date'],
 		'date|null'		=> ['optional', '@date'],

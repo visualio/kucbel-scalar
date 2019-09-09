@@ -60,20 +60,6 @@ class StringIterator extends ScalarIterator
 	 * @param int|null $max
 	 * @return $this
 	 */
-	function char( ?int $min, ?int $max = 1 )
-	{
-		foreach( $this->list as $item ) {
-			$item->char( $min, $max );
-		}
-
-		return $this;
-	}
-
-	/**
-	 * @param int|null $min
-	 * @param int|null $max
-	 * @return $this
-	 */
 	function line( ?int $min, ?int $max = 1 )
 	{
 		foreach( $this->list as $item ) {

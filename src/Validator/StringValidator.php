@@ -50,16 +50,6 @@ class StringValidator extends ScalarValidator
 	 */
 	function length( ?int $min, ?int $max = 1 )
 	{
-		return $this->char( $min, $max );
-	}
-
-	/**
-	 * @param int|null $min
-	 * @param int|null $max
-	 * @return $this
-	 */
-	function char( ?int $min, ?int $max = 1 )
-	{
 		if( $min !== null and $max !== null and $min > $max ) {
 			[ $min, $max ] = [ $max, $min ];
 		}
