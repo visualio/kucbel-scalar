@@ -177,13 +177,13 @@ class StringValidator extends ScalarValidator
 	 * @param bool $real
 	 * @return $this
 	 */
-	function dir( bool $real = false )
+	function dir( bool $real = true )
 	{
 		if( !is_dir( $this->value )) {
 			throw new ValidatorException( $this->name, Error::STR_DIR );
+		} elseif( !$this->path( $real )) {
+			throw new ValidatorException( $this->name, Error::STR_FILE );
 		}
-
-		$this->path( $real, false );
 
 		return $this;
 	}
@@ -192,33 +192,35 @@ class StringValidator extends ScalarValidator
 	 * @param bool $real
 	 * @return $this
 	 */
-	function file( bool $real = false )
+	function file( bool $real = true )
 	{
 		if( !is_file( $this->value )) {
 			throw new ValidatorException( $this->name, Error::STR_FILE );
+		} elseif( !$this->path( $real )) {
+			throw new ValidatorException( $this->name, Error::STR_FILE );
 		}
-
-		$this->path( $real, true );
 
 		return $this;
 	}
 
 	/**
 	 * @param bool $real
-	 * @param bool $file
+	 * @return bool
 	 */
-	protected function path( bool $real, bool $file )
+	protected function path( bool $real ) : bool
 	{
 		if( $real ) {
 			$value = realpath( $this->value );
 
 			if( $value === false ) {
-				throw new ValidatorException( $this->name, $file ? Error::STR_FILE : Error::STR_DIR );
+				return false;
 			}
 
 			$this->value = $value;
 		}
 
 		$this->value = str_replace('\\', '/', $this->value );
+
+		return true;
 	}
 }
