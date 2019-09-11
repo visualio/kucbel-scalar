@@ -45,11 +45,6 @@ class ScalarExtension extends CompilerExtension
 	/**
 	 * @var array | null
 	 */
-	private $aliases;
-
-	/**
-	 * @var array | null
-	 */
 	private $schemas;
 
 	/**
@@ -113,10 +108,10 @@ class ScalarExtension extends CompilerExtension
 	{
 		$builder = $this->getContainerBuilder();
 
-		$builder->addDefinition( $trim = $this->prefix('filter.trim'))
+		$builder->addDefinition( $this->filters[] = $this->prefix('filter.trim'))
 			->setType( Filter\TrimFilter::class );
 
-		$builder->addDefinition( $round = $this->prefix('filter.round'))
+		$builder->addDefinition( $this->filters[] = $this->prefix('filter.round'))
 			->setType( Filter\RoundFilter::class )
 			->setArguments([ 14 ]);
 
@@ -134,9 +129,6 @@ class ScalarExtension extends CompilerExtension
 
 		$builder->addDefinition( $this->prefix('schema.factory'))
 			->setType( Schema\SchemaFactory::class );
-
-		$this->filters[] = $this->aliases['@trim'] = "@$trim";
-		$this->filters[] = $this->aliases['@round'] = "@$round";
 
 		$input = new Input\MixedInput(['types' => $this->types ], $this->name );
 
@@ -458,7 +450,7 @@ class ScalarExtension extends CompilerExtension
 			->array()
 			->string()
 			->match('~[.](neon|json)$~')
-			->file( true )
+			->file()
 			->unique()
 			->fetch();
 
@@ -496,7 +488,7 @@ class ScalarExtension extends CompilerExtension
 			->fetch();
 
 		foreach( $filters ?? [] as $filter ) {
-			$this->filters[] = $this->aliases[ $filter ] ?? $filter;
+			$this->filters[] = $filter;
 		}
 	}
 
@@ -510,7 +502,7 @@ class ScalarExtension extends CompilerExtension
 			$name = "@{$name}";
 		}
 
-		return in_array( $this->aliases[ $name ] ?? $name, $this->filters ?? [], true );
+		return in_array( $name, $this->filters ?? [], true );
 	}
 
 	/**
