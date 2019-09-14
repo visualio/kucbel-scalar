@@ -2,7 +2,9 @@
 
 namespace Kucbel\Scalar\Iterator;
 
+use Kucbel\Scalar\Error;
 use Kucbel\Scalar\Validator\StringValidator;
+use Kucbel\Scalar\Validator\ValidatorException;
 
 /**
  * Class StringIterator
@@ -26,6 +28,19 @@ class StringIterator extends ScalarIterator
 	{
 		$this->name = $name;
 		$this->list = $list;
+	}
+
+	/**
+	 * @param string ...$values
+	 * @return $this
+	 */
+	function exist( string ...$values )
+	{
+		if( array_diff( $values, $this->fetch() )) {
+			throw new ValidatorException( $this->name, Error::ARR_EXIST, ['val' => $values ]);
+		}
+
+		return $this;
 	}
 
 	/**

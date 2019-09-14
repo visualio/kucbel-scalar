@@ -9,6 +9,20 @@ use Kucbel\Scalar\Validator\ValidatorException;
 abstract class ScalarIterator extends Iterator
 {
 	/**
+	 * @return $this
+	 */
+	function unique()
+	{
+		$values = $this->fetch();
+
+		if( array_diff_key( $values, array_unique( $values, SORT_REGULAR ))) {
+			throw new ValidatorException( $this->name, Error::ARR_UNIQUE );
+		}
+
+		return $this;
+	}
+
+	/**
 	 * @param string $regex
 	 * @return $this
 	 */
@@ -17,32 +31,6 @@ abstract class ScalarIterator extends Iterator
 		/** @var ScalarValidator $item */
 		foreach( $this->list as $item ) {
 			$item->match( $regex );
-		}
-
-		return $this;
-	}
-
-	/**
-	 * @return $this
-	 */
-	function unique()
-	{
-		$format = $this instanceof FloatIterator;
-		$values = null;
-
-		/** @var ScalarValidator $item */
-		foreach( $this->list as $item ) {
-			if( $format ) {
-				$value = (string) $item->fetch();
-			} else {
-				$value = $item->fetch();
-			}
-
-			if( isset( $values[ $value ] )) {
-				throw new ValidatorException( $this->name, Error::ARR_UNIQUE );
-			}
-
-			$values[ $value ] = true;
 		}
 
 		return $this;

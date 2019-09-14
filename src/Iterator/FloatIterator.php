@@ -2,7 +2,9 @@
 
 namespace Kucbel\Scalar\Iterator;
 
+use Kucbel\Scalar\Error;
 use Kucbel\Scalar\Validator\FloatValidator;
+use Kucbel\Scalar\Validator\ValidatorException;
 
 /**
  * Class FloatIterator
@@ -26,6 +28,19 @@ class FloatIterator extends NumericIterator
 	{
 		$this->name = $name;
 		$this->list = $list;
+	}
+
+	/**
+	 * @param float  ...$values
+	 * @return $this
+	 */
+	function exist( float ...$values )
+	{
+		if( array_diff( $values, $this->fetch() )) {
+			throw new ValidatorException( $this->name, Error::ARR_EXIST, ['val' => $values ]);
+		}
+
+		return $this;
 	}
 
 	/**

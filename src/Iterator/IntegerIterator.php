@@ -2,7 +2,9 @@
 
 namespace Kucbel\Scalar\Iterator;
 
+use Kucbel\Scalar\Error;
 use Kucbel\Scalar\Validator\IntegerValidator;
+use Kucbel\Scalar\Validator\ValidatorException;
 
 /**
  * Class IntegerIterator
@@ -26,6 +28,19 @@ class IntegerIterator extends NumericIterator
 	{
 		$this->name = $name;
 		$this->list = $list;
+	}
+
+	/**
+	 * @param int  ...$values
+	 * @return $this
+	 */
+	function exist( int ...$values )
+	{
+		if( array_diff( $values, $this->fetch() )) {
+			throw new ValidatorException( $this->name, Error::ARR_EXIST, ['val' => $values ]);
+		}
+
+		return $this;
 	}
 
 	/**

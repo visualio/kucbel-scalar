@@ -38,8 +38,9 @@ class Error
 
 		DATE_VALUE		= 81,
 
-		ARR_COUNT		= 101,
-		ARR_UNIQUE		= 102;
+		ARR_UNIQUE		= 101,
+		ARR_COUNT		= 102,
+		ARR_EXIST		= 103;
 
 	/**
 	 * @param int $code
@@ -118,12 +119,19 @@ class Error
 			case Error::STR_FOLDER:								return 'Parameter $name must point to a folder.';
 
 			case Error::ARR_UNIQUE:								return 'Parameter $name must contain unique values.';
+
 			case Error::ARR_COUNT:
 				switch( true ) {
 					case $values['min'] === $values['max']:		return 'Parameter $name must contain exactly $min values.';
 					case $values['max'] === null:				return 'Parameter $name must contain at least $min values.';
 					case $values['min'] === null:				return 'Parameter $name must contain at most $max values.';
 					default:									return 'Parameter $name must contain between $min and $max values.';
+				}
+
+			case Error::ARR_EXIST:
+				switch( isset( $values['val'][1] )) {
+					case true:									return 'Parameter $name must contain the following values $val.';
+					case false:									return 'Parameter $name must contain the value $val.';
 				}
 
 			default:

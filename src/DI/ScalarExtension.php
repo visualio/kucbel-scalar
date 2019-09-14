@@ -108,10 +108,10 @@ class ScalarExtension extends CompilerExtension
 	{
 		$builder = $this->getContainerBuilder();
 
-		$builder->addDefinition( $this->filters[] = $this->prefix('filter.trim'))
+		$builder->addDefinition( $trim = $this->prefix('filter.trim'))
 			->setType( Filter\TrimFilter::class );
 
-		$builder->addDefinition( $this->filters[] = $this->prefix('filter.round'))
+		$builder->addDefinition( $round = $this->prefix('filter.round'))
 			->setType( Filter\RoundFilter::class )
 			->setArguments([ 14 ]);
 
@@ -130,9 +130,10 @@ class ScalarExtension extends CompilerExtension
 		$builder->addDefinition( $this->prefix('schema.factory'))
 			->setType( Schema\SchemaFactory::class );
 
-		$input = new Input\MixedInput(['types' => $this->types ], $this->name );
+		$input = new Input\MixedInput(['types'  => $this->types, 'filters' => ["@$trim", "@$round"]], $this->name );
 
 		$this->setTypes( $input );
+		$this->setFilters( $input );
 
 		$input = new Input\ExtensionInput( $this );
 
@@ -483,7 +484,7 @@ class ScalarExtension extends CompilerExtension
 			->optional()
 			->array()
 			->string()
-			->match('~^@[^@]+.~')
+			->match('~^@[^@]~')
 			->unique()
 			->fetch();
 
