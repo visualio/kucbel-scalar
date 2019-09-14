@@ -39,7 +39,7 @@ class InputReflector
 			$methods = $this->getMethods( ...$classes );
 
 			foreach( $methods as $method ) {
-				$this->ignore[ $method ] = $method;
+				$this->ignore[] = $method;
 			}
 		}
 	}
@@ -62,7 +62,7 @@ class InputReflector
 			}
 		}
 
-		$methods = array_diff_key( $methods, $this->ignore );
+		$methods = array_diff_key( $methods, array_flip( $this->ignore ));
 		$methods = array_values( $methods );
 
 		sort( $methods );
