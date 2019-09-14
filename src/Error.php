@@ -33,8 +33,8 @@ class Error
 		STR_IMPL		= 63,
 		STR_EMAIL		= 64,
 		STR_URL			= 65,
-		STR_DIR			= 66,
-		STR_FILE		= 67,
+		STR_FILE		= 66,
+		STR_FOLDER		= 67,
 
 		DATE_VALUE		= 81,
 
@@ -62,7 +62,7 @@ class Error
 			case Error::SCA_EQUAL:
 				switch( isset( $values['val'][1] )) {
 					case true:									return 'Parameter $name must be one the following $val.';
-					default:									return 'Parameter $name must be equal to $val.';
+					case false:									return 'Parameter $name must be equal to $val.';
 				}
 
 			case Error::NUM_DIGIT:
@@ -107,15 +107,15 @@ class Error
 				}
 
 			case Error::STR_IMPL:
-				switch( true ) {
-					case interface_exists( $values['type'] ):	return 'Parameter $name must implement $type interface.';
-					default:									return 'Parameter $name must extend $type class.';
+				switch( interface_exists( $values['type'] )) {
+					case true:									return 'Parameter $name must implement $type interface.';
+					case false:									return 'Parameter $name must extend $type class.';
 				}
 
 			case Error::STR_EMAIL:								return 'Parameter $name must be an email.';
 			case Error::STR_URL:								return 'Parameter $name must be an url.';
-			case Error::STR_DIR:								return 'Parameter $name must point to a directory.';
 			case Error::STR_FILE:								return 'Parameter $name must point to a file.';
+			case Error::STR_FOLDER:								return 'Parameter $name must point to a folder.';
 
 			case Error::ARR_UNIQUE:								return 'Parameter $name must contain unique values.';
 			case Error::ARR_COUNT:

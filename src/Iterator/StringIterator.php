@@ -111,10 +111,10 @@ class StringIterator extends ScalarIterator
 	 * @param bool $real
 	 * @return $this
 	 */
-	function dir( bool $real = false )
+	function file( bool $real = true )
 	{
 		foreach( $this->list as $item ) {
-			$item->dir( $real );
+			$item->file( $real );
 		}
 
 		return $this;
@@ -124,10 +124,10 @@ class StringIterator extends ScalarIterator
 	 * @param bool $real
 	 * @return $this
 	 */
-	function file( bool $real = false )
+	function folder( bool $real = true )
 	{
 		foreach( $this->list as $item ) {
-			$item->file( $real );
+			$item->folder( $real );
 		}
 
 		return $this;

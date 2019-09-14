@@ -177,10 +177,10 @@ class StringValidator extends ScalarValidator
 	 * @param bool $real
 	 * @return $this
 	 */
-	function dir( bool $real = true )
+	function file( bool $real = true )
 	{
-		if( !is_dir( $this->value )) {
-			throw new ValidatorException( $this->name, Error::STR_DIR );
+		if( !is_file( $this->value )) {
+			throw new ValidatorException( $this->name, Error::STR_FILE );
 		} elseif( !$this->path( $real )) {
 			throw new ValidatorException( $this->name, Error::STR_FILE );
 		}
@@ -192,10 +192,10 @@ class StringValidator extends ScalarValidator
 	 * @param bool $real
 	 * @return $this
 	 */
-	function file( bool $real = true )
+	function folder( bool $real = true )
 	{
-		if( !is_file( $this->value )) {
-			throw new ValidatorException( $this->name, Error::STR_FILE );
+		if( !is_dir( $this->value )) {
+			throw new ValidatorException( $this->name, Error::STR_FOLDER );
 		} elseif( !$this->path( $real )) {
 			throw new ValidatorException( $this->name, Error::STR_FILE );
 		}
