@@ -11,7 +11,7 @@ class RoundFilter implements FilterInterface
 	/**
 	 * @var int
 	 */
-	private $digit;
+	protected $digit;
 
 	/**
 	 * RoundFilter constructor.

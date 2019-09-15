@@ -14,7 +14,7 @@ class ExistValidator
 	/**
 	 * @var array | null
 	 */
-	private $schema;
+	protected $schema;
 
 	/**
 	 * ExistValidator constructor.

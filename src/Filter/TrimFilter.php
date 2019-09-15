@@ -20,14 +20,14 @@ class TrimFilter implements FilterInterface
 	/**
 	 * @var int
 	 */
-	private $mode;
+	protected $mode;
 
 	/**
 	 * TrimFilter constructor.
 	 *
 	 * @param int $mode
 	 */
-	function __construct( int $mode = self::STRING | self::ARRAY | self::EMPTY )
+	function __construct( int $mode )
 	{
 		if( $mode & self::SPACE and ~ $mode & self::STRING ) {
 			throw new InvalidArgumentException('String filter must be enabled.');

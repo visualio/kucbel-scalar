@@ -4,8 +4,11 @@ namespace Kucbel\Scalar\Input;
 
 use DOMDocument;
 use DOMElement;
+use DOMException;
 use DOMXPath;
+use Nette\FileNotFoundException;
 use Nette\InvalidArgumentException;
+use Nette\Utils\Strings;
 
 class DocumentInput extends Input implements DetectInterface
 {
@@ -79,6 +82,32 @@ class DocumentInput extends Input implements DetectInterface
 		} else {
 			return null;
 		}
+	}
+
+	/**
+	 * @param string $file
+	 * @return DocumentInput
+	 */
+	static function file( string $file ) : self
+	{
+		libxml_clear_errors();
+
+		$document = new DOMDocument;
+
+		if( !@$document->load( $file )) {
+			if( $error = libxml_get_last_error() ) {
+				$message = Strings::replace( $error->message, '~line [0-9]+.*$~', '');
+				$message = Strings::trim( $message );
+
+				$previous = new DOMException( "{$message}, line {$error->line}.", $error->code );
+			} else {
+				$previous = null;
+			}
+
+			throw new FileNotFoundException("File '{$file}' isn't readable.", null, $previous );
+		}
+
+		return new self( $document );
 	}
 
 	/**

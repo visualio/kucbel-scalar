@@ -5,6 +5,7 @@ namespace Kucbel\Scalar\Iterator;
 use Kucbel\Scalar\Error;
 use Kucbel\Scalar\Validator\StringValidator;
 use Kucbel\Scalar\Validator\ValidatorException;
+use Nette\InvalidArgumentException;
 
 /**
  * Class StringIterator
@@ -36,8 +37,12 @@ class StringIterator extends ScalarIterator
 	 */
 	function exist( string ...$values )
 	{
+		if( !$values ) {
+			throw new InvalidArgumentException("Enter at least one value.");
+		}
+
 		if( array_diff( $values, $this->fetch() )) {
-			throw new ValidatorException( $this->name, Error::ARR_EXIST, ['val' => $values ]);
+			throw new ValidatorException( $this->name, Error::ARR_EXIST, [ 'list' => $values ]);
 		}
 
 		return $this;
@@ -75,24 +80,10 @@ class StringIterator extends ScalarIterator
 	 * @param int|null $max
 	 * @return $this
 	 */
-	function line( ?int $min, ?int $max = 1 )
+	function depth( ?int $min, ?int $max = 1 )
 	{
 		foreach( $this->list as $item ) {
-			$item->line( $min, $max );
-		}
-
-		return $this;
-	}
-
-	/**
-	 * @param string $type
-	 * @param bool $same
-	 * @return $this
-	 */
-	function impl( string $type, bool $same = false )
-	{
-		foreach( $this->list as $item ) {
-			$item->impl( $type, $same );
+			$item->depth( $min, $max );
 		}
 
 		return $this;

@@ -2,10 +2,7 @@
 
 namespace Kucbel\Scalar\Iterator;
 
-use Kucbel\Scalar\Error;
 use Kucbel\Scalar\Validator\MixedValidator;
-use Kucbel\Scalar\Validator\ValidatorException;
-use Nette\InvalidArgumentException;
 
 /**
  * Class MixedIterator
@@ -27,50 +24,6 @@ class MixedIterator extends Iterator
 	{
 		$this->name = $name;
 		$this->list = $list;
-	}
-
-	/**
-	 * @param int|null $min
-	 * @param int|null $max
-	 * @return $this
-	 */
-	function count( ?int $min, ?int $max = 0 )
-	{
-		if( $min !== null and $max !== null and $min > $max ) {
-			[ $min, $max ] = [ $max, $min ];
-		}
-
-		if( $min === 0 ) {
-			$min = null;
-		}
-
-		if( $min === null and $max === null ) {
-			throw new InvalidArgumentException("Enter value for either one or both parameters.");
-		}
-
-		$num = count( $this->list );
-
-		if( $min !== null ) {
-			if( $min < 0 ) {
-				throw new InvalidArgumentException("Enter positive count limit.");
-			}
-
-			if( $num < $min ) {
-				throw new ValidatorException( $this->name, Error::ARR_COUNT, ['min' => $min, 'max' => $max ]);
-			}
-		}
-
-		if( $max !== null ) {
-			if( $max < 0 ) {
-				throw new InvalidArgumentException("Enter positive count limit.");
-			}
-
-			if( $num > $max ) {
-				throw new ValidatorException( $this->name, Error::ARR_COUNT, ['min' => $min, 'max' => $max ]);
-			}
-		}
-
-		return $this;
 	}
 
 	/**
@@ -127,6 +80,20 @@ class MixedIterator extends Iterator
 		}
 
 		return new StringIterator( $this->name, ...$list );
+	}
+
+	/**
+	 * @return ClassIterator
+	 */
+	function class()
+	{
+		$list = [];
+
+		foreach( $this->list as $item ) {
+			$list[] = $item->class();
+		}
+
+		return new ClassIterator( $this->name, ...$list );
 	}
 
 	/**

@@ -10,7 +10,6 @@ use Kucbel\Scalar\Schema;
 use Kucbel\Scalar\Schema\SchemaException;
 use Kucbel\Scalar\Validator;
 use Nette\DI\CompilerExtension;
-use Nette\DI\Definitions\ServiceDefinition;
 use Nette\Neon\Exception as NeonException;
 use Nette\Utils\JsonException;
 use ReflectionClass;
@@ -40,7 +39,10 @@ class ScalarExtension extends CompilerExtension
 	/**
 	 * @var array | null
 	 */
-	private $filters;
+	private $filters = [
+		Filter\TrimFilter::class,
+		Filter\RoundFilter::class,
+	];
 
 	/**
 	 * @var array | null
@@ -51,23 +53,31 @@ class ScalarExtension extends CompilerExtension
 	 * @var array | null
 	 */
 	private $types = [
-		'bool'			=> ['bool'],
-		'bool|null'		=> ['optional', '@bool'],
-		'int'			=> ['integer'],
-		'int|null'		=> ['optional', '@int'],
-		'float'			=> ['float'],
-		'float|null'	=> ['optional', '@float'],
-		'str'			=> ['string'],
-		'str|null'		=> ['optional', '@str'],
-		'str255'		=> ['@str', ['length', 255 ]],
-		'str255|null'	=> ['optional' ,'@str255'],
-		'date'			=> ['date'],
-		'date|null'		=> ['optional', '@date'],
-		'date|now'		=> [['optional', 'now'], '@date'],
-		'id'			=> ['integer', ['value', 1, null ]],
-		'id|null'		=> ['optional', '@id'],
-		'ids'			=> ['array', ['count', 1, null ], '@id'],
-		'ids|null'		=> ['optional', '@ids'],
+		'bool'			=> [['bool']],
+		'bool|null'		=> [['optional'], ['@bool']],
+		'int'			=> [['integer']],
+		'int|null'		=> [['optional'], ['@int']],
+		'float'			=> [['float']],
+		'float|null'	=> [['optional'], ['@float']],
+		'str'			=> [['string']],
+		'str|null'		=> [['optional'], ['@str']],
+		'str255'		=> [['@str'], ['length', 255 ]],
+		'str255|null'	=> [['optional'], ['@str255']],
+		'date'			=> [['date']],
+		'date|null'		=> [['optional'], ['@date']],
+		'date|now'		=> [['optional', 'now'], ['@date']],
+		'id'			=> [['integer'], ['value', 1, null ]],
+		'id|null'		=> [['optional'], ['@id']],
+		'ids'			=> [['array'], ['count', 1, null ], ['@id']],
+		'ids|null'		=> [['optional'], ['@ids']],
+	];
+
+	/**
+	 * @var array
+	 */
+	private $argues = [
+		'types'			=> null,
+		'filters'		=> null,
 	];
 
 	/**
@@ -106,34 +116,36 @@ class ScalarExtension extends CompilerExtension
 	 */
 	function loadConfiguration()
 	{
+		$config = $this->getParameters();
 		$builder = $this->getContainerBuilder();
 
-		$builder->addDefinition( $trim = $this->prefix('filter.trim'))
-			->setType( Filter\TrimFilter::class );
+		$builder->addDefinition( $this->prefix('filter.trim'))
+			->setType( Filter\TrimFilter::class )
+			->setArguments([ $config['trim'] ]);
 
-		$builder->addDefinition( $round = $this->prefix('filter.round'))
+		$builder->addDefinition( $this->prefix('filter.round'))
 			->setType( Filter\RoundFilter::class )
-			->setArguments([ 14 ]);
+			->setArguments([ $config['round'] ]);
 
-		$builder->addDefinition( $this->prefix('filter.factory'))
-			->setType( Filter\FilterFactory::class );
+		$builder->addDefinition( $filter = $this->prefix('filter.factory'))
+			->setType( Filter\FilterFactory::class )
+			->setArguments([ &$this->argues['filters'] ]);
 
 		$builder->addDefinition( $this->prefix('input.factory'))
-			->setType( Input\InputFactory::class );
+			->setType( Input\InputFactory::class )
+			->setArguments(["@$filter", &$this->inputs, null, null ]);
 
-		$builder->addDefinition( $this->prefix('assert.factory'))
-			->setType( Schema\AssertFactory::class );
-
-		$builder->addDefinition( $this->prefix('type.factory'))
-			->setType( Schema\TypeFactory::class );
+		$builder->addDefinition( $type = $this->prefix('type.factory'))
+			->setType( Schema\TypeFactory::class )
+			->setArguments([ &$this->argues['types'] ]);
 
 		$builder->addDefinition( $this->prefix('schema.factory'))
-			->setType( Schema\SchemaFactory::class );
+			->setType( Schema\SchemaFactory::class )
+			->setArguments(["@$type", &$this->schemas ]);
 
-		$input = new Input\MixedInput(['types'  => $this->types, 'filters' => ["@$trim", "@$round"]], $this->name );
-
-		$this->setTypes( $input );
-		$this->setFilters( $input );
+		$builder->addDefinition( $this->prefix('assert.factory'))
+			->setType( Schema\AssertFactory::class )
+			->setArguments(["@$type"]);
 
 		$input = new Input\ExtensionInput( $this );
 
@@ -151,28 +163,67 @@ class ScalarExtension extends CompilerExtension
 	 */
 	function beforeCompile()
 	{
-		$tests = null;
+		foreach( $this->types ?? [] as $i => $rules ) {
+			$rules = $this->getResolvedType($i, $rules );
 
-		foreach( $this->types ?? [] as $name => $rules ) {
-			$rules = $this->getResolvedType($name, $rules );
-
-			$tests[ $name ] = $this->generator->compress( ...$rules );
+			$this->argues['types'][ $i ] = $this->generator->compress( ...$rules );
 		}
 
-		$builder = $this->getContainerBuilder();
+		foreach( $this->filters as $i => $filter ) {
+			$this->argues['filters'][ $i ] = "@{$filter}";
+		}
+	}
 
-		/** @var ServiceDefinition $service */
-		$service = $builder->getDefinition( $filter = $this->prefix('filter.factory'));
-		$service->setArguments([ $this->filters ]);
+	/**
+	 * @return array
+	 */
+	protected function getParameters() : array
+	{
+		$modes = [
+			Filter\TrimFilter::STRING	=> 'string',
+			Filter\TrimFilter::ARRAY	=> 'array',
+			Filter\TrimFilter::EMPTY	=> 'empty',
+			Filter\TrimFilter::SPACE	=> 'space',
+			Filter\TrimFilter::BREAK	=> 'break',
+		];
 
-		$service = $builder->getDefinition( $this->prefix('input.factory'));
-		$service->setArguments(["@$filter", $this->inputs, null, null ]);
+		$input = new Input\ExtensionInput( $this );
 
-		$service = $builder->getDefinition( $type = $this->prefix('type.factory'));
-		$service->setArguments([ $tests ]);
+		$flags = $input->create('trim')
+			->optional(['string', 'array', 'empty'])
+			->array()
+			->string()
+			->unique()
+			->equal( ...$modes )
+			->fetch();
 
-		$service = $builder->getDefinition( $this->prefix('schema.factory'));
-		$service->setArguments(["@$type", $this->schemas ]);
+		if( in_array('break', $flags )) {
+			$input->create('trim')
+				->array()
+				->string()
+				->exist('string', 'space');
+		}
+
+		if( in_array('space', $flags )) {
+			$input->create('trim')
+				->array()
+				->string()
+				->exist('string');
+		}
+
+		$param['trim'] = 0;
+
+		foreach( $flags as $flag ) {
+			$param['trim'] |= array_search( $flag, $modes );
+		}
+
+		$param['round'] = $input->create('round')
+			->optional( 14 )
+			->integer()
+			->value( 1, 99 )
+			->fetch();
+
+		return $param;
 	}
 
 	/**
@@ -418,9 +469,10 @@ class ScalarExtension extends CompilerExtension
 		$classes = $input->create('inputs')
 			->optional()
 			->array()
-			->string()
-			->impl( Input\DetectInterface::class )
+			->class()
 			->unique()
+			->concrete()
+			->implement( Input\DetectInterface::class )
 			->fetch();
 
 		foreach( $classes ?? [] as $class ) {
@@ -483,9 +535,10 @@ class ScalarExtension extends CompilerExtension
 		$filters = $input->create('filters')
 			->optional()
 			->array()
-			->string()
-			->match('~^@[^@]~')
+			->class()
 			->unique()
+			->concrete()
+			->implement( Filter\FilterInterface::class )
 			->fetch();
 
 		foreach( $filters ?? [] as $filter ) {
@@ -494,16 +547,12 @@ class ScalarExtension extends CompilerExtension
 	}
 
 	/**
-	 * @param string $name
+	 * @param string $class
 	 * @return bool
 	 */
-	function hasFilter( string $name ) : bool
+	function hasFilter( string $class ) : bool
 	{
-		if(( $name[0] ?? null ) !== '@') {
-			$name = "@{$name}";
-		}
-
-		return in_array( $name, $this->filters ?? [], true );
+		return in_array( $class, $this->filters ?? [], true );
 	}
 
 	/**

@@ -33,11 +33,11 @@ class StringValidator extends ScalarValidator
 	function equal( string ...$values )
 	{
 		if( !$values ) {
-			throw new InvalidArgumentException("Enter at least one parameter.");
+			throw new InvalidArgumentException("Enter at least one value.");
 		}
 
 		if( !in_array( $this->value, $values, true )) {
-			throw new ValidatorException( $this->name, Error::SCA_EQUAL, ['val' => $values ]);
+			throw new ValidatorException( $this->name, Error::SCA_EQUAL, ['list' => $values ]);
 		}
 
 		return $this;
@@ -70,7 +70,7 @@ class StringValidator extends ScalarValidator
 			}
 
 			if( $len < $min ) {
-				throw new ValidatorException( $this->name, Error::STR_CHAR, ['min' => $min, 'max' => $max ]);
+				throw new ValidatorException( $this->name, Error::STR_LENGTH, ['min' => $min, 'max' => $max ]);
 			}
 		}
 
@@ -80,7 +80,7 @@ class StringValidator extends ScalarValidator
 			}
 
 			if( $len > $max ) {
-				throw new ValidatorException( $this->name, Error::STR_CHAR, ['min' => $min, 'max' => $max ]);
+				throw new ValidatorException( $this->name, Error::STR_LENGTH, ['min' => $min, 'max' => $max ]);
 			}
 		}
 
@@ -92,7 +92,7 @@ class StringValidator extends ScalarValidator
 	 * @param int|null $max
 	 * @return $this
 	 */
-	function line( ?int $min, ?int $max = 1 )
+	function depth( ?int $min, ?int $max = 1 )
 	{
 		if( $min !== null and $max !== null and $min > $max ) {
 			[ $min, $max ] = [ $max, $min ];
@@ -114,7 +114,7 @@ class StringValidator extends ScalarValidator
 			}
 
 			if( $num < $min ) {
-				throw new ValidatorException( $this->name, Error::STR_LINE, ['min' => $min, 'max' => $max ]);
+				throw new ValidatorException( $this->name, Error::STR_DEPTH, ['min' => $min, 'max' => $max ]);
 			}
 		}
 
@@ -124,27 +124,9 @@ class StringValidator extends ScalarValidator
 			}
 
 			if( $num > $max ) {
-				throw new ValidatorException( $this->name, Error::STR_LINE, ['min' => $min, 'max' => $max ]);
+				throw new ValidatorException( $this->name, Error::STR_DEPTH, ['min' => $min, 'max' => $max ]);
 			}
 		}
-
-		return $this;
-	}
-
-	/**
-	 * @param string $type
-	 * @param bool $same
-	 * @return $this
-	 */
-	function impl( string $type, bool $same = false )
-	{
-		$value = ltrim( $this->value, '\\');
-
-		if( !class_exists( $value ) or (( $same and !is_a( $value, $type, true )) or ( !$same and !is_subclass_of( $value, $type, true )))) {
-			throw new ValidatorException( $this->name, Error::STR_IMPL, ['type' => $type ]);
-		}
-
-		$this->value = $value;
 
 		return $this;
 	}

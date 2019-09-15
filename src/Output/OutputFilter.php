@@ -12,12 +12,12 @@ class OutputFilter implements OutputInterface
 	/**
 	 * @var OutputInterface
 	 */
-	private $output;
+	protected $output;
 
 	/**
 	 * @var FilterInterface
 	 */
-	private $filter;
+	protected $filter;
 
 	/**
 	 * OutputFilter constructor.

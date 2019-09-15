@@ -11,7 +11,7 @@ class FilterPool implements FilterInterface
 	/**
 	 * @var FilterInterface[]
 	 */
-	private $filters;
+	protected $filters;
 
 	/**
 	 * FilterFactory constructor.

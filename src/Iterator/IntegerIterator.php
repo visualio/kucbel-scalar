@@ -5,6 +5,7 @@ namespace Kucbel\Scalar\Iterator;
 use Kucbel\Scalar\Error;
 use Kucbel\Scalar\Validator\IntegerValidator;
 use Kucbel\Scalar\Validator\ValidatorException;
+use Nette\InvalidArgumentException;
 
 /**
  * Class IntegerIterator
@@ -36,8 +37,12 @@ class IntegerIterator extends NumericIterator
 	 */
 	function exist( int ...$values )
 	{
+		if( !$values ) {
+			throw new InvalidArgumentException("Enter at least one value.");
+		}
+
 		if( array_diff( $values, $this->fetch() )) {
-			throw new ValidatorException( $this->name, Error::ARR_EXIST, ['val' => $values ]);
+			throw new ValidatorException( $this->name, Error::ARR_EXIST, [ 'list' => $values ]);
 		}
 
 		return $this;

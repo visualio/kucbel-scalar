@@ -31,11 +31,11 @@ class IntegerValidator extends NumericValidator
 	function equal( int ...$values )
 	{
 		if( !$values ) {
-			throw new InvalidArgumentException("Enter at least one parameter.");
+			throw new InvalidArgumentException("Enter at least one value.");
 		}
 
 		if( !in_array( $this->value, $values, true )) {
-			throw new ValidatorException( $this->name, Error::SCA_EQUAL, ['val' => $values ]);
+			throw new ValidatorException( $this->name, Error::SCA_EQUAL, ['list' => $values ]);
 		}
 
 		return $this;

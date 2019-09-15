@@ -11,12 +11,12 @@ class CallFilter implements FilterInterface
 	/**
 	 * @var callable
 	 */
-	private $callback;
+	protected $callback;
 
 	/**
 	 * @var callable
 	 */
-	private $condition;
+	protected $condition;
 
 	/**
 	 * CallFilter constructor.

@@ -10,7 +10,7 @@ class ArrayInput extends Input implements DetectInterface
 	/**
 	 * @var ArrayAccess
 	 */
-	private $array;
+	protected $array;
 
 	/**
 	 * ArrayInput constructor.

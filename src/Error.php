@@ -17,30 +17,36 @@ class Error
 		TYPE_FLOAT		= 3,
 		TYPE_INTEGER	= 4,
 		TYPE_STRING		= 5,
-		TYPE_DATE		= 6,
-		TYPE_ARRAY		= 7,
-		TYPE_VOID		= 8,
+		TYPE_CLASS		= 6,
+		TYPE_DATE		= 7,
+		TYPE_ARRAY		= 8,
+		TYPE_VOID		= 9,
 
 		SCA_EQUAL		= 21,
-		SCA_REGEX		= 22,
+		SCA_MATCH		= 22,
 
 		NUM_VALUE		= 41,
 		NUM_DIGIT		= 42,
 		NUM_POINT		= 43,
 
-		STR_CHAR		= 61,
-		STR_LINE		= 62,
-		STR_IMPL		= 63,
-		STR_EMAIL		= 64,
-		STR_URL			= 65,
-		STR_FILE		= 66,
-		STR_FOLDER		= 67,
+		STR_LENGTH		= 61,
+		STR_DEPTH		= 62,
+		STR_EMAIL		= 63,
+		STR_URL			= 64,
+		STR_FILE		= 65,
+		STR_FOLDER		= 66,
 
-		DATE_VALUE		= 81,
+		CLA_EXTEND		= 81,
+		CLA_IMPLEMENT	= 82,
+		CLA_INTERFACE	= 83,
+		CLA_ABSTRACT	= 84,
+		CLA_CONCRETE	= 85,
 
-		ARR_UNIQUE		= 101,
-		ARR_COUNT		= 102,
-		ARR_EXIST		= 103;
+		DATE_VALUE		= 101,
+
+		ARR_COUNT		= 121,
+		ARR_UNIQUE		= 122,
+		ARR_EXIST		= 123;
 
 	/**
 	 * @param int $code
@@ -55,15 +61,16 @@ class Error
 			case Error::TYPE_FLOAT:								return 'Parameter $name must be a float.';
 			case Error::TYPE_INTEGER:							return 'Parameter $name must be an integer.';
 			case Error::TYPE_STRING:							return 'Parameter $name must be a string.';
+			case Error::TYPE_CLASS:								return 'Parameter $name must be a class.';
 			case Error::TYPE_DATE:								return 'Parameter $name must be a date.';
 			case Error::TYPE_ARRAY:								return 'Parameter $name must be an array.';
 			case Error::TYPE_VOID:								return 'Parameter $name does not exist.';
 
-			case Error::SCA_REGEX:								return 'Parameter $name must match $exp pattern.';
+			case Error::SCA_MATCH:								return 'Parameter $name must match $exp pattern.';
 			case Error::SCA_EQUAL:
-				switch( isset( $values['val'][1] )) {
-					case true:									return 'Parameter $name must be one the following $val.';
-					case false:									return 'Parameter $name must be equal to $val.';
+				switch( isset( $values['list'][1] )) {
+					case true:									return 'Parameter $name must be one the following $list.';
+					case false:									return 'Parameter $name must be equal to $list.';
 				}
 
 			case Error::NUM_DIGIT:
@@ -91,7 +98,7 @@ class Error
 					default:									return 'Parameter $name must be between $min and $max.';
 				}
 
-			case Error::STR_CHAR:
+			case Error::STR_LENGTH:
 				switch( true ) {
 					case $values['min'] === $values['max']:		return 'Parameter $name must be exactly $min characters long.';
 					case $values['max'] === null:				return 'Parameter $name must be at least $min characters long.';
@@ -99,7 +106,7 @@ class Error
 					default:									return 'Parameter $name must be between $min and $max characters long.';
 				}
 
-			case Error::STR_LINE:
+			case Error::STR_DEPTH:
 				switch( true ) {
 					case $values['min'] === $values['max']:		return 'Parameter $name must have exactly $min lines.';
 					case $values['max'] === null:				return 'Parameter $name must have at least $min lines.';
@@ -107,18 +114,16 @@ class Error
 					default:									return 'Parameter $name must have between $min and $max lines.';
 				}
 
-			case Error::STR_IMPL:
-				switch( interface_exists( $values['type'] )) {
-					case true:									return 'Parameter $name must implement $type interface.';
-					case false:									return 'Parameter $name must extend $type class.';
-				}
-
 			case Error::STR_EMAIL:								return 'Parameter $name must be an email.';
 			case Error::STR_URL:								return 'Parameter $name must be an url.';
 			case Error::STR_FILE:								return 'Parameter $name must point to a file.';
 			case Error::STR_FOLDER:								return 'Parameter $name must point to a folder.';
 
-			case Error::ARR_UNIQUE:								return 'Parameter $name must contain unique values.';
+			case Error::CLA_EXTEND:								return 'Parameter $name must be a class extending $type parent.';
+			case Error::CLA_IMPLEMENT:							return 'Parameter $name must be a class implementing $type interface.';
+			case Error::CLA_INTERFACE:							return 'Parameter $name must be an interface.';
+			case Error::CLA_ABSTRACT:							return 'Parameter $name must be an extendable class.';
+			case Error::CLA_CONCRETE:							return 'Parameter $name must be an instantiable class.';
 
 			case Error::ARR_COUNT:
 				switch( true ) {
@@ -128,14 +133,16 @@ class Error
 					default:									return 'Parameter $name must contain between $min and $max values.';
 				}
 
+			case Error::ARR_UNIQUE:								return 'Parameter $name must contain unique values.';
+
 			case Error::ARR_EXIST:
-				switch( isset( $values['val'][1] )) {
-					case true:									return 'Parameter $name must contain the following values $val.';
-					case false:									return 'Parameter $name must contain the value $val.';
+				switch( isset( $values['list'][1] )) {
+					case true:									return 'Parameter $name must contain all of the following values $list.';
+					case false:									return 'Parameter $name must contain the value $list.';
 				}
 
 			default:
-				throw new InvalidArgumentException("Error code $code doesn't exist.");
+				throw new InvalidArgumentException("Unknown code.");
 		}
 	}
 

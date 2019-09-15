@@ -14,7 +14,7 @@ class ZoneFilter implements FilterInterface
 	/**
 	 * @var DateTimeZone
 	 */
-	private $zone;
+	protected $zone;
 
 	/**
 	 * ZoneFilter constructor.
