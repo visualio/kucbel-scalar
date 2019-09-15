@@ -132,6 +132,23 @@ class StringValidator extends ScalarValidator
 	}
 
 	/**
+	 * @param string $type
+	 * @return $this
+	 */
+	function class( string $type )
+	{
+		$value = ltrim( $this->value, '\\');
+
+		if( !class_exists( $value ) or !is_subclass_of( $value, $type, true )) {
+			throw new ValidatorException( $this->name, Error::STR_CLASS, ['type' => $type ]);
+		}
+
+		$this->value = $value;
+
+		return $this;
+	}
+
+	/**
 	 * @return $this
 	 */
 	function email()

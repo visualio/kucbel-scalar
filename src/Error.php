@@ -31,22 +31,17 @@ class Error
 
 		STR_LENGTH		= 61,
 		STR_DEPTH		= 62,
-		STR_EMAIL		= 63,
-		STR_URL			= 64,
-		STR_FILE		= 65,
-		STR_FOLDER		= 66,
+		STR_CLASS		= 63,
+		STR_EMAIL		= 64,
+		STR_URL			= 65,
+		STR_FILE		= 66,
+		STR_FOLDER		= 67,
 
-		CLA_EXTEND		= 81,
-		CLA_IMPLEMENT	= 82,
-		CLA_INTERFACE	= 83,
-		CLA_ABSTRACT	= 84,
-		CLA_CONCRETE	= 85,
+		DATE_VALUE		= 81,
 
-		DATE_VALUE		= 101,
-
-		ARR_COUNT		= 121,
-		ARR_UNIQUE		= 122,
-		ARR_EXIST		= 123;
+		ARR_COUNT		= 101,
+		ARR_UNIQUE		= 102,
+		ARR_EXIST		= 103;
 
 	/**
 	 * @param int $code
@@ -114,16 +109,16 @@ class Error
 					default:									return 'Parameter $name must have between $min and $max lines.';
 				}
 
+			case Error::STR_CLASS:
+				switch( interface_exists( $values['type'] )) {
+					case true:									return 'Parameter $name must be a class implementing $type interface.';
+					case false:									return 'Parameter $name must be a class extending $type parent.';
+				}
+
 			case Error::STR_EMAIL:								return 'Parameter $name must be an email.';
 			case Error::STR_URL:								return 'Parameter $name must be an url.';
 			case Error::STR_FILE:								return 'Parameter $name must point to a file.';
 			case Error::STR_FOLDER:								return 'Parameter $name must point to a folder.';
-
-			case Error::CLA_EXTEND:								return 'Parameter $name must be a class extending $type parent.';
-			case Error::CLA_IMPLEMENT:							return 'Parameter $name must be a class implementing $type interface.';
-			case Error::CLA_INTERFACE:							return 'Parameter $name must be an interface.';
-			case Error::CLA_ABSTRACT:							return 'Parameter $name must be an extendable class.';
-			case Error::CLA_CONCRETE:							return 'Parameter $name must be an instantiable class.';
 
 			case Error::ARR_COUNT:
 				switch( true ) {

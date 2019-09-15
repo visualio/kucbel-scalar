@@ -469,10 +469,9 @@ class ScalarExtension extends CompilerExtension
 		$classes = $input->create('inputs')
 			->optional()
 			->array()
-			->class()
+			->string()
+			->class( Input\DetectInterface::class )
 			->unique()
-			->concrete()
-			->implement( Input\DetectInterface::class )
 			->fetch();
 
 		foreach( $classes ?? [] as $class ) {
@@ -535,10 +534,9 @@ class ScalarExtension extends CompilerExtension
 		$filters = $input->create('filters')
 			->optional()
 			->array()
-			->class()
+			->string()
+			->class( Filter\FilterInterface::class )
 			->unique()
-			->concrete()
-			->implement( Filter\FilterInterface::class )
 			->fetch();
 
 		foreach( $filters ?? [] as $filter ) {

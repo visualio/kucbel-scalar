@@ -90,6 +90,19 @@ class StringIterator extends ScalarIterator
 	}
 
 	/**
+	 * @param string $type
+	 * @return $this
+	 */
+	function class( string $type )
+	{
+		foreach( $this->list as $item ) {
+			$item->class( $type );
+		}
+
+		return $this;
+	}
+
+	/**
 	 * @return $this
 	 */
 	function email()

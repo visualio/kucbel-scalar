@@ -83,20 +83,6 @@ class MixedIterator extends Iterator
 	}
 
 	/**
-	 * @return ClassIterator
-	 */
-	function class()
-	{
-		$list = [];
-
-		foreach( $this->list as $item ) {
-			$list[] = $item->class();
-		}
-
-		return new ClassIterator( $this->name, ...$list );
-	}
-
-	/**
 	 * @return DateIterator
 	 */
 	function date()

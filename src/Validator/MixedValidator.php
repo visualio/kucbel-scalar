@@ -161,22 +161,6 @@ class MixedValidator extends Validator
 	}
 
 	/**
-	 * @return ClassValidator
-	 */
-	function class()
-	{
-		$type = self::detect( $this->value );
-
-		if( $type === 'null') {
-			throw new ValidatorException( $this->name, Error::TYPE_NULL );
-		} elseif( $type !== 'str') {
-			throw new ValidatorException( $this->name, Error::TYPE_STRING );
-		}
-
-		return new ClassValidator( $this->name, $this->value );
-	}
-
-	/**
 	 * @return DateValidator
 	 */
 	function date()
