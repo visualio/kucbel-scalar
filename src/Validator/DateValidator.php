@@ -26,6 +26,27 @@ class DateValidator extends Validator
 	}
 
 	/**
+	 * @param mixed ...$values
+	 * @return $this
+	 */
+	function equal( ...$values )
+	{
+		if( !$values ) {
+			throw new InvalidArgumentException("Enter at least one value.");
+		}
+
+		foreach( $values as $i => $value ) {
+			$values[ $i ] = DateTime::from( $value );
+		}
+
+		if( !in_array( $this->value, $values )) {
+			throw new ValidatorException( $this->name, Error::SCA_EQUAL, ['list' => $values ]);
+		}
+
+		return $this;
+	}
+
+	/**
 	 * @param mixed|null $min
 	 * @param mixed|null $max
 	 * @return $this

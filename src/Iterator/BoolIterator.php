@@ -27,4 +27,17 @@ class BoolIterator extends Iterator
 		$this->name = $name;
 		$this->list = $list;
 	}
+
+	/**
+	 * @param bool $value
+	 * @return $this
+	 */
+	function equal( bool $value )
+	{
+		foreach( $this->list as $item ) {
+			$item->equal( $value );
+		}
+
+		return $this;
+	}
 }

@@ -30,6 +30,19 @@ class DateIterator extends Iterator
 	}
 
 	/**
+	 * @param mixed ...$values
+	 * @return $this
+	 */
+	function equal( ...$values )
+	{
+		foreach( $this->list as $item ) {
+			$item->equal( ...$values );
+		}
+
+		return $this;
+	}
+
+	/**
 	 * @param mixed|null $min
 	 * @param mixed|null $max
 	 * @return $this
