@@ -19,7 +19,7 @@ class VoidValidator extends Validator
 	 * @param array $arguments
 	 * @return $this
 	 */
-	function __call( $name, $arguments )
+	function __call( string $name, array $arguments )
 	{
 		return $this;
 	}
