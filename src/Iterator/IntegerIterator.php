@@ -64,12 +64,13 @@ class IntegerIterator extends NumericIterator
 	/**
 	 * @param int|null $min
 	 * @param int|null $max
+	 * @param bool $exc
 	 * @return $this
 	 */
-	function value( ?int $min, ?int $max )
+	function value( ?int $min, ?int $max, bool $exc = false )
 	{
 		foreach( $this->list as $item ) {
-			$item->value( $min, $max );
+			$item->value( $min, $max, $exc );
 		}
 
 		return $this;
