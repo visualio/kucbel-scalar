@@ -54,7 +54,7 @@ class DateValidator extends Validator
 	function value( $min, $max )
 	{
 		if( $min === null and $max === null ) {
-			throw new InvalidArgumentException("Enter value for either one or both parameters.");
+			throw new InvalidArgumentException("Enter at least one value.");
 		}
 
 		if( $min !== null ) {
@@ -65,11 +65,9 @@ class DateValidator extends Validator
 			$max = DateTime::from( $max );
 		}
 
-		if( $min !== null and $this->value < $min ) {
-			throw new ValidatorException( $this->name, Error::DATE_VALUE, ['min' => $min, 'max' => $max ]);
-		}
+		$val = $this->value;
 
-		if( $max !== null and $this->value > $max ) {
+		if(( $min !== null and $val < $min ) or ( $max !== null and $val > $max )) {
 			throw new ValidatorException( $this->name, Error::DATE_VALUE, ['min' => $min, 'max' => $max ]);
 		}
 

@@ -48,14 +48,12 @@ class FloatValidator extends NumericValidator
 	function value( ?float $min, ?float $max )
 	{
 		if( $min === null and $max === null ) {
-			throw new InvalidArgumentException("Enter value for either one or both parameters.");
+			throw new InvalidArgumentException("Enter at least one value.");
 		}
 
-		if( $min !== null and $this->value < $min ) {
-			throw new ValidatorException( $this->name, Error::NUM_VALUE, ['min' => $min, 'max' => $max ]);
-		}
+		$val = $this->value;
 
-		if( $max !== null and $this->value > $max ) {
+		if(( $min !== null and $val < $min ) or ( $max !== null and $val > $max )) {
 			throw new ValidatorException( $this->name, Error::NUM_VALUE, ['min' => $min, 'max' => $max ]);
 		}
 
@@ -67,38 +65,18 @@ class FloatValidator extends NumericValidator
 	 * @param int|null $max
 	 * @return $this
 	 */
-	function point( ?int $min, ?int $max = 0 )
+	function point( ?int $min, ?int $max )
 	{
-		if( $min !== null and $max !== null and $min > $max ) {
-			[ $min, $max ] = [ $max, $min ];
+		if(( $min !== null and $min < 0 ) or ( $max !== null and $max < 0 )) {
+			throw new InvalidArgumentException("Enter a positive length limit.");
+		} elseif( $min === null and $max === null ) {
+			throw new InvalidArgumentException("Enter at least one value.");
 		}
 
-		if( $min === 0 ) {
-			$min = null;
-		}
+		$val = $this->value;
 
-		if( $min === null and $max === null ) {
-			throw new InvalidArgumentException("Enter value for either one or both parameters.");
-		}
-
-		if( $min !== null ) {
-			if( $min < 0 ) {
-				throw new InvalidArgumentException("Enter positive digit limit.");
-			}
-
-			if( $this->value === round( $this->value, $min - 1 )) {
-				throw new ValidatorException( $this->name, Error::NUM_POINT, ['min' => $min, 'max' => $max ]);
-			}
-		}
-
-		if( $max !== null ) {
-			if( $max < 0 ) {
-				throw new InvalidArgumentException("Enter positive digit limit.");
-			}
-
-			if( $this->value !== round( $this->value, $max )) {
-				throw new ValidatorException( $this->name, Error::NUM_POINT, ['min' => $min, 'max' => $max ]);
-			}
+		if(( $min !== null and $min !== 0 and $val === round( $val, $min - 1 )) or ( $max !== null and $val !== round( $val, $max ))) {
+			throw new ValidatorException( $this->name, Error::NUM_POINT, ['min' => $min, 'max' => $max ]);
 		}
 
 		return $this;

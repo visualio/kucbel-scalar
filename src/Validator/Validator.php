@@ -35,7 +35,7 @@ abstract class Validator implements ValidatorInterface
 		if( is_array( $value )) {
 			return [ key( $value ), current( $value ) ];
 		} else {
-			return [ $value ];
+			return [ null, $value ];
 		}
 	}
 }

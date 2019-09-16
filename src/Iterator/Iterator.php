@@ -32,40 +32,18 @@ abstract class Iterator implements IteratorInterface
 	 * @param int|null $max
 	 * @return $this
 	 */
-	function count( ?int $min, ?int $max = 0 )
+	function count( ?int $min, ?int $max )
 	{
-		if( $min !== null and $max !== null and $min > $max ) {
-			[ $min, $max ] = [ $max, $min ];
-		}
-
-		if( $min === 0 ) {
-			$min = null;
-		}
-
-		if( $min === null and $max === null ) {
-			throw new InvalidArgumentException("Enter value for either one or both parameters.");
+		if(( $min !== null and $min < 0 ) or ( $max !== null and $max < 0 )) {
+			throw new InvalidArgumentException("Enter a positive count limit.");
+		} elseif( $min === null and $max === null ) {
+			throw new InvalidArgumentException("Enter at least one value.");
 		}
 
 		$num = count( $this->list );
 
-		if( $min !== null ) {
-			if( $min < 0 ) {
-				throw new InvalidArgumentException("Enter positive count limit.");
-			}
-
-			if( $num < $min ) {
-				throw new ValidatorException( $this->name, Error::ARR_COUNT, ['min' => $min, 'max' => $max ]);
-			}
-		}
-
-		if( $max !== null ) {
-			if( $max < 0 ) {
-				throw new InvalidArgumentException("Enter positive count limit.");
-			}
-
-			if( $num > $max ) {
-				throw new ValidatorException( $this->name, Error::ARR_COUNT, ['min' => $min, 'max' => $max ]);
-			}
+		if(( $min !== null and $num < $min ) or ( $max !== null and $num > $max )) {
+			throw new ValidatorException( $this->name, Error::ARR_COUNT, ['min' => $min, 'max' => $max ]);
 		}
 
 		return $this;

@@ -62,10 +62,7 @@ class MixedValidator extends Validator
 		$value = $this->value;
 		$type = self::detect( $value );
 
-		if( $type === 'int' and ( $value === 1 or $value === 0 )) {
-			$type = 'bool';
-			$value = (bool) $value;
-		} elseif( $type === 'dec' and ( $value === 1. or $value === 0. )) {
+		if( $value === 1 or $value === 1. or $value === 0. or $value === 0 ) {
 			$type = 'bool';
 			$value = (bool) $value;
 		} elseif( $type === 'str' and $match = Strings::match( $value, '~^(true|on|yes|y|1)$|^(false|off|no|n|0)$~i')) {

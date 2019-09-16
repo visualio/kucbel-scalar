@@ -80,7 +80,7 @@ class FloatIterator extends NumericIterator
 	 * @param int|null $max
 	 * @return $this
 	 */
-	function point( ?int $min, ?int $max = 0 )
+	function point( ?int $min, ?int $max )
 	{
 		foreach( $this->list as $item ) {
 			$item->point( $min, $max );

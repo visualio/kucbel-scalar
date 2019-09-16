@@ -7,10 +7,11 @@ use Kucbel\Scalar\Input;
 use Kucbel\Scalar\Input\InputInterface;
 use Kucbel\Scalar\Iterator;
 use Kucbel\Scalar\Schema;
-use Kucbel\Scalar\Schema\SchemaException;
 use Kucbel\Scalar\Validator;
 use Nette\DI\CompilerExtension;
+use Nette\InvalidStateException;
 use Nette\Neon\Exception as NeonException;
+use Nette\PhpGenerator\ClassType;
 use Nette\Utils\JsonException;
 use ReflectionClass;
 
@@ -61,7 +62,7 @@ class ScalarExtension extends CompilerExtension
 		'float|null'	=> [['optional'], ['@float']],
 		'str'			=> [['string']],
 		'str|null'		=> [['optional'], ['@str']],
-		'str255'		=> [['@str'], ['char', 255 ]],
+		'str255'		=> [['@str'], ['char', 1, 255 ]],
 		'str255|null'	=> [['optional'], ['@str255']],
 		'date'			=> [['date']],
 		'date|null'		=> [['optional'], ['@date']],
@@ -175,6 +176,16 @@ class ScalarExtension extends CompilerExtension
 	}
 
 	/**
+	 * @param ClassType $class
+	 */
+	function afterCompile( ClassType $class )
+	{
+		if( array_diff_key( $this->types, $this->argues['types'] ) or array_diff_key( $this->filters, $this->argues['filters'] )) {
+			throw new InvalidStateException("Configuration was modified after extension compilation.");
+		}
+	}
+
+	/**
 	 * @return array
 	 */
 	protected function getParameters() : array
@@ -271,20 +282,20 @@ class ScalarExtension extends CompilerExtension
 			->fetch();
 
 		foreach( $tests as $test ) {
-			$mixed = $input->create("types.$name.$test");
-			$value = $mixed->fetch();
+			$array = $input->create("types.$name.$test")
+				->array();
 
-			if( is_string( $value ) and !strncmp( $value, '@', 1 )) {
-				$rules[] = [ $value ];
-			} else {
-				$array = $mixed->array();
+			$first = $array->first()
+				->string();
 
-				$array->first()
-					->string()
-					->equal( ...$this->methods );
-
-				$rules[] = $array->fetch();
+			try {
+				$array->count( 1, 1 );
+				$first->match('~^@.~');
+			} catch( Validator\ValidatorException $ex ) {
+				$first->equal( ...$this->methods );
 			}
+
+			$rules[] = $array->fetch();
 		}
 
 		$this->types[ $alias ?? $name ] = $rules;
@@ -309,9 +320,9 @@ class ScalarExtension extends CompilerExtension
 		$links = [ $name ];
 
 		for( $index = 0; isset( $rules[ $index ] ); $index++ ) {
-			$link = current( $rules[ $index ] );
+			$link = $rules[ $index ][0];
 
-			if( strncmp( $link, '@', 1 )) {
+			if( $link[0] !== '@') {
 				continue;
 			}
 
@@ -322,13 +333,13 @@ class ScalarExtension extends CompilerExtension
 
 				$loop = implode("', '", $links );
 
-				throw new SchemaException("Type '$name' contains reference loop '$loop', '$link'.");
+				throw new InvalidStateException("Type '$name' contains reference loop '$loop', '$link'.");
 			}
 
 			$type = $this->types[ $link ] ?? null;
 
 			if( !$type ) {
-				throw new SchemaException("Type '$name' contains invalid reference '$link");
+				throw new InvalidStateException("Type '$name' contains invalid reference '$link'.");
 			}
 
 			$rules = array_merge(
@@ -562,13 +573,13 @@ class ScalarExtension extends CompilerExtension
 	static function addExtension( CompilerExtension $extension, array $files )
 	{
 		if( !$extension->compiler ) {
-			throw new SchemaException("Extension isn't attached.");
+			throw new InvalidStateException("Extension isn't attached.");
 		}
 
 		$scalar = current( $extension->compiler->getExtensions( self::class ));
 
 		if( !$scalar instanceof self ) {
-			throw new SchemaException("Extension isn't installed.");
+			throw new InvalidStateException("Extension isn't installed.");
 		}
 
 		$input = new Input\MixedInput(['files' => $files ], $extension->name );
