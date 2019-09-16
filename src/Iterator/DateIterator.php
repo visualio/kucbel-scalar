@@ -45,13 +45,12 @@ class DateIterator extends Iterator
 	/**
 	 * @param mixed|null $min
 	 * @param mixed|null $max
-	 * @param bool $exc
 	 * @return $this
 	 */
-	function value( $min, $max, bool $exc = false )
+	function value( $min, $max )
 	{
 		foreach( $this->list as $item ) {
-			$item->value( $min, $max, $exc );
+			$item->value( $min, $max );
 		}
 
 		return $this;
