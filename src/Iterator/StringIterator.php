@@ -42,7 +42,7 @@ class StringIterator extends ScalarIterator
 		}
 
 		if( array_diff( $values, $this->fetch() )) {
-			throw new ValidatorException( $this->name, Error::ARR_EXIST, [ 'list' => $values ]);
+			throw new ValidatorException( $this->name, Error::ARR_EXIST, ['list' => $values ]);
 		}
 
 		return $this;
@@ -66,10 +66,10 @@ class StringIterator extends ScalarIterator
 	 * @param int|null $max
 	 * @return $this
 	 */
-	function length( ?int $min, ?int $max = 1 )
+	function char( ?int $min, ?int $max = 1 )
 	{
 		foreach( $this->list as $item ) {
-			$item->length( $min, $max );
+			$item->char( $min, $max );
 		}
 
 		return $this;
@@ -80,10 +80,10 @@ class StringIterator extends ScalarIterator
 	 * @param int|null $max
 	 * @return $this
 	 */
-	function depth( ?int $min, ?int $max = 1 )
+	function line( ?int $min, ?int $max = 1 )
 	{
 		foreach( $this->list as $item ) {
-			$item->depth( $min, $max );
+			$item->line( $min, $max );
 		}
 
 		return $this;

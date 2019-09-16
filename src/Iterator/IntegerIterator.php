@@ -42,7 +42,7 @@ class IntegerIterator extends NumericIterator
 		}
 
 		if( array_diff( $values, $this->fetch() )) {
-			throw new ValidatorException( $this->name, Error::ARR_EXIST, [ 'list' => $values ]);
+			throw new ValidatorException( $this->name, Error::ARR_EXIST, ['list' => $values ]);
 		}
 
 		return $this;

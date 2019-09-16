@@ -29,8 +29,8 @@ class Error
 		NUM_DIGIT		= 42,
 		NUM_POINT		= 43,
 
-		STR_LENGTH		= 61,
-		STR_DEPTH		= 62,
+		STR_CHAR		= 61,
+		STR_LINE		= 62,
 		STR_CLASS		= 63,
 		STR_EMAIL		= 64,
 		STR_URL			= 65,
@@ -93,7 +93,7 @@ class Error
 					default:									return 'Parameter $name must be between $min and $max.';
 				}
 
-			case Error::STR_LENGTH:
+			case Error::STR_CHAR:
 				switch( true ) {
 					case $values['min'] === $values['max']:		return 'Parameter $name must be exactly $min characters long.';
 					case $values['max'] === null:				return 'Parameter $name must be at least $min characters long.';
@@ -101,7 +101,7 @@ class Error
 					default:									return 'Parameter $name must be between $min and $max characters long.';
 				}
 
-			case Error::STR_DEPTH:
+			case Error::STR_LINE:
 				switch( true ) {
 					case $values['min'] === $values['max']:		return 'Parameter $name must have exactly $min lines.';
 					case $values['max'] === null:				return 'Parameter $name must have at least $min lines.';

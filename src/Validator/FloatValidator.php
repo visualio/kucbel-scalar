@@ -83,7 +83,7 @@ class FloatValidator extends NumericValidator
 
 		if( $min !== null ) {
 			if( $min < 0 ) {
-				throw new InvalidArgumentException("Enter positive length limit.");
+				throw new InvalidArgumentException("Enter positive digit limit.");
 			}
 
 			if( $this->value === round( $this->value, $min - 1 )) {
@@ -93,7 +93,7 @@ class FloatValidator extends NumericValidator
 
 		if( $max !== null ) {
 			if( $max < 0 ) {
-				throw new InvalidArgumentException("Enter positive length limit.");
+				throw new InvalidArgumentException("Enter positive digit limit.");
 			}
 
 			if( $this->value !== round( $this->value, $max )) {

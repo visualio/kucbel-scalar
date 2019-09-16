@@ -48,7 +48,7 @@ class StringValidator extends ScalarValidator
 	 * @param int|null $max
 	 * @return $this
 	 */
-	function length( ?int $min, ?int $max = 1 )
+	function char( ?int $min, ?int $max = 1 )
 	{
 		if( $min !== null and $max !== null and $min > $max ) {
 			[ $min, $max ] = [ $max, $min ];
@@ -66,21 +66,21 @@ class StringValidator extends ScalarValidator
 
 		if( $min !== null ) {
 			if( $min < 0 ) {
-				throw new InvalidArgumentException("Enter positive length limit.");
+				throw new InvalidArgumentException("Enter positive character limit.");
 			}
 
 			if( $len < $min ) {
-				throw new ValidatorException( $this->name, Error::STR_LENGTH, ['min' => $min, 'max' => $max ]);
+				throw new ValidatorException( $this->name, Error::STR_CHAR, ['min' => $min, 'max' => $max ]);
 			}
 		}
 
 		if( $max !== null ) {
 			if( $max < 0 ) {
-				throw new InvalidArgumentException("Enter positive length limit.");
+				throw new InvalidArgumentException("Enter positive character limit.");
 			}
 
 			if( $len > $max ) {
-				throw new ValidatorException( $this->name, Error::STR_LENGTH, ['min' => $min, 'max' => $max ]);
+				throw new ValidatorException( $this->name, Error::STR_CHAR, ['min' => $min, 'max' => $max ]);
 			}
 		}
 
@@ -92,7 +92,7 @@ class StringValidator extends ScalarValidator
 	 * @param int|null $max
 	 * @return $this
 	 */
-	function depth( ?int $min, ?int $max = 1 )
+	function line( ?int $min, ?int $max = 1 )
 	{
 		if( $min !== null and $max !== null and $min > $max ) {
 			[ $min, $max ] = [ $max, $min ];
@@ -110,21 +110,21 @@ class StringValidator extends ScalarValidator
 
 		if( $min !== null ) {
 			if( $min < 1 ) {
-				throw new InvalidArgumentException("Enter positive count limit.");
+				throw new InvalidArgumentException("Enter positive line limit.");
 			}
 
 			if( $num < $min ) {
-				throw new ValidatorException( $this->name, Error::STR_DEPTH, ['min' => $min, 'max' => $max ]);
+				throw new ValidatorException( $this->name, Error::STR_LINE, ['min' => $min, 'max' => $max ]);
 			}
 		}
 
 		if( $max !== null ) {
 			if( $max < 1 ) {
-				throw new InvalidArgumentException("Enter positive count limit.");
+				throw new InvalidArgumentException("Enter positive line limit.");
 			}
 
 			if( $num > $max ) {
-				throw new ValidatorException( $this->name, Error::STR_DEPTH, ['min' => $min, 'max' => $max ]);
+				throw new ValidatorException( $this->name, Error::STR_LINE, ['min' => $min, 'max' => $max ]);
 			}
 		}
 

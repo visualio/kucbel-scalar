@@ -30,7 +30,7 @@ abstract class NumericValidator extends ScalarValidator
 
 		if( $min !== null ) {
 			if( $min < 0 ) {
-				throw new InvalidArgumentException("Enter positive length limit.");
+				throw new InvalidArgumentException("Enter positive digit limit.");
 			}
 
 			if( $val < 10 ** ( $min - 1 )) {
@@ -40,7 +40,7 @@ abstract class NumericValidator extends ScalarValidator
 
 		if( $max !== null ) {
 			if( $max < 0 ) {
-				throw new InvalidArgumentException("Enter positive length limit.");
+				throw new InvalidArgumentException("Enter positive digit limit.");
 			}
 
 			if( $val >= 10 ** $max ) {
