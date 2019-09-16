@@ -64,13 +64,12 @@ class FloatIterator extends NumericIterator
 	/**
 	 * @param float|null $min
 	 * @param float|null $max
-	 * @param bool $exc
 	 * @return $this
 	 */
-	function value( ?float $min, ?float $max, bool $exc = false )
+	function value( ?float $min, ?float $max )
 	{
 		foreach( $this->list as $item ) {
-			$item->value( $min, $max, $exc );
+			$item->value( $min, $max );
 		}
 
 		return $this;
