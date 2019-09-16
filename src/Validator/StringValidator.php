@@ -132,6 +132,19 @@ class StringValidator extends ScalarValidator
 	}
 
 	/**
+	 * @param int|int[] $char
+	 * @param int|int[] $line
+	 * @return $this
+	 */
+	function length( $char, $line )
+	{
+		$char = self::range( $char );
+		$line = self::range( $line );
+
+		return $this->char( ...$char )->line( ...$line );
+	}
+
+	/**
 	 * @param string $type
 	 * @return $this
 	 */

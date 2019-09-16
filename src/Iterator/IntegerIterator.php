@@ -74,4 +74,19 @@ class IntegerIterator extends NumericIterator
 
 		return $this;
 	}
+
+	/**
+	 * @param int|int[] $digit
+	 * @return $this
+	 */
+	function length( $digit )
+	{
+		$digit = IntegerValidator::range( $digit );
+
+		foreach( $this->list as $item ) {
+			$item->digit( ...$digit );
+		}
+
+		return $this;
+	}
 }

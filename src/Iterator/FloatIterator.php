@@ -88,4 +88,21 @@ class FloatIterator extends NumericIterator
 
 		return $this;
 	}
+
+	/**
+	 * @param int|int[] $digit
+	 * @param int|int[] $point
+	 * @return $this
+	 */
+	function length( $digit, $point )
+	{
+		$digit = FloatValidator::range( $digit );
+		$point = FloatValidator::range( $point );
+
+		foreach( $this->list as $item ) {
+			$item->digit( ...$digit )->point( ...$point );
+		}
+
+		return $this;
+	}
 }
