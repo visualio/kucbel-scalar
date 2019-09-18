@@ -30,7 +30,7 @@ class BoolValidator extends Validator
 	function equal( bool $value )
 	{
 		if( $this->value !== $value ) {
-			throw new ValidatorException( $this->name, Error::SCA_EQUAL, ['list' => [ $value ]]);
+			throw new ValidatorException( $this->name, Error::MIX_EQUAL, ['list' => [ $value ]]);
 		}
 
 		return $this;

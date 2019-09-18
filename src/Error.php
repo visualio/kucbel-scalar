@@ -22,12 +22,12 @@ class Error
 		TYPE_ARRAY		= 8,
 		TYPE_VOID		= 9,
 
-		SCA_EQUAL		= 21,
-		SCA_MATCH		= 22,
+		MIX_EQUAL		= 21,
+		MIX_VALUE		= 22,
+		MIX_MATCH		= 23,
 
-		NUM_VALUE		= 41,
-		NUM_DIGIT		= 42,
-		NUM_POINT		= 43,
+		NUM_DIGIT		= 41,
+		NUM_POINT		= 42,
 
 		STR_CHAR		= 61,
 		STR_LINE		= 62,
@@ -37,11 +37,9 @@ class Error
 		STR_FILE		= 66,
 		STR_FOLDER		= 67,
 
-		DATE_VALUE		= 81,
-
-		ARR_COUNT		= 101,
-		ARR_UNIQUE		= 102,
-		ARR_EXIST		= 103;
+		ARR_COUNT		= 81,
+		ARR_UNIQUE		= 82,
+		ARR_EXIST		= 83;
 
 	/**
 	 * @param int $code
@@ -61,12 +59,21 @@ class Error
 			case Error::TYPE_ARRAY:								return 'Parameter $name must be an array.';
 			case Error::TYPE_VOID:								return 'Parameter $name does not exist.';
 
-			case Error::SCA_MATCH:								return 'Parameter $name must match $exp pattern.';
-			case Error::SCA_EQUAL:
+			case Error::MIX_EQUAL:
 				switch( isset( $values['list'][1] )) {
 					case true:									return 'Parameter $name must be one the following $list.';
 					case false:									return 'Parameter $name must be equal to $list.';
 				}
+
+			case Error::MIX_VALUE:
+				switch( true ) {
+					case $values['min'] === $values['max']:		return 'Parameter $name must be equal to $min.';
+					case $values['max'] === null:				return 'Parameter $name must be equal to or greater than $min.';
+					case $values['min'] === null:				return 'Parameter $name must be equal to or less than $max.';
+					default:									return 'Parameter $name must be between $min and $max.';
+				}
+
+			case Error::MIX_MATCH:								return 'Parameter $name must match $exp pattern.';
 
 			case Error::NUM_DIGIT:
 				switch( true ) {
@@ -82,15 +89,6 @@ class Error
 					case $values['max'] === null:				return 'Parameter $name must have at least $min decimal digits.';
 					case $values['min'] === null:				return 'Parameter $name must have at most $max decimal digits.';
 					default:									return 'Parameter $name must have between $min and $max decimal digits.';
-				}
-
-			case Error::NUM_VALUE:
-			case Error::DATE_VALUE:
-				switch( true ) {
-					case $values['min'] === $values['max']:		return 'Parameter $name must be equal to $min.';
-					case $values['max'] === null:				return 'Parameter $name must be equal to or greater than $min.';
-					case $values['min'] === null:				return 'Parameter $name must be equal to or less than $max.';
-					default:									return 'Parameter $name must be between $min and $max.';
 				}
 
 			case Error::STR_CHAR:

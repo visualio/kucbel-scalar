@@ -35,7 +35,7 @@ class IntegerValidator extends NumericValidator
 		}
 
 		if( !in_array( $this->value, $values, true )) {
-			throw new ValidatorException( $this->name, Error::SCA_EQUAL, ['list' => $values ]);
+			throw new ValidatorException( $this->name, Error::MIX_EQUAL, ['list' => $values ]);
 		}
 
 		return $this;
@@ -55,7 +55,7 @@ class IntegerValidator extends NumericValidator
 		$val = $this->value;
 
 		if(( $min !== null and $val < $min ) or ( $max !== null and $val > $max )) {
-			throw new ValidatorException( $this->name, Error::NUM_VALUE, ['min' => $min, 'max' => $max ]);
+			throw new ValidatorException( $this->name, Error::MIX_VALUE, ['min' => $min, 'max' => $max ]);
 		}
 
 		return $this;

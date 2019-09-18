@@ -40,7 +40,7 @@ class DateValidator extends Validator
 		}
 
 		if( !in_array( $this->value, $values )) {
-			throw new ValidatorException( $this->name, Error::SCA_EQUAL, ['list' => $values ]);
+			throw new ValidatorException( $this->name, Error::MIX_EQUAL, ['list' => $values ]);
 		}
 
 		return $this;
@@ -68,7 +68,7 @@ class DateValidator extends Validator
 		$val = $this->value;
 
 		if(( $min !== null and $val < $min ) or ( $max !== null and $val > $max )) {
-			throw new ValidatorException( $this->name, Error::DATE_VALUE, ['min' => $min, 'max' => $max ]);
+			throw new ValidatorException( $this->name, Error::MIX_VALUE, ['min' => $min, 'max' => $max ]);
 		}
 
 		return $this;

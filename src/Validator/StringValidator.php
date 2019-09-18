@@ -37,7 +37,7 @@ class StringValidator extends ScalarValidator
 		}
 
 		if( !in_array( $this->value, $values, true )) {
-			throw new ValidatorException( $this->name, Error::SCA_EQUAL, ['list' => $values ]);
+			throw new ValidatorException( $this->name, Error::MIX_EQUAL, ['list' => $values ]);
 		}
 
 		return $this;
@@ -72,7 +72,7 @@ class StringValidator extends ScalarValidator
 	 */
 	function line( ?int $min, ?int $max )
 	{
-		if(( $min !== null and $min < 1 ) or ( $max !== null and $max < 1 )) {
+		if(( $min !== null and $min < 0 ) or ( $max !== null and $max < 1 )) {
 			throw new InvalidArgumentException("Enter a positive non-zero count limit.");
 		} elseif( $min === null and $max === null ) {
 			throw new InvalidArgumentException("Enter at least one value.");
