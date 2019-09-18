@@ -2,9 +2,7 @@
 
 namespace Kucbel\Scalar\Schema;
 
-use DateTimeInterface;
 use Error;
-use Nette\InvalidArgumentException;
 use Nette\PhpGenerator\Closure;
 use Nette\SmartObject;
 use Nette\Utils\Strings;
@@ -25,12 +23,6 @@ class TypeGenerator
 
 		foreach( $rules as $parts ) {
 			$method = array_shift( $parts );
-
-			foreach( $parts as $part ) {
-				if( $part instanceof DateTimeInterface ) {
-					throw new InvalidArgumentException("Unable to compress datetime object.");
-				}
-			}
 
 			$closure->addBody("->{$method}(...?)", [ $parts ]);
 		}

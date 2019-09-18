@@ -2,6 +2,8 @@
 
 namespace Kucbel\Scalar\DI;
 
+use AppendIterator;
+use ArrayIterator;
 use Kucbel\Scalar\Filter;
 use Kucbel\Scalar\Input;
 use Kucbel\Scalar\Input\InputInterface;
@@ -115,7 +117,7 @@ class ScalarExtension extends CompilerExtension
 	 * @throws NeonException
 	 * @throws JsonException
 	 */
-	function loadConfiguration()
+	function loadConfiguration() : void
 	{
 		$config = $this->getParameters();
 		$builder = $this->getContainerBuilder();
@@ -162,7 +164,7 @@ class ScalarExtension extends CompilerExtension
 	/**
 	 * Compile
 	 */
-	function beforeCompile()
+	function beforeCompile() : void
 	{
 		foreach( $this->types ?? [] as $i => $rules ) {
 			$rules = $this->getResolvedType($i, $rules );
@@ -240,7 +242,7 @@ class ScalarExtension extends CompilerExtension
 	/**
 	 * @param InputInterface $input
 	 */
-	function setTypes( InputInterface $input )
+	function setTypes( InputInterface $input ) : void
 	{
 		if( $input->has('types')) {
 			$this->types = null;
@@ -252,7 +254,7 @@ class ScalarExtension extends CompilerExtension
 	/**
 	 * @param InputInterface $input
 	 */
-	function addTypes( InputInterface $input )
+	function addTypes( InputInterface $input ) : void
 	{
 		$types = $input->create('types')
 			->optional()
@@ -272,7 +274,7 @@ class ScalarExtension extends CompilerExtension
 	 * @param string $name
 	 * @param string $alias
 	 */
-	function addType( InputInterface $input, string $name, string $alias = null )
+	function addType( InputInterface $input, string $name, string $alias = null ) : void
 	{
 		$rules = [];
 		$tests = $input->create("types.$name")
@@ -298,6 +300,10 @@ class ScalarExtension extends CompilerExtension
 			$rules[] = $array->fetch();
 		}
 
+		if( $this->hasObject( $rules )) {
+			throw new InvalidStateException("Type '{$name}' contains DateTime object.");
+		}
+
 		$this->types[ $alias ?? $name ] = $rules;
 	}
 
@@ -305,9 +311,29 @@ class ScalarExtension extends CompilerExtension
 	 * @param string $name
 	 * @return bool
 	 */
-	function hasType( string $name )
+	function hasType( string $name ) : bool
 	{
 		return isset( $this->types[ $name ] );
+	}
+
+	/**
+	 * @param array $rules
+	 * @return bool
+	 */
+	protected function hasObject( array $rules ) : bool
+	{
+		$queue = new AppendIterator;
+		$queue->append( new ArrayIterator( $rules ));
+
+		foreach( $queue as $item ) {
+			if( is_array( $item )) {
+				$queue->append( new ArrayIterator( $item ));
+			} elseif( is_object( $item )) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**
@@ -357,7 +383,7 @@ class ScalarExtension extends CompilerExtension
 	/**
 	 * @param InputInterface $input
 	 */
-	function setSchemas( InputInterface $input )
+	function setSchemas( InputInterface $input ) : void
 	{
 		if( $input->has('schemas')) {
 			$this->schemas = null;
@@ -369,7 +395,7 @@ class ScalarExtension extends CompilerExtension
 	/**
 	 * @param InputInterface $input
 	 */
-	function addSchemas( InputInterface $input )
+	function addSchemas( InputInterface $input ) : void
 	{
 		$schemas = $input->create('schemas')
 			->optional()
@@ -389,7 +415,7 @@ class ScalarExtension extends CompilerExtension
 	 * @param string $name
 	 * @param string $alias
 	 */
-	function addSchema( InputInterface $input, string $name, string $alias = null )
+	function addSchema( InputInterface $input, string $name, string $alias = null ) : void
 	{
 		$types = $input->create("schemas.$name")
 			->optional()
@@ -463,7 +489,7 @@ class ScalarExtension extends CompilerExtension
 	/**
 	 * @param InputInterface $input
 	 */
-	function setInputs( InputInterface $input )
+	function setInputs( InputInterface $input ) : void
 	{
 		if( $input->has('inputs')) {
 			$this->inputs = null;
@@ -475,7 +501,7 @@ class ScalarExtension extends CompilerExtension
 	/**
 	 * @param InputInterface $input
 	 */
-	function addInputs( InputInterface $input )
+	function addInputs( InputInterface $input ) : void
 	{
 		$classes = $input->create('inputs')
 			->optional()
@@ -506,7 +532,7 @@ class ScalarExtension extends CompilerExtension
 	 * @throws NeonException
 	 * @throws JsonException
 	 */
-	function addFiles( InputInterface $input )
+	function addFiles( InputInterface $input ) : void
 	{
 		$files = $input->create('files')
 			->optional()
@@ -528,7 +554,7 @@ class ScalarExtension extends CompilerExtension
 	/**
 	 * @param InputInterface $input
 	 */
-	function setFilters( InputInterface $input )
+	function setFilters( InputInterface $input ) : void
 	{
 		if( $input->has('filters')) {
 			$this->filters = null;
@@ -540,7 +566,7 @@ class ScalarExtension extends CompilerExtension
 	/**
 	 * @param InputInterface $input
 	 */
-	function addFilters( InputInterface $input )
+	function addFilters( InputInterface $input ) : void
 	{
 		$filters = $input->create('filters')
 			->optional()
@@ -570,7 +596,7 @@ class ScalarExtension extends CompilerExtension
 	 * @throws NeonException
 	 * @throws JsonException
 	 */
-	static function addExtension( CompilerExtension $extension, array $files )
+	static function addExtension( CompilerExtension $extension, array $files ) : void
 	{
 		if( !$extension->compiler ) {
 			throw new InvalidStateException("Extension isn't attached.");
