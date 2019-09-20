@@ -3,6 +3,7 @@
 namespace Kucbel\Scalar;
 
 use DateTimeInterface;
+use Kucbel\Scalar\Validator\Validator;
 use Nette\InvalidArgumentException;
 use Nette\StaticClass;
 use Nette\Utils\Strings;
@@ -65,13 +66,14 @@ class Error
 					case false:									return 'Parameter $name must be equal to $list.';
 				}
 
-			case Error::MIX_VALUE:
-				switch( true ) {
-					case $values['min'] === $values['max']:		return 'Parameter $name must be equal to $min.';
-					case $values['max'] === null:				return 'Parameter $name must be equal to or greater than $min.';
-					case $values['min'] === null:				return 'Parameter $name must be equal to or less than $max.';
-					default:									return 'Parameter $name must be between $min and $max.';
-				}
+			case Error::MIX_VALUE:															$text = 'Parameter $name must be';
+				if( $values['min'] !== null and ~ $values['opt'] & Validator::EXCL_MIN ) {	$text .= ' equal or'; }
+				if( $values['min'] !== null ) {												$text .= ' greater than $min'; }
+				if( $values['min'] !== null and $values['max'] !== null ) {					$text .= ' and'; }
+				if( $values['max'] !== null and ~ $values['opt'] & Validator::EXCL_MAX ) {	$text .= ' equal or'; }
+				if( $values['max'] !== null ) {												$text .= ' less than $max'; }
+
+				return "{$text}.";
 
 			case Error::MIX_MATCH:								return 'Parameter $name must match $exp pattern.';
 

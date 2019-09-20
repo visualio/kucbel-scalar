@@ -44,18 +44,21 @@ class IntegerValidator extends NumericValidator
 	/**
 	 * @param int|null $min
 	 * @param int|null $max
+	 * @param int $opt
 	 * @return $this
 	 */
-	function value( ?int $min, ?int $max )
+	function value( ?int $min, ?int $max, int $opt = 0 )
 	{
 		if( $min === null and $max === null ) {
 			throw new InvalidArgumentException("Enter at least one value.");
 		}
 
 		$val = $this->value;
+		$nin = $opt & self::EXCL_MIN;
+		$nax = $opt & self::EXCL_MAX;
 
-		if(( $min !== null and $val < $min ) or ( $max !== null and $val > $max )) {
-			throw new ValidatorException( $this->name, Error::MIX_VALUE, ['min' => $min, 'max' => $max ]);
+		if(( $min !== null and ( $val <=> $min ) <= ( $nin ? 0 : -1 )) or ( $max !== null and ( $val <=> $max ) >= ( $nax ? 0 : 1 ))) {
+			throw new ValidatorException( $this->name, Error::MIX_VALUE, ['min' => $min, 'max' => $max, 'opt' => $opt ]);
 		}
 
 		return $this;

@@ -8,6 +8,11 @@ abstract class Validator implements ValidatorInterface
 {
 	use SmartObject;
 
+	const
+		EXCL_MIN	= 0b1,
+		EXCL_MAX	= 0b10,
+		EXCL_ALL	= 0b11;
+
 	/**
 	 * @var string
 	 */
