@@ -11,7 +11,7 @@ abstract class Validator implements ValidatorInterface
 	const
 		EXCL_MIN	= 0b1,
 		EXCL_MAX	= 0b10,
-		EXCL_ALL	= 0b11;
+		EXCL_BOTH	= 0b11;
 
 	/**
 	 * @var string
