@@ -7,8 +7,8 @@ use Kucbel\Scalar\Validator\MixedValidator;
 interface TypeInterface
 {
 	/**
-	 * @param MixedValidator $validator
+	 * @param MixedValidator $value
 	 * @return mixed
 	 */
-	function fetch( MixedValidator $validator );
+	function fetch( MixedValidator $value );
 }

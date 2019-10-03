@@ -25,11 +25,11 @@ class CallType implements TypeInterface
 	}
 
 	/**
-	 * @param MixedValidator $column
+	 * @param MixedValidator $value
 	 * @return mixed
 	 */
-	function fetch( MixedValidator $column )
+	function fetch( MixedValidator $value )
 	{
-		return ( $this->callback )( $column );
+		return ( $this->callback )( $value );
 	}
 }
