@@ -134,7 +134,7 @@ class ScalarExtension extends CompilerExtension
 			->setType( Filter\FilterFactory::class )
 			->setArguments([ &$this->argues['filters'] ]);
 
-		$builder->addDefinition( $this->prefix('input.factory'))
+		$builder->addDefinition( $input = $this->prefix('input.factory'))
 			->setType( Input\InputFactory::class )
 			->setArguments(["@$filter", &$this->inputs, null, null ]);
 
@@ -148,7 +148,7 @@ class ScalarExtension extends CompilerExtension
 
 		$builder->addDefinition( $this->prefix('assert.factory'))
 			->setType( Schema\AssertFactory::class )
-			->setArguments(["@$type"]);
+			->setArguments(["@$input", "@$type"]);
 
 		$input = new Input\ExtensionInput( $this );
 
