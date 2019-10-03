@@ -202,26 +202,19 @@ class ScalarExtension extends CompilerExtension
 
 		$input = new Input\ExtensionInput( $this );
 
-		$flags = $input->create('trim')
+		$array = $input->create('trim')
 			->optional(['string', 'array', 'empty'])
 			->array()
 			->string()
 			->unique()
-			->equal( ...$modes )
-			->fetch();
+			->equal( ...$modes );
 
-		if( in_array('break', $flags )) {
-			$input->create('trim')
-				->array()
-				->string()
-				->exist('string', 'space');
-		}
+		$flags = $array->fetch();
 
-		if( in_array('space', $flags )) {
-			$input->create('trim')
-				->array()
-				->string()
-				->exist('string');
+		if( in_array('break', $flags, true )) {
+			$array->exist('string', 'space');
+		} elseif( in_array('space', $flags, true )) {
+			$array->exist('string');
 		}
 
 		$param['trim'] = 0;
