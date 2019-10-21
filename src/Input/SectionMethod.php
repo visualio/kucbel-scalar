@@ -16,7 +16,7 @@ trait SectionMethod
 	function section( ?string $section ) : self
 	{
 		$that = clone $this;
-		$that->section = self::suffix( $section );
+		$that->section = Input::suffix( $section );
 
 		return $that;
 	}
