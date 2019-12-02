@@ -65,6 +65,23 @@ class IntegerValidator extends NumericValidator
 	}
 
 	/**
+	 * @param int $div
+	 * @return $this
+	 */
+	function modulo( int $div )
+	{
+		if( $div <= 0 ) {
+			throw new InvalidArgumentException("Enter a positive non-zero divisor.");
+		}
+
+		if( abs( $this->value ) % $div ) {
+			throw new ValidatorException( $this->name, Error::NUM_MODULO, ['div' => $div ]);
+		}
+
+		return $this;
+	}
+
+	/**
 	 * @param int|int[] $digit
 	 * @return $this
 	 */

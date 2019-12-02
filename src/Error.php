@@ -29,6 +29,7 @@ class Error
 
 		NUM_DIGIT		= 41,
 		NUM_POINT		= 42,
+		NUM_MODULO		= 43,
 
 		STR_CHAR		= 61,
 		STR_LINE		= 62,
@@ -92,6 +93,8 @@ class Error
 					case $values['min'] === null:				return 'Parameter $name must have at most $max decimal digits.';
 					default:									return 'Parameter $name must have between $min and $max decimal digits.';
 				}
+
+			case Error::NUM_MODULO:								return 'Parameter $name must be divisible by $div.';
 
 			case Error::STR_CHAR:
 				switch( true ) {

@@ -77,6 +77,19 @@ class IntegerIterator extends NumericIterator
 	}
 
 	/**
+	 * @param int $div
+	 * @return $this
+	 */
+	function modulo( int $div )
+	{
+		foreach( $this->list as $item ) {
+			$item->modulo( $div );
+		}
+
+		return $this;
+	}
+
+	/**
 	 * @param int|int[] $digit
 	 * @return $this
 	 */

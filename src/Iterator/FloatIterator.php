@@ -91,6 +91,19 @@ class FloatIterator extends NumericIterator
 	}
 
 	/**
+	 * @param float $div
+	 * @return $this
+	 */
+	function modulo( float $div )
+	{
+		foreach( $this->list as $item ) {
+			$item->modulo( $div );
+		}
+
+		return $this;
+	}
+
+	/**
 	 * @param int|int[] $digit
 	 * @param int|int[] $point
 	 * @return $this
