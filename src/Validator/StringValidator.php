@@ -177,17 +177,13 @@ class StringValidator extends ScalarValidator
 	 */
 	protected function path( bool $real ) : bool
 	{
-		if( $real ) {
-			$value = realpath( $this->value );
+		$value = $this->value;
 
-			if( $value === false ) {
-				return false;
-			}
-
-			$this->value = $value;
+		if( $real and ( $value = realpath( $value )) === false ) {
+			return false;
 		}
 
-		$this->value = str_replace('\\', '/', $this->value );
+		$this->value = str_replace('\\', '/', $value );
 
 		return true;
 	}
