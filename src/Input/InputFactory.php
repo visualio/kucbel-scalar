@@ -22,7 +22,7 @@ class InputFactory
 	protected $factory;
 
 	/**
-	 * @var array
+	 * @var DetectInterface[]
 	 */
 	protected $inputs = [
 		ComponentInput::class,

@@ -31,10 +31,11 @@ class CallFilter implements FilterInterface
 	}
 
 	/**
+	 * @param string $name
 	 * @param mixed $value
 	 * @return mixed
 	 */
-	function clear( $value )
+	function clear( string $name, $value )
 	{
 		if(( $this->condition )( $value )) {
 			$value = ( $this->callback )( $value );

@@ -32,7 +32,7 @@ class IntegerIterator extends NumericIterator
 	}
 
 	/**
-	 * @param int  ...$values
+	 * @param int ...$values
 	 * @return $this
 	 */
 	function exist( int ...$values )

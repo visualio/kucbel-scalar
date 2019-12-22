@@ -24,17 +24,14 @@ class FilterPool implements FilterInterface
 	}
 
 	/**
+	 * @param string $name
 	 * @param mixed $value
 	 * @return mixed
 	 */
-	function clear( $value )
+	function clear( string $name, $value )
 	{
 		foreach( $this->filters as $filter ) {
-			if( $value === null ) {
-				break;
-			}
-
-			$value = $filter->clear( $value );
+			$value = $filter->clear( $name, $value );
 		}
 
 		return $value;

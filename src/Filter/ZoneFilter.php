@@ -27,10 +27,11 @@ class ZoneFilter implements FilterInterface
 	}
 
 	/**
+	 * @param string $name
 	 * @param mixed $value
 	 * @return mixed
 	 */
-	function clear( $value )
+	function clear( string $name, $value )
 	{
 		if( $value instanceof DateTime or $value instanceof DateTimeImmutable ) {
 			$value = $value->setTimezone( $this->zone );

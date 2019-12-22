@@ -5,7 +5,7 @@ namespace Kucbel\Scalar\Input;
 use Kucbel\Scalar\Validator\MixedValidator;
 use Nette\SmartObject;
 
-class InputAlias implements InputInterface
+class RenameInput implements InputInterface
 {
 	use SmartObject;
 
@@ -20,7 +20,7 @@ class InputAlias implements InputInterface
 	protected $names;
 
 	/**
-	 * InputAlias constructor.
+	 * RenameInput constructor.
 	 *
 	 * @param InputInterface $input
 	 * @param array $names

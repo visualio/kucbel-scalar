@@ -41,10 +41,11 @@ class TrimFilter implements FilterInterface
 	}
 
 	/**
+	 * @param string $name
 	 * @param mixed $value
 	 * @return mixed
 	 */
-	function clear( $value )
+	function clear( string $name, $value )
 	{
 		if( is_array( $value )) {
 			$value = array_map([ $this, 'clear'], $value );

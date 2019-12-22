@@ -32,7 +32,7 @@ class FloatIterator extends NumericIterator
 	}
 
 	/**
-	 * @param float  ...$values
+	 * @param float ...$values
 	 * @return $this
 	 */
 	function exist( float ...$values )

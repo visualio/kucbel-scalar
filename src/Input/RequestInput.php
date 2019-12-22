@@ -48,15 +48,12 @@ class RequestInput extends Input implements DetectInterface
 	 */
 	function get( string $name )
 	{
-		switch( $this->source ) {
-			case self::POST:
-				return $this->request->getPost( $name );
-			case self::QUERY:
-				return $this->request->getQuery( $name );
-			case self::HEADER:
-				return $this->request->getHeader( $name );
-			default:
-				return null;
+		if( $this->source === self::POST ) {
+			return $this->request->getPost( $name );
+		} elseif( $this->source === self::QUERY ) {
+			return $this->request->getQuery( $name );
+		} else {
+			return $this->request->getHeader( $name );
 		}
 	}
 
