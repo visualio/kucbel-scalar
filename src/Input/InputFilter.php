@@ -55,7 +55,7 @@ class InputFilter implements InputInterface
 	 */
 	function get( string $name )
 	{
-		return $this->filter->clear( $this->input->get( $name ));
+		return $this->filter->clear( $name, $this->input->get( $name ));
 	}
 
 	/**
