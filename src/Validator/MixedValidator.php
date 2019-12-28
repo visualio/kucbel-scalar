@@ -32,7 +32,7 @@ class MixedValidator extends Validator
 	 */
 	function clear( FilterInterface $filter )
 	{
-		$this->value = $filter->clear( $this->name, $this->value );
+		$this->value = $filter->clear( $this->value );
 
 		return $this;
 	}

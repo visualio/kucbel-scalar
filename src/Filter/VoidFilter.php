@@ -9,11 +9,10 @@ class VoidFilter implements FilterInterface
 	use SmartObject;
 
 	/**
-	 * @param string $name
 	 * @param mixed $value
 	 * @return mixed
 	 */
-	function clear( string $name, $value )
+	function clear( $value )
 	{
 		return $value;
 	}

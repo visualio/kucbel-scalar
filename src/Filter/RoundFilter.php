@@ -24,11 +24,10 @@ class RoundFilter implements FilterInterface
 	}
 
 	/**
-	 * @param string $name
 	 * @param mixed $value
 	 * @return mixed
 	 */
-	function clear( string $name, $value )
+	function clear( $value )
 	{
 		if( $value and is_float( $value )) {
 			$value = round( $value, $this->digit - floor( log10( abs( $value ))));
