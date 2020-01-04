@@ -48,7 +48,7 @@ class InputFactory
 	 */
 	protected $adapters = [
 		self::POOL		=> InputAdapter::QUERY,
-		self::LIST		=> InputAdapter::QUERY | InputAdapter::MERGE,
+		self::LIST		=> InputAdapter::QUERY,
 	];
 
 	/**
@@ -124,9 +124,7 @@ class InputFactory
 			throw new InputException("No source provided.");
 		}
 
-		$index = 0;
-
-		foreach( $sources as $index => $source ) {
+		foreach( $sources as $i => $source ) {
 			if( is_array( $source ) and array_key_exists( 0, $source )) {
 				$input = $this->wrap( ...$source );
 			} else {
@@ -137,22 +135,14 @@ class InputFactory
 				$input = $this->factory->create( $input );
 			}
 
-			$sources[ $index ] = $input;
+			$sources[ $i ] = $input;
 		}
 
-		if( $index > 0 ) {
-			$input = new InputPool( ...$sources );
-			$input->mode( $this->adapters[ self::POOL ] );
+		$input = new InputPool( ...$sources );
+		$input->mode( $this->adapters[ self::POOL ] );
 
-			if( $this->filters[ self::POOL ] & InputFilter::WRAP ) {
-				$input = $this->factory->create( $input );
-			}
-		} else {
-			$input = $sources[0];
-
-			if( $this->filters[ self::POOL ] & InputFilter::WRAP and ~ $this->filters[ self::POOL ] & InputFilter::EACH ) {
-				$input = $this->factory->create( $input );
-			}
+		if( $this->filters[ self::POOL ] & InputFilter::WRAP ) {
+			$input = $this->factory->create( $input );
 		}
 
 		return $input;
@@ -199,13 +189,11 @@ class InputFactory
 	 */
 	function value( $value, string $name = '???') : MixedValidator
 	{
-		$mixed = new MixedValidator( $name, $value );
-
 		if( $this->filters[ self::VALUE ] & InputFilter::WRAP ) {
-			$mixed->clear( $this->factory->get() );
+			$value = $this->factory->value( $value );
 		}
 
-		return $mixed;
+		return new MixedValidator( $name, $value );
 	}
 
 	/**

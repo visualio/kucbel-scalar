@@ -12,18 +12,12 @@ abstract class InputAdapter implements InputInterface
 	const
 		NONE	= 0,
 		QUERY	= 0b1,
-		CHECK	= 0b10,
-		MERGE	= 0b100;
+		CHECK	= 0b10;
 
 	/**
 	 * @var InputInterface[]
 	 */
 	protected $inputs;
-
-	/**
-	 * @var int
-	 */
-	protected $count;
 
 	/**
 	 * @var int
@@ -42,7 +36,6 @@ abstract class InputAdapter implements InputInterface
 		}
 
 		$this->inputs = $inputs;
-		$this->count = count( $inputs );
 	}
 
 	/**
