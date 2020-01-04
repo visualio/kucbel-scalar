@@ -16,11 +16,6 @@ class FilterFactory
 	protected $filters;
 
 	/**
-	 * @var FilterInterface | null
-	 */
-	protected $default;
-
-	/**
 	 * FilterFactory constructor.
 	 *
 	 * @param FilterInterface[] $filters
@@ -36,33 +31,26 @@ class FilterFactory
 	 */
 	function create( InputInterface $input ) : InputInterface
 	{
-		if( isset( $this->filters[0] )) {
-			return new InputFilter( $input, $this->get() );
+		if( isset( $this->filters[1] )) {
+			return new InputFilter( $input, new FilterPool( ...$this->filters ));
+		} elseif( isset( $this->filters[0] )) {
+			return new InputFilter( $input, $this->filters[0] );
 		} else {
 			return $input;
 		}
 	}
 
 	/**
-	 * @return FilterInterface
+	 * @param mixed $value
+	 * @return mixed
 	 */
-	function get() : FilterInterface
+	function value( $value )
 	{
-		if( isset( $this->filters[1] )) {
-			return new FilterPool( ...$this->filters );
-		} elseif( isset( $this->filters[0] )) {
-			return $this->filters[0];
-		} else {
-			return $this->default ?? $this->default = new VoidFilter;
+		foreach( $this->filters as $filter ) {
+			$value = $filter->clear( $value );
 		}
-	}
 
-	/**
-	 * @return bool
-	 */
-	function has() : bool
-	{
-		return isset( $this->filters[0] );
+		return $value;
 	}
 
 	/**
