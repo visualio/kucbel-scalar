@@ -34,16 +34,68 @@ class SchemaFactory
 	/**
 	 * @param InputInterface $input
 	 * @param string $name
+	 * @param string ...$names
 	 * @return Schema
 	 */
-	function create( InputInterface $input, string $name ) : Schema
+	function create( InputInterface $input, string $name, string ...$names ) : Schema
 	{
-		$schema = $this->schemas[ $name ] ?? null;
+		return new Schema( $this->factory, $input, $this->get( $name, ...$names ));
+	}
 
-		if( $schema === null ) {
-			throw new SchemaException("Schema '$name' doesn't exist.");
+	/**
+	 * @param InputInterface $input
+	 * @param string $name
+	 * @param string ...$names
+	 * @return Schema
+	 */
+	function update( InputInterface $input, string $name, string ...$names ) : Schema
+	{
+		$filter = $this->get( $name, ...$names );
+		$schema = [];
+
+		foreach( $filter as $name => $type ) {
+			if( $input->has( $name )) {
+				$schema[ $name ] = $type;
+			}
 		}
 
 		return new Schema( $this->factory, $input, $schema );
+	}
+
+	/**
+	 * @param string ...$names
+	 * @return array
+	 */
+	protected function get( string ...$names ) : array
+	{
+		$verify = isset( $names[1] );
+
+		$origins =
+		$schemas = [];
+
+		foreach( $names as $name ) {
+			$schema = $this->schemas[ $name ] ?? null;
+
+			if( $schema === null ) {
+				throw new SchemaException("Schema '$name' doesn't exist.");
+			}
+
+			if( $verify ) {
+				foreach( $schema as $each => $type ) {
+					$same = $schemas[ $each ] ?? null;
+
+					if( $same !== null and $same !== $type ) {
+						throw new SchemaException("Schemas '{$origins[ $each ]}' and '$name' aren't compatible.");
+					}
+
+					$origins[ $each ] = $name;
+					$schemas[ $each ] = $type;
+				}
+			} else {
+				$schemas = $schema;
+			}
+		}
+
+		return $schemas;
 	}
 }
