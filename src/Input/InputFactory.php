@@ -10,70 +10,33 @@ class InputFactory
 {
 	use SmartObject;
 
-	const
-		INPUT	= 0b1,
-		VALUE	= 0b10,
-		POOL	= 0b100,
-		LIST	= 0b1000;
-
 	/**
 	 * @var FilterFactory
 	 */
-	protected $factory;
+	protected $filter;
 
 	/**
 	 * @var DetectInterface[]
 	 */
-	protected $inputs = [
-		ComponentInput::class,
-		RequestInput::class,
-		ConsoleInput::class,
-		DocumentInput::class,
-		ArrayInput::class,
-		MixedInput::class,
-	];
-
-	/**
-	 * @var array
-	 */
-	protected $filters = [
-		self::INPUT		=> InputFilter::WRAP,
-		self::VALUE		=> InputFilter::WRAP,
-		self::POOL 		=> InputFilter::WRAP,
-		self::LIST 		=> InputFilter::WRAP,
-	];
-
-	/**
-	 * @var array
-	 */
-	protected $adapters = [
-		self::POOL		=> InputAdapter::QUERY,
-		self::LIST		=> InputAdapter::QUERY,
-	];
+	protected $inputs;
 
 	/**
 	 * InputFactory constructor.
 	 *
-	 * @param FilterFactory $factory
-	 * @param array $inputs
-	 * @param array $filters
-	 * @param array $adapters
+	 * @param FilterFactory $filter
+	 * @param string[] $inputs
 	 */
-	function __construct( FilterFactory $factory, array $inputs = null, array $filters = null, array $adapters = null )
+	function __construct( FilterFactory $filter, array $inputs = null )
 	{
-		$this->factory = $factory;
-
-		if( $inputs ) {
-			$this->inputs = $inputs;
-		}
-
-		if( $filters ) {
-			$this->filters = $filters + $this->filters;
-		}
-
-		if( $adapters ) {
-			$this->adapters = $adapters + $this->adapters;
-		}
+		$this->filter = $filter;
+		$this->inputs = $inputs ?? [
+			ComponentInput::class,
+			RequestInput::class,
+			ConsoleInput::class,
+			DocumentInput::class,
+			ArrayInput::class,
+			MixedInput::class,
+		];
 	}
 
 	/**
@@ -93,9 +56,15 @@ class InputFactory
 			}
 		}
 
-		$type = is_object( $source ) ? get_class( $source ) : strtolower( gettype( $source ));
+		if( is_object( $source )) {
+			$type = get_class( $source );
+			$name = 'class';
+		} else {
+			$type = strtolower( gettype( $source ));
+			$name = 'type';
+		}
 
-		throw new InputException("No input registered for '$type'.");
+		throw new InputException("No input registered for '$type' {$name}.");
 	}
 
 	/**
@@ -107,79 +76,7 @@ class InputFactory
 	{
 		$input = $this->wrap( $source, ...$options );
 
-		if( $this->filters[ self::INPUT ] & InputFilter::WRAP ) {
-			$input = $this->factory->create( $input );
-		}
-
-		return $input;
-	}
-
-	/**
-	 * @param mixed ...$sources
-	 * @return InputInterface
-	 */
-	function pool( ...$sources ) : InputInterface
-	{
-		if( !$sources ) {
-			throw new InputException("No source provided.");
-		}
-
-		foreach( $sources as $i => $source ) {
-			if( is_array( $source ) and array_key_exists( 0, $source )) {
-				$input = $this->wrap( ...$source );
-			} else {
-				$input = $this->wrap( $source );
-			}
-
-			if( $this->filters[ self::POOL ] & InputFilter::EACH ) {
-				$input = $this->factory->create( $input );
-			}
-
-			$sources[ $i ] = $input;
-		}
-
-		$input = new InputPool( ...$sources );
-		$input->mode( $this->adapters[ self::POOL ] );
-
-		if( $this->filters[ self::POOL ] & InputFilter::WRAP ) {
-			$input = $this->factory->create( $input );
-		}
-
-		return $input;
-	}
-
-	/**
-	 * @param mixed ...$sources
-	 * @return InputInterface
-	 */
-	function list( ...$sources ) : InputInterface
-	{
-		if( !$sources ) {
-			throw new InputException("No source provided.");
-		}
-
-		foreach( $sources as $index => $source ) {
-			if( is_array( $source ) and array_key_exists( 0,$source )) {
-				$input = $this->wrap( ...$source );
-			} else {
-				$input = $this->wrap( $source );
-			}
-
-			if( $this->filters[ self::LIST ] & InputFilter::EACH ) {
-				$input = $this->factory->create( $input );
-			}
-
-			$sources[ $index ] = $input;
-		}
-
-		$input = new InputList( ...$sources );
-		$input->mode( $this->adapters[ self::LIST ] );
-
-		if( $this->filters[ self::LIST ] & InputFilter::WRAP ) {
-			$input = $this->factory->create( $input );
-		}
-
-		return $input;
+		return $this->filter->input( $input );
 	}
 
 	/**
@@ -189,18 +86,40 @@ class InputFactory
 	 */
 	function value( $value, string $name = '???') : MixedValidator
 	{
-		if( $this->filters[ self::VALUE ] & InputFilter::WRAP ) {
-			$value = $this->factory->value( $value );
-		}
+		$value = $this->filter->value( $value );
 
 		return new MixedValidator( $name, $value );
 	}
 
 	/**
-	 * @return InputBuilder
+	 * @return InputFactory
 	 */
-	function setup() : InputBuilder
+	function withoutFilter() : self
 	{
-		return new InputBuilder( $this->factory->setup(), $this->inputs, $this->filters, $this->adapters );
+		$that = clone $this;
+		$that->filter = new FilterFactory;
+
+		return $that;
+	}
+
+	/**
+	 * @param FilterFactory $filter
+	 * @return InputFactory
+	 */
+	function withFilter( FilterFactory $filter ) : self
+	{
+		$that = clone $this;
+		$that->filter = $filter;
+
+		return $that;
+	}
+
+	/**
+	 * @param callable $callback
+	 * @return InputFactory
+	 */
+	function withFilterSetup( callable $callback ) : self
+	{
+		return $this->withFilter( $callback( $this->filter ));
 	}
 }

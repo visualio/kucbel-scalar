@@ -2,10 +2,9 @@
 
 namespace Kucbel\Scalar\Input;
 
-use Nette\InvalidArgumentException;
 use Nette\SmartObject;
 
-abstract class InputAdapter implements InputInterface
+abstract class Adapter implements InputInterface
 {
 	use SmartObject;
 
@@ -27,15 +26,16 @@ abstract class InputAdapter implements InputInterface
 	/**
 	 * InputAdapter constructor.
 	 *
+	 * @param InputInterface $input
 	 * @param InputInterface ...$inputs
 	 */
-	function __construct( InputInterface ...$inputs )
+	function __construct( InputInterface $input, InputInterface ...$inputs )
 	{
-		if( !$inputs ) {
-			throw new InvalidArgumentException('No inputs provided.');
-		}
+		$this->inputs[] = $input;
 
-		$this->inputs = $inputs;
+		foreach( $inputs as $input ) {
+			$this->inputs[] = $input;
+		}
 	}
 
 	/**

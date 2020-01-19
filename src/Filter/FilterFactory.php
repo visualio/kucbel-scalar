@@ -4,6 +4,8 @@ namespace Kucbel\Scalar\Filter;
 
 use Kucbel\Scalar\Input\InputFilter;
 use Kucbel\Scalar\Input\InputInterface;
+use Kucbel\Scalar\Output\OutputFilter;
+use Kucbel\Scalar\Output\OutputInterface;
 use Nette\SmartObject;
 
 class FilterFactory
@@ -16,27 +18,67 @@ class FilterFactory
 	protected $filters;
 
 	/**
+	 * @var FilterInterface | null
+	 */
+	protected $pool;
+
+	/**
 	 * FilterFactory constructor.
 	 *
-	 * @param FilterInterface[] $filters
+	 * @param FilterInterface ...$filters
 	 */
-	function __construct( array $filters = null )
+	function __construct( FilterInterface ...$filters )
 	{
-		$this->filters = $filters ?? [];
+		$this->filters = $filters;
+	}
+
+	/**
+	 * FilterFactory cloner.
+	 */
+	function __clone()
+	{
+		$this->pool = null;
+	}
+
+	/**
+	 * @return FilterInterface | null
+	 */
+	protected function get() : ?FilterInterface
+	{
+		if( $this->pool ) {
+			return $this->pool;
+		} elseif( isset( $this->filters[1] )) {
+			return $this->pool = new FilterPool( ...$this->filters );
+		} elseif( isset( $this->filters[0] )) {
+			return $this->pool = $this->filters[0];
+		} else {
+			return null;
+		}
 	}
 
 	/**
 	 * @param InputInterface $input
 	 * @return InputInterface
 	 */
-	function create( InputInterface $input ) : InputInterface
+	function input( InputInterface $input ) : InputInterface
 	{
-		if( isset( $this->filters[1] )) {
-			return new InputFilter( $input, new FilterPool( ...$this->filters ));
-		} elseif( isset( $this->filters[0] )) {
-			return new InputFilter( $input, $this->filters[0] );
+		if( $this->filters ) {
+			return new InputFilter( $input, $this->get() );
 		} else {
 			return $input;
+		}
+	}
+
+	/**
+	 * @param OutputInterface $output
+	 * @return OutputInterface
+	 */
+	function output( OutputInterface $output ) : OutputInterface
+	{
+		if( $this->filters ) {
+			return new OutputFilter( $output, $this->get() );
+		} else {
+			return $output;
 		}
 	}
 
@@ -54,10 +96,91 @@ class FilterFactory
 	}
 
 	/**
-	 * @return FilterBuilder
+	 * @param FilterInterface ...$filters
+	 * @return FilterFactory
 	 */
-	function setup() : FilterBuilder
+	function withFirst( FilterInterface ...$filters ) : self
 	{
-		return new FilterBuilder( $this->filters );
+		$that = clone $this;
+		$that->filters = $filters;
+
+		foreach( $this->filters as $filter ) {
+			$that->filters[] = $filter;
+		}
+
+		return $that;
+	}
+
+	/**
+	 * @param FilterInterface ...$filters
+	 * @return FilterFactory
+	 */
+	function withLast( FilterInterface ...$filters ) : self
+	{
+		$that = clone $this;
+
+		foreach( $filters as $filter ) {
+			$that->filters[] = $filter;
+		}
+
+		return $that;
+	}
+
+	/**
+	 * @param FilterInterface ...$filters
+	 * @return FilterFactory
+	 */
+	function withOnly( FilterInterface ...$filters ) : self
+	{
+		$that = clone $this;
+		$that->filters = $filters;
+
+		return $that;
+	}
+
+	/**
+	 * @param string $type
+	 * @param string ...$types
+	 * @return FilterFactory
+	 */
+	function withType( string $type, string ...$types ) : self
+	{
+		$types[] = $type;
+		$filters = [];
+
+		foreach( $this->filters as $filter ) {
+			foreach( $types as $type ) {
+				if( $filter instanceof $type ) {
+					$filters[] = $filter;
+
+					continue 2;
+				}
+			}
+		}
+
+		return $this->withOnly( ...$filters );
+	}
+
+	/**
+	 * @param string $type
+	 * @param string ...$types
+	 * @return FilterFactory
+	 */
+	function withoutType( string $type, string ...$types ) : self
+	{
+		$types[] = $type;
+		$filters = [];
+
+		foreach( $this->filters as $filter ) {
+			foreach( $types as $type ) {
+				if( $filter instanceof $type ) {
+					continue 2;
+				}
+			}
+
+			$filters[] = $filter;
+		}
+
+		return $this->withOnly( ...$filters );
 	}
 }

@@ -69,18 +69,18 @@ class TypeFactory
 	 */
 	protected function create( string $name ) : TypeInterface
 	{
-		$code = $this->tests[ $name ] ?? null;
+		$test = $this->tests[ $name ] ?? null;
 
-		if( $code === null ) {
+		if( $test === null ) {
 			throw new SchemaException("Type '$name' doesn't exist.");
 		}
 
 		try {
-			$test = eval( $code );
+			$call = eval( $test );
 		} catch( Throwable $ex ) {
 			throw new SchemaException("Type '$name' didn't compile.", null, $ex );
 		}
 
-		return new CallType( $test );
+		return new CallType( $call );
 	}
 }

@@ -4,7 +4,7 @@ namespace Kucbel\Scalar\Input;
 
 use Kucbel\Scalar\Validator\MixedValidator;
 
-class InputList extends InputAdapter
+class InputList extends Adapter
 {
 	/**
 	 * @param string $name

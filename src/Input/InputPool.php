@@ -5,7 +5,7 @@ namespace Kucbel\Scalar\Input;
 use Kucbel\Scalar\Validator\MixedValidator;
 use Nette\InvalidStateException;
 
-class InputPool extends InputAdapter
+class InputPool extends Adapter
 {
 	/**
 	 * @var int
@@ -15,13 +15,14 @@ class InputPool extends InputAdapter
 	/**
 	 * InputPool constructor.
 	 *
+	 * @param InputInterface $input
 	 * @param InputInterface ...$inputs
 	 */
-	public function __construct( InputInterface ...$inputs )
+	public function __construct( InputInterface $input, InputInterface ...$inputs )
 	{
-		parent::__construct( ...$inputs );
+		parent::__construct( $input, ...$inputs );
 
-		$this->final = end( $inputs ) ? key( $inputs ) : null;
+		$this->final = count( $inputs );
 	}
 
 	/**
@@ -55,10 +56,8 @@ class InputPool extends InputAdapter
 	 */
 	function get( string $name )
 	{
-		foreach( $this->inputs as $index => $input ) {
-			if( $this->final === $index ) {
-				return $input->get( $name );
-			} elseif( $this->mode & self::CHECK ) {
+		foreach( $this->inputs as $input ) {
+			if( $this->mode & self::CHECK ) {
 				if(( $value = $input->get( $name )) !== null ) {
 					return $value;
 				}
@@ -71,6 +70,6 @@ class InputPool extends InputAdapter
 			}
 		}
 
-		throw new InvalidStateException;
+		return null;
 	}
 }

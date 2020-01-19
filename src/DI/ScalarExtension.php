@@ -11,9 +11,10 @@ use Kucbel\Scalar\Iterator;
 use Kucbel\Scalar\Schema;
 use Kucbel\Scalar\Validator;
 use Nette\DI\CompilerExtension;
+use Nette\DI\Definitions\ServiceDefinition;
 use Nette\InvalidStateException;
 use Nette\Neon\Exception as NeonException;
-use Nette\PhpGenerator\ClassType;
+use Nette\PhpGenerator\PhpLiteral;
 use Nette\Utils\JsonException;
 use ReflectionClass;
 
@@ -28,6 +29,11 @@ class ScalarExtension extends CompilerExtension
 	 * @var Schema\TypeGenerator
 	 */
 	private $generator;
+
+	/**
+	 * @var ServiceDefinition[]
+	 */
+	private $services;
 
 	/**
 	 * @var array
@@ -73,14 +79,6 @@ class ScalarExtension extends CompilerExtension
 		'id|null'		=> [['optional'], ['@id']],
 		'ids'			=> [['array'], ['count', 1, null ], ['@id']],
 		'ids|null'		=> [['optional'], ['@ids']],
-	];
-
-	/**
-	 * @var array
-	 */
-	private $argues = [
-		'types'			=> null,
-		'filters'		=> null,
 	];
 
 	/**
@@ -130,21 +128,19 @@ class ScalarExtension extends CompilerExtension
 			->setType( Filter\RoundFilter::class )
 			->setArguments([ $config['round'] ]);
 
-		$builder->addDefinition( $filter = $this->prefix('filter.factory'))
-			->setType( Filter\FilterFactory::class )
-			->setArguments([ &$this->argues['filters'] ]);
+		$this->services['filter'] = $builder->addDefinition( $filter = $this->prefix('filter.factory'))
+			->setType( Filter\FilterFactory::class );
 
-		$builder->addDefinition( $this->prefix('input.factory'))
+		$this->services['input'] = $builder->addDefinition( $this->prefix('input.factory'))
 			->setType( Input\InputFactory::class )
-			->setArguments(["@$filter", &$this->inputs, null, null ]);
+			->setArguments(["@$filter"]);
 
-		$builder->addDefinition( $type = $this->prefix('type.factory'))
-			->setType( Schema\TypeFactory::class )
-			->setArguments([ &$this->argues['types'] ]);
+		$this->services['type'] = $builder->addDefinition( $type = $this->prefix('type.factory'))
+			->setType( Schema\TypeFactory::class );
 
-		$builder->addDefinition( $this->prefix('schema.factory'))
+		$this->services['schema'] = $builder->addDefinition( $this->prefix('schema.factory'))
 			->setType( Schema\SchemaFactory::class )
-			->setArguments(["@$type", &$this->schemas ]);
+			->setArguments(["@$type"]);
 
 		$builder->addDefinition( $this->prefix('assert.factory'))
 			->setType( Schema\AssertFactory::class )
@@ -166,25 +162,23 @@ class ScalarExtension extends CompilerExtension
 	 */
 	function beforeCompile() : void
 	{
-		foreach( $this->types ?? [] as $i => $rules ) {
-			$rules = $this->getResolvedType($i, $rules );
+		$types =
+		$filters = null;
 
-			$this->argues['types'][ $i ] = $this->generator->compress( ...$rules );
+		foreach( $this->types ?? [] as $name => $rules ) {
+			$rules = $this->getResolvedType($name, $rules );
+
+			$types[ $name ] = $this->generator->compress( ...$rules );
 		}
 
-		foreach( $this->filters as $i => $filter ) {
-			$this->argues['filters'][ $i ] = "@{$filter}";
+		foreach( $this->filters ?? [] as $filter ) {
+			$filters[] = "@$filter";
 		}
-	}
 
-	/**
-	 * @param ClassType $class
-	 */
-	function afterCompile( ClassType $class )
-	{
-		if( array_diff_key( $this->types, $this->argues['types'] ) or array_diff_key( $this->filters, $this->argues['filters'] )) {
-			throw new InvalidStateException("Configuration was modified after extension compilation.");
-		}
+		$this->services['filter']->setArguments( $filters ?? [ new PhpLiteral('') ]);
+		$this->services['input']->setArgument( 1, $this->inputs );
+		$this->services['type']->setArgument( 0, $types );
+		$this->services['schema']->setArgument( 1, $this->schemas );
 	}
 
 	/**
