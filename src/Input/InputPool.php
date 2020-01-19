@@ -5,7 +5,7 @@ namespace Kucbel\Scalar\Input;
 use Kucbel\Scalar\Validator\MixedValidator;
 use Nette\InvalidStateException;
 
-class InputPool extends Adapter
+class InputPool extends InputAdapter
 {
 	/**
 	 * @var int

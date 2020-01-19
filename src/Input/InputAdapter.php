@@ -4,7 +4,7 @@ namespace Kucbel\Scalar\Input;
 
 use Nette\SmartObject;
 
-abstract class Adapter implements InputInterface
+abstract class InputAdapter implements InputInterface
 {
 	use SmartObject;
 
