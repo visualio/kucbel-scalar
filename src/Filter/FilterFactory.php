@@ -20,7 +20,7 @@ class FilterFactory
 	/**
 	 * @var FilterInterface | null
 	 */
-	protected $pool;
+	protected $filter;
 
 	/**
 	 * FilterFactory constructor.
@@ -37,32 +37,33 @@ class FilterFactory
 	 */
 	function __clone()
 	{
-		$this->pool = null;
+		$this->filter = null;
 	}
 
 	/**
-	 * @return FilterInterface | null
+	 * @return FilterInterface
 	 */
-	protected function get() : ?FilterInterface
+	protected function get() : FilterInterface
 	{
-		if( $this->pool ) {
-			return $this->pool;
+		if( $this->filter ) {
+			return $this->filter;
 		} elseif( isset( $this->filters[1] )) {
-			return $this->pool = new FilterPool( ...$this->filters );
+			return $this->filter = new FilterPool( ...$this->filters );
 		} elseif( isset( $this->filters[0] )) {
-			return $this->pool = $this->filters[0];
+			return $this->filter = $this->filters[0];
 		} else {
-			return null;
+			return $this->filter = new VoidFilter;
 		}
 	}
 
 	/**
 	 * @param InputInterface $input
+	 * @param bool $wrap
 	 * @return InputInterface
 	 */
-	function input( InputInterface $input ) : InputInterface
+	function input( InputInterface $input, bool $wrap = false ) : InputInterface
 	{
-		if( $this->filters ) {
+		if( $this->filters or $wrap ) {
 			return new InputFilter( $input, $this->get() );
 		} else {
 			return $input;
