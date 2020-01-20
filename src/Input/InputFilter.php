@@ -10,10 +10,6 @@ class InputFilter implements InputInterface
 {
 	use SmartObject;
 
-	const
-		QUERY	= 0b1,
-		CHECK	= 0b10;
-
 	/**
 	 * @var InputInterface
 	 */
@@ -23,11 +19,6 @@ class InputFilter implements InputInterface
 	 * @var FilterInterface
 	 */
 	protected $filter;
-
-	/**
-	 * @var int
-	 */
-	protected $mode = self::QUERY;
 
 	/**
 	 * InputFilter constructor.
@@ -68,21 +59,6 @@ class InputFilter implements InputInterface
 	 */
 	function has( string $name ) : bool
 	{
-		if( $this->mode & self::CHECK ) {
-			return $this->filter->clear( $this->input->get( $name )) !== null;
-		} else {
-			return $this->input->has( $name );
-		}
-	}
-
-	/**
-	 * @param int $mode
-	 * @return $this
-	 */
-	function mode( int $mode )
-	{
-		$this->mode = $mode;
-
-		return $this;
+		return $this->input->has( $name );
 	}
 }

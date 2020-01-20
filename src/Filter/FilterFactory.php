@@ -58,12 +58,11 @@ class FilterFactory
 
 	/**
 	 * @param InputInterface $input
-	 * @param bool $wrap
 	 * @return InputInterface
 	 */
-	function input( InputInterface $input, bool $wrap = false ) : InputInterface
+	function input( InputInterface $input ) : InputInterface
 	{
-		if( $this->filters or $wrap ) {
+		if( $this->filters ) {
 			return new InputFilter( $input, $this->get() );
 		} else {
 			return $input;
