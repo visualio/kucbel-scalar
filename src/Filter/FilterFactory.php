@@ -6,6 +6,7 @@ use Kucbel\Scalar\Input\InputFilter;
 use Kucbel\Scalar\Input\InputInterface;
 use Kucbel\Scalar\Output\OutputFilter;
 use Kucbel\Scalar\Output\OutputInterface;
+use Nette\InvalidStateException;
 use Nette\SmartObject;
 
 class FilterFactory
@@ -52,7 +53,7 @@ class FilterFactory
 		} elseif( isset( $this->filters[0] )) {
 			return $this->filter = $this->filters[0];
 		} else {
-			return $this->filter = new VoidFilter;
+			throw new InvalidStateException;
 		}
 	}
 
