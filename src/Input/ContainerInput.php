@@ -22,8 +22,8 @@ class ContainerInput extends StrictInput
 	 */
 	function __construct( ContainerBuilder $container, string $section = null )
 	{
-		if( !self::$ignore ) {
-			array_push( self::$ignore, 'appDir', 'wwwDir', 'debugMode', 'productionMode', 'consoleMode');
+		if( !in_array('appDir', self::$ignore, true )) {
+			array_push( self::$ignore, 'appDir', 'wwwDir', 'tempDir', 'vendorDir', 'debugMode', 'productionMode', 'consoleMode');
 		}
 
 		$this->container = $container;
