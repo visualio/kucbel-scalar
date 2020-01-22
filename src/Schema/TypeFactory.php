@@ -31,18 +31,23 @@ class TypeFactory
 
 	/**
 	 * @param string $name
-	 * @param TypeInterface $type
-	 * @return $this
+	 * @return TypeInterface
 	 */
-	function add( string $name, TypeInterface $type )
+	protected function create( string $name ) : TypeInterface
 	{
-		if( $this->has( $name )) {
-			throw new SchemaException("Type '$name' already exists.");
+		$test = $this->tests[ $name ] ?? null;
+
+		if( $test === null ) {
+			throw new SchemaException("Type '$name' doesn't exist.");
 		}
 
-		$this->types[ $name ] = $type;
+		try {
+			$call = eval( $test );
+		} catch( Throwable $ex ) {
+			throw new SchemaException("Type '$name' didn't compile.", null, $ex );
+		}
 
-		return $this;
+		return new CallType( $call );
 	}
 
 	/**
@@ -65,22 +70,17 @@ class TypeFactory
 
 	/**
 	 * @param string $name
-	 * @return TypeInterface
+	 * @param TypeInterface $type
+	 * @return $this
 	 */
-	protected function create( string $name ) : TypeInterface
+	function set( string $name, TypeInterface $type )
 	{
-		$test = $this->tests[ $name ] ?? null;
-
-		if( $test === null ) {
-			throw new SchemaException("Type '$name' doesn't exist.");
+		if( $this->has( $name )) {
+			throw new SchemaException("Type '$name' already exists.");
 		}
 
-		try {
-			$call = eval( $test );
-		} catch( Throwable $ex ) {
-			throw new SchemaException("Type '$name' didn't compile.", null, $ex );
-		}
+		$this->types[ $name ] = $type;
 
-		return new CallType( $call );
+		return $this;
 	}
 }
