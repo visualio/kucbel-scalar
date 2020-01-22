@@ -14,6 +14,17 @@ use Traversable;
 
 class MixedValidator extends Validator
 {
+	const
+		NULL	= 1,
+		BOOL	= 2,
+		INT		= 3,
+		FLO		= 4,
+		STR		= 5,
+		DATE	= 6,
+		OBJ		= 7,
+		ARR		= 8,
+		POO		= 9;
+
 	/**
 	 * MixedValidator constructor.
 	 *
@@ -63,16 +74,16 @@ class MixedValidator extends Validator
 		$type = self::detect( $value );
 
 		if( $value === 1 or $value === 1. or $value === 0. or $value === 0 ) {
-			$type = 'bool';
+			$type = self::BOOL;
 			$value = (bool) $value;
-		} elseif( $type === 'str' and $match = Strings::match( $value, '~^(true|on|yes|y|1)$|^(false|off|no|n|0)$~i')) {
-			$type = 'bool';
+		} elseif( $type === self::STR and $match = Strings::match( $value, '~^(true|on|yes|y|1)$|^(false|off|no|n|0)$~i')) {
+			$type = self::BOOL;
 			$value = (bool) $match[1];
 		}
 
-		if( $type === 'null') {
+		if( $type === self::NULL ) {
 			throw new ValidatorException( $this->name, Error::TYPE_NULL );
-		} elseif( $type !== 'bool') {
+		} elseif( $type !== self::BOOL ) {
 			throw new ValidatorException( $this->name, Error::TYPE_BOOL );
 		}
 
@@ -87,17 +98,17 @@ class MixedValidator extends Validator
 		$value = $this->value;
 		$type = self::detect( $value );
 
-		if( $type === 'str' and $match = Strings::match( $value, '~^[+-]?([.][0-9]+|[0-9]+[.]?[0-9]*)([Ee][+-]?[0-9]{1,2})?$~') and strlen( Strings::replace( $match[1], '~^[0.]+|[0.]+$|[.]~', '')) <= 14 ) {
-			$type = 'dec';
+		if( $type === self::STR and $match = Strings::match( $value, '~^[+-]?([.][0-9]+|[0-9]+[.]?[0-9]*)([Ee][+-]?[0-9]{1,2})?$~') and strlen( Strings::replace( $match[1], '~^[0.]+|[0.]+$|[.]~', '')) <= 14 ) {
+			$type = self::FLO;
 			$value = (float) $value;
-		} elseif( $type === 'date') {
-			$type = 'dec';
+		} elseif( $type === self::DATE ) {
+			$type = self::FLO;
 			$value = (float) $value->format('U');
 		}
 
-		if( $type === 'null') {
+		if( $type === self::NULL ) {
 			throw new ValidatorException( $this->name, Error::TYPE_NULL );
-		} elseif( $type !== 'dec' and $type !== 'int') {
+		} elseif( $type !== self::FLO and $type !== self::INT ) {
 			throw new ValidatorException( $this->name, Error::TYPE_FLOAT );
 		}
 
@@ -112,23 +123,23 @@ class MixedValidator extends Validator
 		$value = $this->value;
 		$type = self::detect( $value );
 
-		if( $type === 'bool') {
-			$type = 'int';
+		if( $type === self::BOOL ) {
+			$type = self::INT;
 			$value = (int) $value;
-		} elseif( $type === 'str' and Strings::match( $value, '~^[+-]?[0-9]+[.]?0*$~') and $value >= PHP_INT_MIN and $value <= PHP_INT_MAX ) {
-			$type = 'int';
+		} elseif( $type === self::STR and Strings::match( $value, '~^[+-]?[0-9]+[.]?0*$~') and $value >= PHP_INT_MIN and $value <= PHP_INT_MAX ) {
+			$type = self::INT;
 			$value = (int) $value;
-		} elseif( $type === 'dec' and $value === floor( $value ) and $value >= PHP_INT_MIN and $value <= PHP_INT_MAX ) {
-			$type = 'int';
+		} elseif( $type === self::FLO and $value === floor( $value ) and $value >= PHP_INT_MIN and $value <= PHP_INT_MAX ) {
+			$type = self::INT;
 			$value = (int) $value;
-		} elseif( $type === 'date' and ( $stamp = $value->format('U')) <= PHP_INT_MAX ) {
-			$type = 'int';
+		} elseif( $type === self::DATE and ( $stamp = $value->format('U')) <= PHP_INT_MAX ) {
+			$type = self::INT;
 			$value = (int) $stamp;
 		}
 
-		if( $type === 'null') {
+		if( $type === self::NULL ) {
 			throw new ValidatorException( $this->name, Error::TYPE_NULL );
-		} elseif( $type !== 'int') {
+		} elseif( $type !== self::INT ) {
 			throw new ValidatorException( $this->name, Error::TYPE_INTEGER );
 		}
 
@@ -143,14 +154,14 @@ class MixedValidator extends Validator
 		$value = $this->value;
 		$type = self::detect( $value );
 
-		if( $type === 'date') {
-			$type = 'str';
+		if( $type === self::DATE ) {
+			$type = self::STR;
 			$value = $value->format( DATE_ATOM );
 		}
 
-		if( $type === 'null') {
+		if( $type === self::NULL ) {
 			throw new ValidatorException( $this->name, Error::TYPE_NULL );
-		} elseif( $type !== 'str' and $type !== 'int' and $type !== 'dec') {
+		} elseif( $type !== self::STR and $type !== self::INT and $type !== self::FLO ) {
 			throw new ValidatorException( $this->name, Error::TYPE_STRING );
 		}
 
@@ -165,14 +176,14 @@ class MixedValidator extends Validator
 		$value = $this->value;
 		$type = self::detect( $value );
 
-		if( $type === 'dec' and $value === floor( $value ) and $value >= PHP_INT_MIN and $value <= PHP_INT_MAX ) {
-			$type = 'int';
+		if( $type === self::FLO and $value === floor( $value ) and $value >= PHP_INT_MIN and $value <= PHP_INT_MAX ) {
+			$type = self::INT;
 			$value = (int) $value;
 		}
 
-		if( $type === 'null') {
+		if( $type === self::NULL ) {
 			throw new ValidatorException( $this->name, Error::TYPE_NULL );
-		} elseif( $type !== 'date' and $type !== 'str' and $type !== 'int') {
+		} elseif( $type !== self::DATE and $type !== self::STR and $type !== self::INT ) {
 			throw new ValidatorException( $this->name, Error::TYPE_DATE );
 		}
 
@@ -192,14 +203,14 @@ class MixedValidator extends Validator
 	{
 		$type = self::detect( $this->value );
 
-		if( $type === 'null') {
+		if( $type === self::NULL ) {
 			throw new ValidatorException( $this->name, Error::TYPE_NULL );
 		}
 
 		$hint = strpos( $this->name, '.');
 		$list = [];
 
-		if( $type === 'arr') {
+		if( $type === self::ARR ) {
 			foreach( $this->value as $index => $value ) {
 				$name = $hint ? "{$this->name}.{$index}" : "{$this->name}[{$index}]";
 
@@ -219,9 +230,9 @@ class MixedValidator extends Validator
 	{
 		$type = self::detect( $this->value );
 
-		if( $type === 'null') {
+		if( $type === self::NULL ) {
 			throw new ValidatorException( $this->name, Error::TYPE_NULL );
-		} elseif( $type !== 'arr') {
+		} elseif( $type !== self::ARR ) {
 			throw new ValidatorException( $this->name, Error::TYPE_ARRAY );
 		}
 
@@ -239,36 +250,36 @@ class MixedValidator extends Validator
 
 	/**
 	 * @param mixed $value
-	 * @return string
+	 * @return int
 	 */
-	static function detect( $value ) : string
+	static function detect( $value ) : int
 	{
 		switch( gettype( $value )) {
 			case 'NULL':
-				return 'null';
+				return self::NULL;
 			case 'boolean':
-				return 'bool';
+				return self::BOOL;
 			case 'integer':
-				return 'int';
+				return self::INT;
 			case 'double':
-				return is_finite( $value ) ? 'dec' : 'wtf';
+				return is_finite( $value ) ? self::FLO : self::POO;
 			case 'string':
-				return 'str';
+				return self::STR;
 			case 'array':
-				return 'arr';
+				return self::ARR;
 			case 'resource':
 			case 'unknown type':
-				return 'wtf';
+				return self::POO;
 		}
 
 		switch( true ) {
 			case $value instanceof DateTimeInterface:
-				return 'date';
+				return self::DATE;
 			case $value instanceof Traversable:
 			case $value instanceof stdClass:
-				return 'arr';
+				return self::ARR;
 			default:
-				return 'obj';
+				return self::OBJ;
 		}
 	}
 }
