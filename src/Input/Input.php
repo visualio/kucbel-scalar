@@ -42,11 +42,9 @@ abstract class Input implements InputInterface
 	 */
 	static function suffix( ?string $name ) : ?string
 	{
-		$last = $name[-1] ?? null;
-
-		if( $last === null or $name === '.') {
+		if( $name === null or $name === '' ) {
 			return null;
-		} elseif( $last === '.') {
+		} elseif( $name[-1] === '.') {
 			return $name;
 		} else {
 			return "{$name}.";
