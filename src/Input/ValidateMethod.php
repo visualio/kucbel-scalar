@@ -8,6 +8,11 @@ use Kucbel\Scalar\Validator\ValidatorException;
 trait ValidateMethod
 {
 	/**
+	 * @var object[]
+	 */
+	protected static $parent = [];
+
+	/**
 	 * @var string[]
 	 */
 	protected static $ignore = [];
@@ -21,13 +26,11 @@ trait ValidateMethod
 	 * @param object $parent
 	 * @return ExistValidator
 	 */
-	protected static function validate( $parent )
+	protected static function validate( object $parent )
 	{
 		$hash = spl_object_hash( $parent );
 
-		static $index;
-
-		return $index[ $hash ] ?? $index[ $hash ] = new ExistValidator( ...static::$ignore );
+		return self::$parent[ $hash ] ?? self::$parent[ $hash ] = new ExistValidator( ...self::$ignore );
 	}
 
 	/**
@@ -36,7 +39,7 @@ trait ValidateMethod
 	static function ignore( string ...$names )
 	{
 		foreach( $names as $name ) {
-			static::$ignore[] = $name;
+			self::$ignore[] = $name;
 		}
 	}
 
