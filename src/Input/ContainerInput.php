@@ -7,7 +7,7 @@ use Nette\DI\ContainerBuilder;
 
 class ContainerInput extends StrictInput
 {
-	use SearchMethod, SectionMethod, ValidateMethod;
+	use SearchMethod, SwitchMethod, ValidateMethod;
 
 	/**
 	 * @var ContainerBuilder
