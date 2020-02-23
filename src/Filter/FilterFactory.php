@@ -6,7 +6,6 @@ use Kucbel\Scalar\Input\InputFilter;
 use Kucbel\Scalar\Input\InputInterface;
 use Kucbel\Scalar\Output\OutputFilter;
 use Kucbel\Scalar\Output\OutputInterface;
-use Nette\InvalidStateException;
 use Nette\SmartObject;
 
 class FilterFactory
@@ -21,7 +20,12 @@ class FilterFactory
 	/**
 	 * @var FilterInterface | null
 	 */
-	protected $filter;
+	protected $cache;
+
+	/**
+	 * @var int | null
+	 */
+	protected $mode;
 
 	/**
 	 * FilterFactory constructor.
@@ -38,7 +42,7 @@ class FilterFactory
 	 */
 	function __clone()
 	{
-		$this->filter = null;
+		$this->cache = null;
 	}
 
 	/**
@@ -46,14 +50,14 @@ class FilterFactory
 	 */
 	protected function get() : FilterInterface
 	{
-		if( $this->filter ) {
-			return $this->filter;
+		if( $this->cache ) {
+			return $this->cache;
 		} elseif( isset( $this->filters[1] )) {
-			return $this->filter = new FilterPool( ...$this->filters );
+			return $this->cache = new FilterPool( ...$this->filters );
 		} elseif( isset( $this->filters[0] )) {
-			return $this->filter = $this->filters[0];
+			return $this->cache = $this->filters[0];
 		} else {
-			throw new InvalidStateException;
+			return $this->cache = new VoidFilter;
 		}
 	}
 
@@ -63,8 +67,8 @@ class FilterFactory
 	 */
 	function input( InputInterface $input ) : InputInterface
 	{
-		if( $this->filters ) {
-			return new InputFilter( $input, $this->get() );
+		if( $this->filters or $this->mode ) {
+			return new InputFilter( $input, $this->get(), $this->mode );
 		} else {
 			return $input;
 		}
@@ -135,6 +139,29 @@ class FilterFactory
 	{
 		$that = clone $this;
 		$that->filters = $filters;
+
+		return $that;
+	}
+
+	/**
+	 * @param int $mode
+	 * @return FilterFactory
+	 */
+	function withMode( int $mode ) : self
+	{
+		$that = clone $this;
+		$that->mode = $mode;
+
+		return $that;
+	}
+
+	/**
+	 * @return $this
+	 */
+	function withoutMode() : self
+	{
+		$that = clone $this;
+		$that->mode = null;
 
 		return $that;
 	}
