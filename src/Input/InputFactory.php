@@ -118,7 +118,7 @@ class InputFactory
 	 * @param callable $callback
 	 * @return InputFactory
 	 */
-	function withFilterSetup( callable $callback ) : self
+	function withSetup( callable $callback ) : self
 	{
 		return $this->withFilter( $callback( $this->filter ));
 	}
