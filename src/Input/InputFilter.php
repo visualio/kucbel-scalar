@@ -74,7 +74,7 @@ class InputFilter implements InputInterface
 	function has( string $name ) : bool
 	{
 		if( $this->check ) {
-			return $this->input->get( $name ) !== null;
+			return $this->filter->clear( $this->input->get( $name )) !== null;
 		} else {
 			return $this->input->has( $name );
 		}
