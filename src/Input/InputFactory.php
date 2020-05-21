@@ -58,13 +58,13 @@ class InputFactory
 
 		if( is_object( $source )) {
 			$type = get_class( $source );
-			$name = 'class';
+			$what = 'class';
 		} else {
 			$type = strtolower( gettype( $source ));
-			$name = 'type';
+			$what = 'type';
 		}
 
-		throw new InputException("No input registered for '$type' {$name}.");
+		throw new InputException("No input registered for '{$type}' {$what}.");
 	}
 
 	/**

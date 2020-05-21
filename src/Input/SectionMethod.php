@@ -2,7 +2,7 @@
 
 namespace Kucbel\Scalar\Input;
 
-trait SwitchMethod
+trait SectionMethod
 {
 	/**
 	 * @var string | null
@@ -13,7 +13,7 @@ trait SwitchMethod
 	 * @param string $section
 	 * @return static
 	 */
-	function switch( ?string $section ) : self
+	function with( ?string $section ) : self
 	{
 		$that = clone $this;
 		$that->section = Input::suffix( $section );

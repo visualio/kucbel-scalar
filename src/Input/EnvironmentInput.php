@@ -7,7 +7,7 @@ use Kucbel\Scalar\Output\OutputInterface;
 
 class EnvironmentInput extends StrictInput implements OutputInterface
 {
-	use SwitchMethod;
+	use SectionMethod;
 
 	/**
 	 * EnvironmentInput constructor.

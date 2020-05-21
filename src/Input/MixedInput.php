@@ -11,7 +11,7 @@ use Nette\Utils\Strings;
 
 class MixedInput extends StrictInput implements DetectInterface
 {
-	use SearchMethod, SwitchMethod;
+	use SearchMethod, SectionMethod;
 
 	/**
 	 * @var mixed
