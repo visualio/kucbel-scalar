@@ -1,6 +1,6 @@
 <?php
 
-namespace Kucbel\Scalar\Schema;
+namespace Kucbel\Scalar\Schema\Type;
 
 use Kucbel\Scalar\Validator\MixedValidator;
 use Nette\SmartObject;
@@ -12,7 +12,7 @@ class CallType implements TypeInterface
 	/**
 	 * @var callable
 	 */
-	private $callback;
+	protected $callback;
 
 	/**
 	 * CallType constructor.

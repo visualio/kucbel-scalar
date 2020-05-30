@@ -1,6 +1,6 @@
 <?php
 
-namespace Kucbel\Scalar\Schema;
+namespace Kucbel\Scalar\Schema\Type;
 
 use Error;
 use Nette\PhpGenerator\Closure;

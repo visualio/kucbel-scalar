@@ -3,6 +3,7 @@
 namespace Kucbel\Scalar\Schema;
 
 use Kucbel\Scalar\Input\InputInterface;
+use Kucbel\Scalar\Schema\Type\TypeFactory;
 use Nette\SmartObject;
 
 class SchemaFactory
@@ -12,7 +13,7 @@ class SchemaFactory
 	/**
 	 * @var TypeFactory
 	 */
-	protected $factory;
+	protected $type;
 
 	/**
 	 * @var array | null
@@ -22,12 +23,12 @@ class SchemaFactory
 	/**
 	 * SchemaFactory constructor.
 	 *
-	 * @param TypeFactory $factory
+	 * @param TypeFactory $type
 	 * @param array $schemas
 	 */
-	function __construct( TypeFactory $factory, array $schemas = null )
+	function __construct( TypeFactory $type, array $schemas = null )
 	{
-		$this->factory = $factory;
+		$this->type = $type;
 		$this->schemas = $schemas;
 	}
 
@@ -39,7 +40,7 @@ class SchemaFactory
 	 */
 	function create( InputInterface $input, string $name, string ...$names ) : Schema
 	{
-		return new Schema( $this->factory, $input, $this->get( $name, ...$names ));
+		return new Schema( $this->type, $input, $this->get( $name, ...$names ));
 	}
 
 	/**
@@ -59,7 +60,7 @@ class SchemaFactory
 			}
 		}
 
-		return new Schema( $this->factory, $input, $schema );
+		return new Schema( $this->type, $input, $schema );
 	}
 
 	/**

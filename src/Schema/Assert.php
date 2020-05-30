@@ -3,6 +3,7 @@
 namespace Kucbel\Scalar\Schema;
 
 use Kucbel\Scalar\Input\InputInterface;
+use Kucbel\Scalar\Schema\Type\TypeFactory;
 use Kucbel\Scalar\Validator\ValidatorException;
 use Nette\SmartObject;
 
@@ -13,23 +14,43 @@ class Assert
 	/**
 	 * @var TypeFactory
 	 */
-	private $factory;
+	protected $type;
 
 	/**
 	 * @var InputInterface
 	 */
-	private $input;
+	protected $input;
 
 	/**
 	 * Assert constructor.
 	 *
-	 * @param TypeFactory $factory
+	 * @param TypeFactory $type
 	 * @param InputInterface $input
 	 */
-	function __construct( TypeFactory $factory, InputInterface $input )
+	function __construct( TypeFactory $type, InputInterface $input )
 	{
-		$this->factory = $factory;
+		$this->type = $type;
 		$this->input = $input;
+	}
+
+	/**
+	 * @param string $name
+	 * @param string $type
+	 * @return bool
+	 */
+	function has( string $name, string $type = null ) : bool
+	{
+		if( $type === null ) {
+			return $this->input->has( $name );
+		}
+
+		try {
+			$this->type->get( $type )->fetch( $this->input->create( $name ));
+
+			return true;
+		} catch( ValidatorException $ex ) {
+			return false;
+		}
 	}
 
 	/**
@@ -37,25 +58,16 @@ class Assert
 	 * @param string $type
 	 * @return mixed
 	 */
-	function fetch( string $name, string $type )
+	function get( string $name, string $type = null )
 	{
-		return $this->factory->get( $type )->fetch( $this->input->create( $name ));
-	}
+		if( $type === null ) {
+			return $this->input->get( $name );
+		}
 
-	/**
-	 * @param string $name
-	 * @param string $type
-	 * @param mixed $data
-	 * @return bool
-	 */
-	function match( string $name, string $type, &$data = null ) : bool
-	{
 		try {
-			$data = $this->factory->get( $type )->fetch( $this->input->create( $name ));
-
-			return true;
+			return $this->type->get( $type )->fetch( $this->input->create( $name ));
 		} catch( ValidatorException $ex ) {
-			return false;
+			throw new AssertException("Parameter '{$ex->getName()}' isn't valid '{$type}' type.", null, $ex );
 		}
 	}
 }

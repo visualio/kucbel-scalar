@@ -3,6 +3,7 @@
 namespace Kucbel\Scalar\Schema;
 
 use Kucbel\Scalar\Input\InputInterface;
+use Kucbel\Scalar\Schema\Type\TypeFactory;
 use Kucbel\Scalar\Validator\MixedValidator;
 use Nette\SmartObject;
 
@@ -13,7 +14,7 @@ class AssertFactory
 	/**
 	 * @var TypeFactory
 	 */
-	protected $factory;
+	protected $type;
 
 	/**
 	 * AssertFactory constructor.
@@ -22,7 +23,7 @@ class AssertFactory
 	 */
 	function __construct( TypeFactory $type )
 	{
-		$this->factory = $type;
+		$this->type = $type;
 	}
 
 	/**
@@ -31,7 +32,7 @@ class AssertFactory
 	 */
 	function create( InputInterface $input ) : Assert
 	{
-		return new Assert( $this->factory, $input );
+		return new Assert( $this->type, $input );
 	}
 
 	/**
@@ -41,6 +42,6 @@ class AssertFactory
 	 */
 	function value( MixedValidator $value, string $type )
 	{
-		return $this->factory->get( $type )->fetch( $value );
+		return $this->type->get( $type )->fetch( $value );
 	}
 }

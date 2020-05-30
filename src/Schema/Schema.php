@@ -7,6 +7,7 @@ use Kucbel\Scalar\Input\VoidInput;
 use Kucbel\Scalar\Output\ArrayOutput;
 use Kucbel\Scalar\Output\CompareOutput;
 use Kucbel\Scalar\Output\OutputInterface;
+use Kucbel\Scalar\Schema\Type\TypeFactory;
 use Nette\SmartObject;
 
 class Schema
@@ -16,28 +17,28 @@ class Schema
 	/**
 	 * @var TypeFactory
 	 */
-	private $factory;
+	protected $type;
 
 	/**
 	 * @var InputInterface
 	 */
-	private $input;
+	protected $input;
 
 	/**
 	 * @var array
 	 */
-	private $schema;
+	protected $schema;
 
 	/**
 	 * Schema constructor.
 	 *
-	 * @param TypeFactory $factory
+	 * @param TypeFactory $type
 	 * @param InputInterface $input
 	 * @param array $schema
 	 */
-	function __construct( TypeFactory $factory, InputInterface $input, array $schema )
+	function __construct( TypeFactory $type, InputInterface $input, array $schema )
 	{
-		$this->factory = $factory;
+		$this->type = $type;
 		$this->input = $input;
 		$this->schema = $schema;
 	}
@@ -54,7 +55,7 @@ class Schema
 			throw new SchemaException("Parameter '$name' doesn't exist.");
 		}
 
-		return $this->factory->get( $type )->fetch( $this->input->create( $name ));
+		return $this->type->get( $type )->fetch( $this->input->create( $name ));
 	}
 
 	/**
@@ -63,7 +64,7 @@ class Schema
 	function write( OutputInterface $output )
 	{
 		foreach( $this->schema as $name => $type ) {
-			$output->set( $name, $this->factory->get( $type )->fetch( $this->input->create( $name )));
+			$output->set( $name, $this->type->get( $type )->fetch( $this->input->create( $name )));
 		}
 	}
 

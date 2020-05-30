@@ -26,7 +26,7 @@ class ScalarExtension extends CompilerExtension
 	private $reflector;
 
 	/**
-	 * @var Schema\TypeGenerator
+	 * @var Schema\Type\TypeGenerator
 	 */
 	private $generator;
 
@@ -104,7 +104,7 @@ class ScalarExtension extends CompilerExtension
 		]);
 
 		$this->reflector = new Input\InputReflector( ...$ignores );
-		$this->generator = new Schema\TypeGenerator;
+		$this->generator = new Schema\Type\TypeGenerator;
 
 		$this->methods = $this->reflector->getMethods( ...$imports );
 	}
@@ -135,8 +135,8 @@ class ScalarExtension extends CompilerExtension
 			->setType( Input\InputFactory::class )
 			->setArguments(["@$filter"]);
 
-		$this->services['type'] = $builder->addDefinition( $type = $this->prefix('type.factory'))
-			->setType( Schema\TypeFactory::class );
+		$this->services['type'] = $builder->addDefinition( $type = $this->prefix('schema.type.factory'))
+			->setType( Schema\Type\TypeFactory::class );
 
 		$this->services['schema'] = $builder->addDefinition( $this->prefix('schema.factory'))
 			->setType( Schema\SchemaFactory::class )

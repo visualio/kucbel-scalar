@@ -1,7 +1,8 @@
 <?php
 
-namespace Kucbel\Scalar\Schema;
+namespace Kucbel\Scalar\Schema\Type;
 
+use Kucbel\Scalar\Schema\SchemaException;
 use Nette\SmartObject;
 use Throwable;
 
