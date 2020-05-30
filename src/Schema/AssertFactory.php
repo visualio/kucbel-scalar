@@ -5,6 +5,7 @@ namespace Kucbel\Scalar\Schema;
 use Kucbel\Scalar\Input\InputInterface;
 use Kucbel\Scalar\Schema\Type\TypeFactory;
 use Kucbel\Scalar\Validator\MixedValidator;
+use Kucbel\Scalar\Validator\ValidatorException;
 use Nette\SmartObject;
 
 class AssertFactory
@@ -42,6 +43,10 @@ class AssertFactory
 	 */
 	function value( MixedValidator $value, string $type )
 	{
-		return $this->type->get( $type )->fetch( $value );
+		try {
+			return $this->type->get( $type )->fetch( $value );
+		} catch( ValidatorException $ex ) {
+			throw new AssertException("Parameter '{$ex->getName()}' isn't valid '{$type}' type.", null, $ex );
+		}
 	}
 }
