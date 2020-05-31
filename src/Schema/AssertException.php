@@ -16,12 +16,12 @@ class AssertException extends Exception implements JsonSerializable
 	/**
 	 * @var ValidatorException
 	 */
-	private $error;
+	protected $error;
 
 	/**
 	 * @var string
 	 */
-	private $type;
+	protected $type;
 
 	/**
 	 * AssertException constructor.

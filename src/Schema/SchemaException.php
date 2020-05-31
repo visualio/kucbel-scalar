@@ -16,7 +16,7 @@ class SchemaException extends Exception implements JsonSerializable
 	/**
 	 * @var ValidatorException[]
 	 */
-	private $errors;
+	protected $errors;
 
 	/**
 	 * SchemaException constructor.

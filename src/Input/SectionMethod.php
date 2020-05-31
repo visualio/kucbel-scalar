@@ -11,7 +11,7 @@ trait SectionMethod
 
 	/**
 	 * @param string $section
-	 * @return static
+	 * @return $this
 	 */
 	function with( ?string $section ) : self
 	{

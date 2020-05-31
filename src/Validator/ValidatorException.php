@@ -12,12 +12,12 @@ class ValidatorException extends Exception implements JsonSerializable
 	/**
 	 * @var string
 	 */
-	private $name;
+	protected $name;
 
 	/**
 	 * @var array | null
 	 */
-	private $values;
+	protected $values;
 
 	/**
 	 * ValidatorException constructor.

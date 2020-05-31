@@ -32,6 +32,11 @@ class Schema
 	protected $schema;
 
 	/**
+	 * @var bool
+	 */
+	protected $stop = false;
+
+	/**
 	 * Schema constructor.
 	 *
 	 * @param TypeFactory $type
@@ -67,7 +72,7 @@ class Schema
 	/**
 	 * @param OutputInterface $output
 	 */
-	function write( OutputInterface $output )
+	function write( OutputInterface $output ) : void
 	{
 		$errors = [];
 
@@ -76,6 +81,10 @@ class Schema
 				$output->set( $name, $this->type->get( $type )->fetch( $this->input->create( $name )));
 			} catch( ValidatorException $error ) {
 				$errors[] = $error;
+
+				if( $this->stop ) {
+					break;
+				}
 			}
 		}
 
@@ -108,5 +117,13 @@ class Schema
 		}
 
 		return $output->fetch();
+	}
+
+	/**
+	 * @param bool $stop
+	 */
+	function setStopOnError( bool $stop = true ) : void
+	{
+		$this->stop = $stop;
 	}
 }
