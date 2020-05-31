@@ -57,7 +57,11 @@ class Schema
 			throw new InvalidArgumentException("Parameter '$name' doesn't exist.");
 		}
 
-		return $this->type->get( $type )->fetch( $this->input->create( $name ));
+		try {
+			return $this->type->get( $type )->fetch( $this->input->create( $name ));
+		} catch( ValidatorException $error ) {
+			throw new SchemaException( $error );
+		}
 	}
 
 	/**
