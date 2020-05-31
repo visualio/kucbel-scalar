@@ -2,6 +2,7 @@
 
 namespace Kucbel\Scalar\Input;
 
+use Nette\InvalidArgumentException;
 use Nette\Neon\Exception as NeonException;
 use Nette\Neon\Neon;
 use Nette\Utils\FileSystem;
@@ -108,7 +109,7 @@ class MixedInput extends StrictInput implements DetectInterface
 		$type = Strings::after( $file, '.', -1 );
 
 		if( !$type ) {
-			throw new InputException("File '{$file}' doesn't have an extension.");
+			throw new InvalidArgumentException("File '$file' doesn't have an extension.");
 		}
 
 		$data = FileSystem::read( $file );
@@ -119,7 +120,7 @@ class MixedInput extends StrictInput implements DetectInterface
 			case 'json':
 				return self::json( $data, $alias );
 			default:
-				throw new InputException("File '{$file}' isn't supported.");
+				throw new InvalidArgumentException("File '$file' isn't supported.");
 		}
 	}
 }

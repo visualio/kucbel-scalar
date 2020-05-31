@@ -45,8 +45,8 @@ class AssertFactory
 	{
 		try {
 			return $this->type->get( $type )->fetch( $value );
-		} catch( ValidatorException $ex ) {
-			throw new AssertException("Parameter '{$ex->getName()}' isn't valid '{$type}' type.", null, $ex );
+		} catch( ValidatorException $error ) {
+			throw new AssertException( $error, $type );
 		}
 	}
 }

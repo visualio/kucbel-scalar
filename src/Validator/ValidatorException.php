@@ -69,7 +69,7 @@ class ValidatorException extends Exception implements JsonSerializable
 	}
 
 	/**
-	 * @inheritdoc
+	 * @return array
 	 */
 	function jsonSerialize()
 	{

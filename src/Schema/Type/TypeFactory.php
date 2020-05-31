@@ -2,7 +2,7 @@
 
 namespace Kucbel\Scalar\Schema\Type;
 
-use Kucbel\Scalar\Schema\SchemaException;
+use Nette\InvalidStateException;
 use Nette\SmartObject;
 use Throwable;
 
@@ -39,13 +39,13 @@ class TypeFactory
 		$test = $this->tests[ $name ] ?? null;
 
 		if( $test === null ) {
-			throw new SchemaException("Type '$name' doesn't exist.");
+			throw new InvalidStateException("Type '$name' doesn't exist.");
 		}
 
 		try {
 			$call = eval( $test );
-		} catch( Throwable $ex ) {
-			throw new SchemaException("Type '$name' didn't compile.", null, $ex );
+		} catch( Throwable $error ) {
+			throw new InvalidStateException("Type '$name' didn't compile.", null, $error );
 		}
 
 		return new CallType( $call );
@@ -77,7 +77,7 @@ class TypeFactory
 	function set( string $name, TypeInterface $type )
 	{
 		if( $this->has( $name )) {
-			throw new SchemaException("Type '$name' already exists.");
+			throw new InvalidStateException("Type '$name' already exists.");
 		}
 
 		$this->types[ $name ] = $type;

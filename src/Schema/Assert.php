@@ -48,7 +48,7 @@ class Assert
 			$this->type->get( $type )->fetch( $this->input->create( $name ));
 
 			return true;
-		} catch( ValidatorException $ex ) {
+		} catch( ValidatorException $error ) {
 			return false;
 		}
 	}
@@ -66,8 +66,8 @@ class Assert
 
 		try {
 			return $this->type->get( $type )->fetch( $this->input->create( $name ));
-		} catch( ValidatorException $ex ) {
-			throw new AssertException("Parameter '{$ex->getName()}' isn't valid '{$type}' type.", null, $ex );
+		} catch( ValidatorException $error ) {
+			throw new AssertException( $error, $type );
 		}
 	}
 }

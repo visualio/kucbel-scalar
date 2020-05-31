@@ -64,7 +64,7 @@ class InputFactory
 			$what = 'type';
 		}
 
-		throw new InputException("No input registered for '{$type}' {$what}.");
+		throw new InputException("No input registered for '$type' $what.");
 	}
 
 	/**

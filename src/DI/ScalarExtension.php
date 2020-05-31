@@ -280,7 +280,7 @@ class ScalarExtension extends CompilerExtension
 			try {
 				$array->count( 1, 1 );
 				$first->match('~^@.~');
-			} catch( Validator\ValidatorException $ex ) {
+			} catch( Validator\ValidatorException $error ) {
 				$first->equal( ...$this->methods );
 			}
 
@@ -288,7 +288,7 @@ class ScalarExtension extends CompilerExtension
 		}
 
 		if( $this->hasObject( $rules )) {
-			throw new InvalidStateException("Type '{$name}' contains DateTime object.");
+			throw new InvalidStateException("Type '$name' contains an object.");
 		}
 
 		$this->types[ $alias ?? $name ] = $rules;

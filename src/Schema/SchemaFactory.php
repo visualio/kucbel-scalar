@@ -4,6 +4,8 @@ namespace Kucbel\Scalar\Schema;
 
 use Kucbel\Scalar\Input\InputInterface;
 use Kucbel\Scalar\Schema\Type\TypeFactory;
+use Nette\InvalidArgumentException;
+use Nette\InvalidStateException;
 use Nette\SmartObject;
 
 class SchemaFactory
@@ -78,7 +80,7 @@ class SchemaFactory
 			$schema = $this->schemas[ $name ] ?? null;
 
 			if( $schema === null ) {
-				throw new SchemaException("Schema '$name' doesn't exist.");
+				throw new InvalidArgumentException("Schema '$name' doesn't exist.");
 			}
 
 			if( $verify ) {
@@ -86,7 +88,7 @@ class SchemaFactory
 					$same = $schemas[ $each ] ?? null;
 
 					if( $same !== null and $same !== $type ) {
-						throw new SchemaException("Schemas '{$origins[ $each ]}' and '$name' aren't compatible.");
+						throw new InvalidStateException("Schemas '{$origins[ $each ]}' and '$name' aren't compatible.");
 					}
 
 					$origins[ $each ] = $name;

@@ -189,7 +189,7 @@ class MixedValidator extends Validator
 
 		try {
 			$value = DateTime::from( $value );
-		} catch( Throwable $ex ) {
+		} catch( Throwable $error ) {
 			throw new ValidatorException( $this->name, Error::TYPE_DATE );
 		}
 

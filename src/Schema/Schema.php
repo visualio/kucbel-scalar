@@ -8,6 +8,8 @@ use Kucbel\Scalar\Output\ArrayOutput;
 use Kucbel\Scalar\Output\CompareOutput;
 use Kucbel\Scalar\Output\OutputInterface;
 use Kucbel\Scalar\Schema\Type\TypeFactory;
+use Kucbel\Scalar\Validator\ValidatorException;
+use Nette\InvalidArgumentException;
 use Nette\SmartObject;
 
 class Schema
@@ -52,7 +54,7 @@ class Schema
 		$type = $this->schema[ $name ] ?? null;
 
 		if( $type === null ) {
-			throw new SchemaException("Parameter '$name' doesn't exist.");
+			throw new InvalidArgumentException("Parameter '$name' doesn't exist.");
 		}
 
 		return $this->type->get( $type )->fetch( $this->input->create( $name ));
@@ -63,8 +65,18 @@ class Schema
 	 */
 	function write( OutputInterface $output )
 	{
+		$errors = [];
+
 		foreach( $this->schema as $name => $type ) {
-			$output->set( $name, $this->type->get( $type )->fetch( $this->input->create( $name )));
+			try {
+				$output->set( $name, $this->type->get( $type )->fetch( $this->input->create( $name )));
+			} catch( ValidatorException $error ) {
+				$errors[] = $error;
+			}
+		}
+
+		if( $errors ) {
+			throw new SchemaException( ...$errors );
 		}
 	}
 

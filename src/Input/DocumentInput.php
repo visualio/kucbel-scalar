@@ -66,7 +66,7 @@ class DocumentInput extends Input implements DetectInterface
 		$query = @$this->search->query( $name, $this->element );
 
 		if( $query === false ) {
-			throw new InputException("Query '$name' is malformed.");
+			throw new InvalidArgumentException("Query '$name' is malformed.");
 		}
 
 		if( $query->length === 1 ) {
@@ -104,7 +104,7 @@ class DocumentInput extends Input implements DetectInterface
 				$previous = null;
 			}
 
-			throw new FileNotFoundException("File '{$file}' isn't readable.", null, $previous );
+			throw new FileNotFoundException("File '$file' isn't readable.", null, $previous );
 		}
 
 		return new self( $document );
