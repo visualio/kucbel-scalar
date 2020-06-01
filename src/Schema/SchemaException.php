@@ -68,6 +68,6 @@ class SchemaException extends Exception implements JsonSerializable
 			$json[] = $error->jsonSerialize();
 		}
 
-		return ['errors' => $json ];
+		return $json;
 	}
 }
