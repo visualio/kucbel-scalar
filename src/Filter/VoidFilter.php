@@ -12,7 +12,7 @@ class VoidFilter implements FilterInterface
 	 * @param mixed $value
 	 * @return mixed
 	 */
-	function clear( $value )
+	function value( $value )
 	{
 		return $value;
 	}

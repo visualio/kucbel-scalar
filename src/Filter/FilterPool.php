@@ -27,10 +27,10 @@ class FilterPool implements FilterInterface
 	 * @param mixed $value
 	 * @return mixed
 	 */
-	function clear( $value )
+	function value( $value )
 	{
 		foreach( $this->filters as $filter ) {
-			$value = $filter->clear( $value );
+			$value = $filter->value( $value );
 		}
 
 		return $value;

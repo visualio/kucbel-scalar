@@ -126,7 +126,7 @@ class ScalarExtension extends CompilerExtension
 
 		$builder->addDefinition( $this->prefix('filter.round'))
 			->setType( Filter\RoundFilter::class )
-			->setArguments([ $config['round'] ]);
+			->setArguments([ 14, $config['round'] ]);
 
 		$this->services['filter'] = $builder->addDefinition( $filter = $this->prefix('filter.factory'))
 			->setType( Filter\FilterFactory::class );
@@ -218,9 +218,8 @@ class ScalarExtension extends CompilerExtension
 		}
 
 		$param['round'] = $input->create('round')
-			->optional( 14 )
+			->optional( 6 )
 			->integer()
-			->value( 1, 99 )
 			->fetch();
 
 		return $param;
