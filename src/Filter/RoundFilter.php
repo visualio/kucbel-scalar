@@ -2,6 +2,7 @@
 
 namespace Kucbel\Scalar\Filter;
 
+use Nette\InvalidArgumentException;
 use Nette\SmartObject;
 
 class RoundFilter implements FilterInterface
@@ -16,18 +17,22 @@ class RoundFilter implements FilterInterface
 	/**
 	 * @var int
 	 */
-	protected $limit;
+	protected $point;
 
 	/**
 	 * RoundFilter constructor.
 	 *
 	 * @param int $digit
-	 * @param int $limit
+	 * @param int $point
 	 */
-	function __construct( int $digit, int $limit )
+	function __construct( int $digit, int $point )
 	{
+		if( $digit <= 0 ) {
+			throw new InvalidArgumentException("Digit must be greater then zero.");
+		}
+
 		$this->digit = $digit - 1;
-		$this->limit = $limit;
+		$this->point = $point;
 	}
 
 	/**
@@ -38,7 +43,7 @@ class RoundFilter implements FilterInterface
 	{
 		if( $value and is_float( $value ) and is_finite( $value )) {
 			$point = $this->digit - floor( log10( abs( $value )));
-			$point = min( $this->limit, $point );
+			$point = min( $this->point, $point );
 			$value = round( $value, $point );
 		}
 

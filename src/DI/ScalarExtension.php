@@ -218,8 +218,9 @@ class ScalarExtension extends CompilerExtension
 		}
 
 		$param['round'] = $input->create('round')
-			->optional( 6 )
+			->optional( 14 )
 			->integer()
+			->value( 0, null )
 			->fetch();
 
 		return $param;
