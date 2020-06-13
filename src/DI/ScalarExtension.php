@@ -98,7 +98,6 @@ class ScalarExtension extends CompilerExtension
 		]);
 
 		$ignores = array_map( $deflect, [
-			Filter\FilterInterface::class,
 			Iterator\IteratorInterface::class,
 			Validator\ValidatorInterface::class,
 		]);
