@@ -37,6 +37,6 @@ class OutputFilter implements OutputInterface
 	 */
 	function set( string $name, $value )
 	{
-		$this->output->set( $name, $this->filter->value( $value ));
+		$this->output->set( $name, $this->filter->clear( $value ));
 	}
 }

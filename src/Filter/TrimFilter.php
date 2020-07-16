@@ -44,10 +44,10 @@ class TrimFilter implements FilterInterface
 	 * @param mixed $value
 	 * @return mixed
 	 */
-	function value( $value )
+	function clear( $value )
 	{
 		if( is_array( $value )) {
-			$value = array_map([ $this, 'value' ], $value );
+			$value = array_map([ $this, 'clear' ], $value );
 
 			if( $this->mode & self::ARRAY ) {
 				$value = array_filter( $value, [ $this, 'null']);

@@ -94,7 +94,7 @@ class FilterFactory
 	function value( $value )
 	{
 		foreach( $this->filters as $filter ) {
-			$value = $filter->value( $value );
+			$value = $filter->clear( $value );
 		}
 
 		return $value;

@@ -34,7 +34,7 @@ class CallFilter implements FilterInterface
 	 * @param mixed $value
 	 * @return mixed
 	 */
-	function value( $value )
+	function clear( $value )
 	{
 		if(( $this->condition )( $value )) {
 			$value = ( $this->callback )( $value );
