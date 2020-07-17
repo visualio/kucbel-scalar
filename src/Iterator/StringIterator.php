@@ -90,23 +90,6 @@ class StringIterator extends ScalarIterator
 	}
 
 	/**
-	 * @param int|int[] $char
-	 * @param int|int[] $line
-	 * @return $this
-	 */
-	function length( $char, $line )
-	{
-		$char = StringValidator::range( $char );
-		$line = StringValidator::range( $line );
-
-		foreach( $this->list as $item ) {
-			$item->char( ...$char )->line( ...$line );
-		}
-
-		return $this;
-	}
-
-	/**
 	 * @param string $type
 	 * @return $this
 	 */

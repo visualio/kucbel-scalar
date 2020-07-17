@@ -80,15 +80,4 @@ class IntegerValidator extends NumericValidator
 
 		return $this;
 	}
-
-	/**
-	 * @param int|int[] $digit
-	 * @return $this
-	 */
-	function length( $digit )
-	{
-		$digit = self::range( $digit );
-
-		return $this->digit( ...$digit );
-	}
 }

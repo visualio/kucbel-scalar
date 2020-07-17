@@ -101,17 +101,4 @@ class FloatValidator extends NumericValidator
 
 		return $this;
 	}
-
-	/**
-	 * @param int|int[] $digit
-	 * @param int|int[] $point
-	 * @return $this
-	 */
-	function length( $digit, $point )
-	{
-		$digit = self::range( $digit );
-		$point = self::range( $point );
-
-		return $this->digit( ...$digit )->point( ...$point );
-	}
 }
