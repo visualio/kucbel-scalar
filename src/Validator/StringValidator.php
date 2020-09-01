@@ -152,7 +152,7 @@ class StringValidator extends ScalarValidator
 		if( !is_dir( $this->value )) {
 			throw new ValidatorException( $this->name, Error::STR_FOLDER );
 		} elseif( !$this->path( $real )) {
-			throw new ValidatorException( $this->name, Error::STR_FILE );
+			throw new ValidatorException( $this->name, Error::STR_FOLDER );
 		}
 
 		return $this;

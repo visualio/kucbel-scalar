@@ -34,7 +34,7 @@ class Schema
 	/**
 	 * @var bool
 	 */
-	protected $stop = false;
+	public $abort = false;
 
 	/**
 	 * Schema constructor.
@@ -82,7 +82,7 @@ class Schema
 			} catch( ValidatorException $error ) {
 				$errors[] = $error;
 
-				if( $this->stop ) {
+				if( $this->abort ) {
 					break;
 				}
 			}
@@ -117,13 +117,5 @@ class Schema
 		}
 
 		return $output->fetch();
-	}
-
-	/**
-	 * @param bool $stop
-	 */
-	function setStopOnError( bool $stop = true ) : void
-	{
-		$this->stop = $stop;
 	}
 }
