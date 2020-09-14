@@ -29,11 +29,24 @@ class ConsoleInput extends Input implements DetectInterface
 	{
 		if( $this->input->hasArgument( $name )) {
 			return $this->input->getArgument( $name );
-		} elseif( $this->input->hasOption( $name )) {
-			return $this->input->getOption( $name );
 		} else {
-			return null;
+			return $this->input->getOption( $name );
 		}
+	}
+
+	/**
+	 * @param string $name
+	 * @return bool
+	 */
+	function has( string $name ) : bool
+	{
+		if( $this->input->hasArgument( $name )) {
+			$value = $this->input->getArgument( $name );
+		} else {
+			$value = $this->input->getOption( $name );
+		}
+
+		return $value !== null and $value !== false;
 	}
 
 	/**
