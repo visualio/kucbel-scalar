@@ -13,7 +13,7 @@ trait SectionMethod
 	 * @param string $section
 	 * @return $this
 	 */
-	function with( ?string $section ) : self
+	function withSection( ?string $section ) : self
 	{
 		$that = clone $this;
 		$that->section = Input::suffix( $section );
