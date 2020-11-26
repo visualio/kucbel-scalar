@@ -67,7 +67,7 @@ class Assert
 		try {
 			return $this->type->get( $type )->fetch( $this->input->create( $name ));
 		} catch( ValidatorException $error ) {
-			throw new AssertException( $error, $type );
+			throw $error->withType( $type );
 		}
 	}
 }

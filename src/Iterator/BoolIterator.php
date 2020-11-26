@@ -20,12 +20,12 @@ class BoolIterator extends Iterator
 	 * BoolIterator constructor.
 	 *
 	 * @param string $name
-	 * @param BoolValidator ...$list
+	 * @param BoolValidator ...$items
 	 */
-	function __construct( string $name, BoolValidator ...$list )
+	function __construct( string $name, BoolValidator ...$items )
 	{
 		$this->name = $name;
-		$this->list = $list;
+		$this->items = $items;
 	}
 
 	/**
@@ -34,7 +34,7 @@ class BoolIterator extends Iterator
 	 */
 	function equal( bool $value )
 	{
-		foreach( $this->list as $item ) {
+		foreach( $this->items as $item ) {
 			$item->equal( $value );
 		}
 

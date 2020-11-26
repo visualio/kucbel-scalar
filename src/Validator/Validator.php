@@ -2,21 +2,14 @@
 
 namespace Kucbel\Scalar\Validator;
 
-use Nette\SmartObject;
+use Kucbel\Scalar\Property;
 
-abstract class Validator implements ValidatorInterface
+abstract class Validator extends Property implements ValidatorInterface
 {
-	use SmartObject;
-
 	const
-		EXCL_MIN	= 0b1,
-		EXCL_MAX	= 0b10,
-		EXCL_BOTH	= 0b11;
-
-	/**
-	 * @var string
-	 */
-	protected $name;
+		EXCL_LOWER	= 0b1,
+		EXCL_UPPER	= 0b10,
+		EXCL_LIMIT	= 0b11;
 
 	/**
 	 * @var mixed

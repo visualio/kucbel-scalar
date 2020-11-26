@@ -18,12 +18,12 @@ class MixedIterator extends Iterator
 	 * MixedIterator constructor.
 	 *
 	 * @param string $name
-	 * @param MixedValidator ...$list
+	 * @param MixedValidator ...$items
 	 */
-	function __construct( string $name, MixedValidator ...$list )
+	function __construct( string $name, MixedValidator ...$items )
 	{
 		$this->name = $name;
-		$this->list = $list;
+		$this->items = $items;
 	}
 
 	/**
@@ -31,13 +31,13 @@ class MixedIterator extends Iterator
 	 */
 	function bool()
 	{
-		$list = [];
+		$items = [];
 
-		foreach( $this->list as $item ) {
-			$list[] = $item->bool();
+		foreach( $this->items as $item ) {
+			$items[] = $item->bool();
 		}
 
-		return new BoolIterator( $this->name, ...$list );
+		return new BoolIterator( $this->name, ...$items );
 	}
 
 	/**
@@ -45,13 +45,13 @@ class MixedIterator extends Iterator
 	 */
 	function float()
 	{
-		$list = [];
+		$items = [];
 
-		foreach( $this->list as $item ) {
-			$list[] = $item->float();
+		foreach( $this->items as $item ) {
+			$items[] = $item->float();
 		}
 
-		return new FloatIterator( $this->name, ...$list );
+		return new FloatIterator( $this->name, ...$items );
 	}
 
 	/**
@@ -59,13 +59,13 @@ class MixedIterator extends Iterator
 	 */
 	function integer()
 	{
-		$list = [];
+		$items = [];
 
-		foreach( $this->list as $item ) {
-			$list[] = $item->integer();
+		foreach( $this->items as $item ) {
+			$items[] = $item->integer();
 		}
 
-		return new IntegerIterator( $this->name, ...$list );
+		return new IntegerIterator( $this->name, ...$items );
 	}
 
 	/**
@@ -73,13 +73,13 @@ class MixedIterator extends Iterator
 	 */
 	function string()
 	{
-		$list = [];
+		$items = [];
 
-		foreach( $this->list as $item ) {
-			$list[] = $item->string();
+		foreach( $this->items as $item ) {
+			$items[] = $item->string();
 		}
 
-		return new StringIterator( $this->name, ...$list );
+		return new StringIterator( $this->name, ...$items );
 	}
 
 	/**
@@ -87,12 +87,12 @@ class MixedIterator extends Iterator
 	 */
 	function date()
 	{
-		$list = [];
+		$items = [];
 
-		foreach( $this->list as $item ) {
-			$list[] = $item->date();
+		foreach( $this->items as $item ) {
+			$items[] = $item->date();
 		}
 
-		return new DateIterator( $this->name, ...$list );
+		return new DateIterator( $this->name, ...$items );
 	}
 }

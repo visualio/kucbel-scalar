@@ -37,51 +37,111 @@ class StringValidator extends ScalarValidator
 		}
 
 		if( !in_array( $this->value, $values, true )) {
-			throw new ValidatorException( $this->name, Error::MIX_EQUAL, ['list' => $values ]);
+			$text = isset( $values[1] ) ? 'one of the following' : 'equal to';
+
+			$this->error("Parameter \$name must be {$text} \$list.", Error::MIX_EQUAL, ['list' => $values ]);
 		}
 
 		return $this;
 	}
 
 	/**
-	 * @param int|null $min
-	 * @param int|null $max
+	 * @param int|null $lower limit
+	 * @param int|null $upper limit
 	 * @return $this
 	 */
-	function char( ?int $min, ?int $max )
+	function char( ?int $lower, ?int $upper )
 	{
-		if(( $min !== null and $min < 0 ) or ( $max !== null and $max < 0 )) {
-			throw new InvalidArgumentException("Enter a positive length limit.");
-		} elseif( $min === null and $max === null ) {
+		if( $lower === null and $upper === null ) {
 			throw new InvalidArgumentException("Enter at least one value.");
 		}
 
-		$len = Strings::length( $this->value );
+		$check = Strings::length( $this->value );
+		$match = true;
 
-		if(( $min !== null and $len < $min ) or ( $max !== null and $len > $max )) {
-			throw new ValidatorException( $this->name, Error::STR_CHAR, ['min' => $min, 'max' => $max ]);
+		if( $lower !== null and $lower !== 0 ) {
+			if( $lower < 0 ) {
+				throw new InvalidArgumentException("Enter a positive lower limit.");
+			}
+
+			if( $check < $lower ) {
+				$match = false;
+			}
+		}
+
+		if( $upper !== null ) {
+			if( $upper < 0 ) {
+				throw new InvalidArgumentException("Enter a positive upper limit.");
+			}
+
+			if( $check > $upper ) {
+				$match = false;
+			}
+		}
+
+		if( !$match ) {
+			if( $lower === $upper ) {
+				$text = "exactly \$lower";
+			} elseif( $upper === null ) {
+				$text = "at least \$lower";
+			} elseif( $lower === null ) {
+				$text = "at most \$upper";
+			} else {
+				$text = "between \$lower and \$upper";
+			}
+
+			$this->error("Parameter \$name must be {$text} characters long.", Error::STR_CHAR, ['lower' => $lower, 'upper' => $upper ]);
 		}
 
 		return $this;
 	}
 
 	/**
-	 * @param int|null $min
-	 * @param int|null $max
+	 * @param int|null $lower
+	 * @param int|null $upper
 	 * @return $this
 	 */
-	function line( ?int $min, ?int $max )
+	function line( ?int $lower, ?int $upper )
 	{
-		if(( $min !== null and $min < 0 ) or ( $max !== null and $max < 1 )) {
-			throw new InvalidArgumentException("Enter a positive non-zero count limit.");
-		} elseif( $min === null and $max === null ) {
+		if( $lower === null and $upper === null ) {
 			throw new InvalidArgumentException("Enter at least one value.");
 		}
 
-		$num = count( Strings::matchAll( $this->value, '~\r\n|\r|\n~')) + 1;
+		$check = count( Strings::matchAll( $this->value, '~\r\n|\r|\n~')) + 1;
+		$match = true;
 
-		if(( $min !== null and $num < $min ) or ( $max !== null and $num > $max )) {
-			throw new ValidatorException( $this->name, Error::STR_LINE, ['min' => $min, 'max' => $max ]);
+		if( $lower !== null ) {
+			if( $lower < 1 ) {
+				throw new InvalidArgumentException("Enter a positive non-zero lower limit.");
+			}
+
+			if( $check < $lower ) {
+				$match = false;
+			}
+		}
+
+		if( $upper !== null ) {
+			if( $upper < 1 ) {
+				throw new InvalidArgumentException("Enter a positive non-zero upper limit.");
+			}
+
+			if( $check > $upper ) {
+				$match = false;
+			}
+		}
+
+		if( !$match ) {
+			if( $lower === $upper ) {
+				$text = "exactly \$lower";
+			} elseif( $upper === null ) {
+				$text = "at least \$lower";
+			} elseif( $lower === null ) {
+				$text = "at most \$upper";
+			} else {
+				$text = "between \$lower and \$upper";
+			}
+
+			$this->error("Parameter \$name must have {$text} lines.", Error::STR_LINE, ['lower' => $lower, 'upper' => $upper ]);
 		}
 
 		return $this;
@@ -93,13 +153,15 @@ class StringValidator extends ScalarValidator
 	 */
 	function class( string $type )
 	{
-		$value = ltrim( $this->value, '\\');
+		$check = ltrim( $this->value, '\\');
 
-		if( !class_exists( $value ) or !is_subclass_of( $value, $type, true )) {
-			throw new ValidatorException( $this->name, Error::STR_CLASS, ['type' => $type ]);
+		if( !class_exists( $check ) or !is_subclass_of( $check, $type, true )) {
+			$text = interface_exists( $type ) ? "implementing \$type interface" : "extending \$type parent";
+
+			$this->error("Parameter \$name must be a class {$text}.", Error::STR_CLASS, ['type' => $type ]);
 		}
 
-		$this->value = $value;
+		$this->value = $check;
 
 		return $this;
 	}
@@ -110,7 +172,7 @@ class StringValidator extends ScalarValidator
 	function email()
 	{
 		if( !Validators::isEmail( $this->value )) {
-			throw new ValidatorException( $this->name, Error::STR_EMAIL );
+			$this->error("Parameter \$name must be an email.", Error::STR_EMAIL );
 		}
 
 		return $this;
@@ -122,7 +184,7 @@ class StringValidator extends ScalarValidator
 	function url()
 	{
 		if( !Validators::isUrl( $this->value )) {
-			throw new ValidatorException( $this->name, Error::STR_URL );
+			$this->error("Parameter \$name must be an url.", Error::STR_URL );
 		}
 
 		return $this;
@@ -134,10 +196,8 @@ class StringValidator extends ScalarValidator
 	 */
 	function file( bool $real = true )
 	{
-		if( !is_file( $this->value )) {
-			throw new ValidatorException( $this->name, Error::STR_FILE );
-		} elseif( !$this->path( $real )) {
-			throw new ValidatorException( $this->name, Error::STR_FILE );
+		if( !is_file( $this->value ) or !$this->path( $real )) {
+			$this->error("Parameter \$name must point to a file.", Error::STR_FILE );
 		}
 
 		return $this;
@@ -149,10 +209,8 @@ class StringValidator extends ScalarValidator
 	 */
 	function folder( bool $real = true )
 	{
-		if( !is_dir( $this->value )) {
-			throw new ValidatorException( $this->name, Error::STR_FOLDER );
-		} elseif( !$this->path( $real )) {
-			throw new ValidatorException( $this->name, Error::STR_FOLDER );
+		if( !is_dir( $this->value ) or !$this->path( $real )) {
+			$this->error("Parameter \$name must point to a folder.", Error::STR_FOLDER );
 		}
 
 		return $this;
@@ -164,13 +222,17 @@ class StringValidator extends ScalarValidator
 	 */
 	protected function path( bool $real ) : bool
 	{
-		$value = $this->value;
+		$check = $this->value;
 
-		if( $real and ( $value = realpath( $value )) === false ) {
-			return false;
+		if( $real ) {
+			$check = realpath( $check );
+
+			if( $check === false ) {
+				return false;
+			}
 		}
 
-		$this->value = str_replace('\\', '/', $value );
+		$this->value = str_replace('\\', '/', $check );
 
 		return true;
 	}

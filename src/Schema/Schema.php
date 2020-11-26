@@ -34,7 +34,7 @@ class Schema
 	/**
 	 * @var bool
 	 */
-	public $abort = false;
+	public $entire = false;
 
 	/**
 	 * Schema constructor.
@@ -65,7 +65,7 @@ class Schema
 		try {
 			return $this->type->get( $type )->fetch( $this->input->create( $name ));
 		} catch( ValidatorException $error ) {
-			throw new SchemaException( $error );
+			throw new SchemaException( $error->withType( $type ));
 		}
 	}
 
@@ -80,9 +80,9 @@ class Schema
 			try {
 				$output->set( $name, $this->type->get( $type )->fetch( $this->input->create( $name )));
 			} catch( ValidatorException $error ) {
-				$errors[] = $error;
+				$errors[] = $error->withType( $type );
 
-				if( $this->abort ) {
+				if( !$this->entire ) {
 					break;
 				}
 			}

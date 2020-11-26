@@ -30,7 +30,7 @@ class BoolValidator extends Validator
 	function equal( bool $value )
 	{
 		if( $this->value !== $value ) {
-			throw new ValidatorException( $this->name, Error::MIX_EQUAL, ['list' => [ $value ]]);
+			$this->error("Parameter \$name must be equal to \$value.", Error::MIX_EQUAL, ['value' => $value ]);
 		}
 
 		return $this;

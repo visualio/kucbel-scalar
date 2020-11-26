@@ -21,12 +21,12 @@ class DateIterator extends Iterator
 	 * DateIterator constructor.
 	 *
 	 * @param string $name
-	 * @param DateValidator ...$list
+	 * @param DateValidator ...$items
 	 */
-	function __construct( string $name, DateValidator ...$list )
+	function __construct( string $name, DateValidator ...$items )
 	{
 		$this->name = $name;
-		$this->list = $list;
+		$this->items = $items;
 	}
 
 	/**
@@ -35,7 +35,7 @@ class DateIterator extends Iterator
 	 */
 	function equal( ...$values )
 	{
-		foreach( $this->list as $item ) {
+		foreach( $this->items as $item ) {
 			$item->equal( ...$values );
 		}
 
@@ -43,15 +43,15 @@ class DateIterator extends Iterator
 	}
 
 	/**
-	 * @param mixed|null $min
-	 * @param mixed|null $max
-	 * @param int $opt
+	 * @param mixed|null $lower
+	 * @param mixed|null $upper
+	 * @param int $flag
 	 * @return $this
 	 */
-	function value( $min, $max, int $opt = 0 )
+	function value( $lower, $upper, int $flag = 0 )
 	{
-		foreach( $this->list as $item ) {
-			$item->value( $min, $max, $opt );
+		foreach( $this->items as $item ) {
+			$item->value( $lower, $upper, $flag );
 		}
 
 		return $this;

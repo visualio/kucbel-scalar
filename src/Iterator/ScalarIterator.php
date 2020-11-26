@@ -4,7 +4,6 @@ namespace Kucbel\Scalar\Iterator;
 
 use Kucbel\Scalar\Error;
 use Kucbel\Scalar\Validator\ScalarValidator;
-use Kucbel\Scalar\Validator\ValidatorException;
 
 abstract class ScalarIterator extends Iterator
 {
@@ -14,9 +13,14 @@ abstract class ScalarIterator extends Iterator
 	function unique()
 	{
 		$values = $this->fetch();
+		$checks = [];
 
-		if( array_diff_key( $values, array_unique( $values, SORT_REGULAR ))) {
-			throw new ValidatorException( $this->name, Error::ARR_UNIQUE );
+		foreach( $values as $value ) {
+			if( isset( $checks["{$value}"] )) {
+				$this->error("Parameter \$name must contain unique values.", Error::ARR_UNIQUE );
+			}
+
+			$checks["{$value}"] = true;
 		}
 
 		return $this;
@@ -29,7 +33,7 @@ abstract class ScalarIterator extends Iterator
 	function match( string $regex )
 	{
 		/** @var ScalarValidator $item */
-		foreach( $this->list as $item ) {
+		foreach( $this->items as $item ) {
 			$item->match( $regex );
 		}
 

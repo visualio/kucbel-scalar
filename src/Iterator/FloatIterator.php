@@ -4,7 +4,6 @@ namespace Kucbel\Scalar\Iterator;
 
 use Kucbel\Scalar\Error;
 use Kucbel\Scalar\Validator\FloatValidator;
-use Kucbel\Scalar\Validator\ValidatorException;
 use Nette\InvalidArgumentException;
 
 /**
@@ -23,12 +22,12 @@ class FloatIterator extends NumericIterator
 	 * FloatIterator constructor.
 	 *
 	 * @param string $name
-	 * @param FloatValidator ...$list
+	 * @param FloatValidator ...$items
 	 */
-	function __construct( string $name, FloatValidator ...$list )
+	function __construct( string $name, FloatValidator ...$items )
 	{
 		$this->name = $name;
-		$this->list = $list;
+		$this->items = $items;
 	}
 
 	/**
@@ -42,7 +41,9 @@ class FloatIterator extends NumericIterator
 		}
 
 		if( array_diff( $values, $this->fetch() )) {
-			throw new ValidatorException( $this->name, Error::ARR_EXIST, ['list' => $values ]);
+			$text = isset( $values[1] ) ? "all of the following values" : "the value";
+
+			$this->error("Parameter \$name must contain {$text} \$list.", Error::ARR_EXIST, ['list' => $values ]);
 		}
 
 		return $this;
@@ -54,7 +55,7 @@ class FloatIterator extends NumericIterator
 	 */
 	function equal( float ...$values )
 	{
-		foreach( $this->list as $item ) {
+		foreach( $this->items as $item ) {
 			$item->equal( ...$values );
 		}
 
@@ -62,42 +63,42 @@ class FloatIterator extends NumericIterator
 	}
 
 	/**
-	 * @param float|null $min
-	 * @param float|null $max
-	 * @param int $opt
+	 * @param float|null $lower limit
+	 * @param float|null $upper limit
+	 * @param int $flag
 	 * @return $this
 	 */
-	function value( ?float $min, ?float $max, int $opt = 0 )
+	function value( ?float $lower, ?float $upper, int $flag = 0 )
 	{
-		foreach( $this->list as $item ) {
-			$item->value( $min, $max, $opt );
+		foreach( $this->items as $item ) {
+			$item->value( $lower, $upper, $flag );
 		}
 
 		return $this;
 	}
 
 	/**
-	 * @param int|null $min
-	 * @param int|null $max
+	 * @param int|null $lower limit
+	 * @param int|null $upper limit
 	 * @return $this
 	 */
-	function point( ?int $min, ?int $max )
+	function point( ?int $lower, ?int $upper )
 	{
-		foreach( $this->list as $item ) {
-			$item->point( $min, $max );
+		foreach( $this->items as $item ) {
+			$item->point( $lower, $upper );
 		}
 
 		return $this;
 	}
 
 	/**
-	 * @param float $div
+	 * @param float $value
 	 * @return $this
 	 */
-	function modulo( float $div )
+	function modulo( float $value )
 	{
-		foreach( $this->list as $item ) {
-			$item->modulo( $div );
+		foreach( $this->items as $item ) {
+			$item->modulo( $value );
 		}
 
 		return $this;

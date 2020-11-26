@@ -65,7 +65,7 @@ class ExistValidator
 
 			foreach( $config as $name => $value ) {
 				if( !array_key_exists( $name, $schema )) {
-					throw new ValidatorException( $prefix . $name, Error::TYPE_VOID );
+					$this->error( $prefix . $name );
 				}
 			}
 
@@ -77,5 +77,15 @@ class ExistValidator
 				}
 			}
 		}
+	}
+
+	/**
+	 * @param string $name
+	 */
+	protected function error( string $name ) : void
+	{
+		$text = Error::compose( $name, "Parameter \$name does not exist.");
+
+		throw new ValidatorException( $name, $text, Error::TYPE_VOID );
 	}
 }

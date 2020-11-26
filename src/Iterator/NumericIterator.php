@@ -7,15 +7,15 @@ use Kucbel\Scalar\Validator\NumericValidator;
 abstract class NumericIterator extends ScalarIterator
 {
 	/**
-	 * @param int|null $min
-	 * @param int|null $max
+	 * @param int|null $lower
+	 * @param int|null $upper
 	 * @return $this
 	 */
-	function digit( ?int $min, ?int $max )
+	function digit( ?int $lower, ?int $upper )
 	{
 		/** @var NumericValidator $item */
-		foreach( $this->list as $item ) {
-			$item->digit( $min, $max );
+		foreach( $this->items as $item ) {
+			$item->digit( $lower, $upper );
 		}
 
 		return $this;

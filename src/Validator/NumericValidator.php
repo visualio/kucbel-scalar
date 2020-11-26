@@ -8,22 +8,51 @@ use Nette\InvalidArgumentException;
 abstract class NumericValidator extends ScalarValidator
 {
 	/**
-	 * @param int|null $min
-	 * @param int|null $max
+	 * @param int|null $lower limit
+	 * @param int|null $upper limit
 	 * @return $this
 	 */
-	function digit( ?int $min, ?int $max )
+	function digit( ?int $lower, ?int $upper )
 	{
-		if(( $min !== null and $min < 0 ) or ( $max !== null and $max < 0 )) {
-			throw new InvalidArgumentException("Enter a positive length limit.");
-		} elseif( $min === null and $max === null ) {
+		if( $lower === null and $upper === null ) {
 			throw new InvalidArgumentException("Enter at least one value.");
 		}
 
-		$val = abs( $this->value );
+		$check = $this->value < 0 ? - $this->value : $this->value;
+		$match = true;
 
-		if(( $min !== null and $min !== 0 and $val < 10 ** ( $min - 1 )) or ( $max !== null and $val >= 10 ** $max )) {
-			throw new ValidatorException( $this->name, Error::NUM_DIGIT, ['min' => $min, 'max' => $max ]);
+		if( $lower !== null and $lower !== 0 ) {
+			if( $lower < 0 ) {
+				throw new InvalidArgumentException("Enter a positive lower limit.");
+			}
+
+			if( $check < 10 ** ( $lower - 1 )) {
+				$match = false;
+			}
+		}
+
+		if( $upper !== null ) {
+			if( $upper < 0 ) {
+				throw new InvalidArgumentException("Enter a positive upper limit.");
+			}
+
+			if( $check >= 10 ** $upper ) {
+				$match = false;
+			}
+		}
+
+		if( !$match ) {
+			if( $lower === $upper ) {
+				$text = "exactly \$lower";
+			} elseif( $upper === null ) {
+				$text = "at least \$lower";
+			} elseif( $lower === null ) {
+				$text = "at most \$upper";
+			} else {
+				$text = "between \$lower and \$upper";
+			}
+
+			$this->error("Parameter \$name must have {$text} digits.", Error::NUM_DIGIT, ['lower' => $lower, 'upper' => $upper ]);
 		}
 
 		return $this;

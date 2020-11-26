@@ -35,43 +35,73 @@ class DateValidator extends Validator
 			throw new InvalidArgumentException("Enter at least one value.");
 		}
 
-		foreach( $values as $i => $value ) {
-			$values[ $i ] = DateTime::from( $value );
+		$match = false;
+
+		foreach( $values as &$value ) {
+			$value = DateTime::from( $value );
+
+			if( $this->value == $value ) {
+				$match = true;
+
+				break;
+			}
 		}
 
-		if( !in_array( $this->value, $values )) {
-			throw new ValidatorException( $this->name, Error::MIX_EQUAL, ['list' => $values ]);
+		if( !$match ) {
+			$text = isset( $values[1] ) ? 'one of the following' : 'equal to';
+
+			$this->error("Parameter \$name must be {$text} \$list.", Error::MIX_EQUAL, ['list' => $values ]);
 		}
 
 		return $this;
 	}
 
 	/**
-	 * @param mixed|null $min
-	 * @param mixed|null $max
-	 * @param int $opt
+	 * @param mixed|null $lower limit
+	 * @param mixed|null $upper limit
+	 * @param int $flag
 	 * @return $this
 	 */
-	function value( $min, $max, int $opt = 0 )
+	function value( $lower, $upper, int $flag = 0 )
 	{
-		if( $min === null and $max === null ) {
+		if( $lower === null and $upper === null ) {
 			throw new InvalidArgumentException("Enter at least one value.");
 		}
 
-		if( $min !== null ) {
-			$min = DateTime::from( $min );
+		$match = true;
+
+		if( $lower !== null ) {
+			$lower = DateTime::from( $lower );
+
+			if(( $this->value <=> $lower ) <= ( $flag & self::EXCL_LOWER ? 0 : -1 )) {
+				$match = false;
+			}
 		}
 
-		if( $max !== null ) {
-			$max = DateTime::from( $max );
+		if( $upper !== null ) {
+			$upper = DateTime::from( $upper );
+
+			if(( $this->value <=> $upper ) >= ( $flag & self::EXCL_UPPER ? 0 : 1 )) {
+				$match = false;
+			}
 		}
 
-		$val = $this->value;
-		$nin = $opt & self::EXCL_MIN;
-		$nax = $opt & self::EXCL_MAX;
+		if( !$match ) {
+			$text = '';
 
-		if(( $min !== null and ( $val <=> $min ) <= ( $nin ? 0 : -1 )) or ( $max !== null and ( $val <=> $max ) >= ( $nax ? 0 : 1 ))) {
-			throw new ValidatorException( $this->name, Error::MIX_VALUE, ['min' => $min, 'max' => $max, 'opt' => $opt ]);
+			if( $lower !== null ) {
+				$text .= $flag & self::EXCL_LOWER ? " greater than \$lower" : " equal or greater than \$lower";
+			}
+
+			if( $lower !== null and $upper !== null ) {
+				$text .= " and";
+			}
+
+			if( $upper !== null ) {
+				$text .= $flag & self::EXCL_UPPER ? " less than \$upper" : " equal or less than \$upper";
+			}
+
+			$this->error("Parameter \$name must be{$text}.", Error::MIX_VALUE, ['lower' => $lower, 'upper' => $upper ]);
 		}
 
 		return $this;

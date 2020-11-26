@@ -14,11 +14,11 @@ use Traversable;
 
 class MixedValidator extends Validator
 {
-	const
+	protected const
 		NULL	= 1,
 		BOOL	= 2,
 		INT		= 3,
-		FLO		= 4,
+		DEC		= 4,
 		STR		= 5,
 		DATE	= 6,
 		OBJ		= 7,
@@ -82,9 +82,9 @@ class MixedValidator extends Validator
 		}
 
 		if( $type === self::NULL ) {
-			throw new ValidatorException( $this->name, Error::TYPE_NULL );
+			$this->error("Parameter \$name must be provided.", Error::TYPE_NULL );
 		} elseif( $type !== self::BOOL ) {
-			throw new ValidatorException( $this->name, Error::TYPE_BOOL );
+			$this->error("Parameter \$name must be a boolean.", Error::TYPE_BOOL );
 		}
 
 		return new BoolValidator( $this->name, $value );
@@ -99,17 +99,17 @@ class MixedValidator extends Validator
 		$type = self::detect( $value );
 
 		if( $type === self::STR and $match = Strings::match( $value, '~^[+-]?([.][0-9]+|[0-9]+[.]?[0-9]*)([Ee][+-]?[0-9]{1,2})?$~') and strlen( Strings::replace( $match[1], '~^[0.]+|[0.]+$|[.]~', '')) <= 14 ) {
-			$type = self::FLO;
+			$type = self::DEC;
 			$value = (float) $value;
 		} elseif( $type === self::DATE ) {
-			$type = self::FLO;
+			$type = self::DEC;
 			$value = (float) $value->format('U');
 		}
 
 		if( $type === self::NULL ) {
-			throw new ValidatorException( $this->name, Error::TYPE_NULL );
-		} elseif( $type !== self::FLO and $type !== self::INT ) {
-			throw new ValidatorException( $this->name, Error::TYPE_FLOAT );
+			$this->error("Parameter \$name must be provided.", Error::TYPE_NULL );
+		} elseif( $type !== self::DEC and $type !== self::INT ) {
+			$this->error("Parameter \$name must be a float.", Error::TYPE_FLOAT );
 		}
 
 		return new FloatValidator( $this->name, $value );
@@ -129,7 +129,7 @@ class MixedValidator extends Validator
 		} elseif( $type === self::STR and Strings::match( $value, '~^[+-]?[0-9]+[.]?0*$~') and $value >= PHP_INT_MIN and $value <= PHP_INT_MAX ) {
 			$type = self::INT;
 			$value = (int) $value;
-		} elseif( $type === self::FLO and $value === floor( $value ) and $value >= PHP_INT_MIN and $value <= PHP_INT_MAX ) {
+		} elseif( $type === self::DEC and $value === floor( $value ) and $value >= PHP_INT_MIN and $value <= PHP_INT_MAX ) {
 			$type = self::INT;
 			$value = (int) $value;
 		} elseif( $type === self::DATE and ( $stamp = $value->format('U')) <= PHP_INT_MAX ) {
@@ -138,9 +138,9 @@ class MixedValidator extends Validator
 		}
 
 		if( $type === self::NULL ) {
-			throw new ValidatorException( $this->name, Error::TYPE_NULL );
+			$this->error("Parameter \$name must be provided.", Error::TYPE_NULL );
 		} elseif( $type !== self::INT ) {
-			throw new ValidatorException( $this->name, Error::TYPE_INTEGER );
+			$this->error("Parameter \$name must be an integer.", Error::TYPE_INTEGER );
 		}
 
 		return new IntegerValidator( $this->name, $value );
@@ -160,9 +160,9 @@ class MixedValidator extends Validator
 		}
 
 		if( $type === self::NULL ) {
-			throw new ValidatorException( $this->name, Error::TYPE_NULL );
-		} elseif( $type !== self::STR and $type !== self::INT and $type !== self::FLO ) {
-			throw new ValidatorException( $this->name, Error::TYPE_STRING );
+			$this->error("Parameter \$name must be provided.", Error::TYPE_NULL );
+		} elseif( $type !== self::STR and $type !== self::INT and $type !== self::DEC ) {
+			$this->error("Parameter \$name must be a string.", Error::TYPE_STRING );
 		}
 
 		return new StringValidator( $this->name, $value );
@@ -170,27 +170,28 @@ class MixedValidator extends Validator
 
 	/**
 	 * @return DateValidator
+	 * @todo string $from = null
 	 */
 	function date()
 	{
 		$value = $this->value;
 		$type = self::detect( $value );
 
-		if( $type === self::FLO and $value === floor( $value ) and $value >= PHP_INT_MIN and $value <= PHP_INT_MAX ) {
+		if( $type === self::DEC and $value === floor( $value ) and $value >= PHP_INT_MIN and $value <= PHP_INT_MAX ) {
 			$type = self::INT;
 			$value = (int) $value;
 		}
 
 		if( $type === self::NULL ) {
-			throw new ValidatorException( $this->name, Error::TYPE_NULL );
+			$this->error("Parameter \$name must be provided.", Error::TYPE_NULL );
 		} elseif( $type !== self::DATE and $type !== self::STR and $type !== self::INT ) {
-			throw new ValidatorException( $this->name, Error::TYPE_DATE );
+			$this->error("Parameter \$name must be a date.", Error::TYPE_DATE );
 		}
 
 		try {
 			$value = DateTime::from( $value );
 		} catch( Throwable $error ) {
-			throw new ValidatorException( $this->name, Error::TYPE_DATE );
+			$this->error("Parameter \$name must be a date.", Error::TYPE_DATE );
 		}
 
 		return new DateValidator( $this->name, $value );
@@ -204,7 +205,7 @@ class MixedValidator extends Validator
 		$type = self::detect( $this->value );
 
 		if( $type === self::NULL ) {
-			throw new ValidatorException( $this->name, Error::TYPE_NULL );
+			$this->error("Parameter \$name must be provided.", Error::TYPE_NULL );
 		}
 
 		$hint = strpos( $this->name, '.');
@@ -231,9 +232,9 @@ class MixedValidator extends Validator
 		$type = self::detect( $this->value );
 
 		if( $type === self::NULL ) {
-			throw new ValidatorException( $this->name, Error::TYPE_NULL );
+			$this->error("Parameter \$name must be provided.", Error::TYPE_NULL );
 		} elseif( $type !== self::ARR ) {
-			throw new ValidatorException( $this->name, Error::TYPE_ARRAY );
+			$this->error("Parameter \$name must be an array.", Error::TYPE_ARRAY );
 		}
 
 		$hint = strpos( $this->name, '.');
@@ -252,7 +253,7 @@ class MixedValidator extends Validator
 	 * @param mixed $value
 	 * @return int
 	 */
-	static function detect( $value ) : int
+	static protected function detect( $value ) : int
 	{
 		switch( gettype( $value )) {
 			case 'NULL':
@@ -262,12 +263,13 @@ class MixedValidator extends Validator
 			case 'integer':
 				return self::INT;
 			case 'double':
-				return is_finite( $value ) ? self::FLO : self::POO;
+				return is_finite( $value ) ? self::DEC : self::POO;
 			case 'string':
 				return self::STR;
 			case 'array':
 				return self::ARR;
 			case 'resource':
+			case 'resource (closed)':
 			case 'unknown type':
 				return self::POO;
 		}

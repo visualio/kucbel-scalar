@@ -46,7 +46,7 @@ class AssertFactory
 		try {
 			return $this->type->get( $type )->fetch( $value );
 		} catch( ValidatorException $error ) {
-			throw new AssertException( $error, $type );
+			throw $error->withType( $type );
 		}
 	}
 }

@@ -8,7 +8,7 @@ use Kucbel\Scalar\Validator\ValidatorException;
 trait ValidateMethod
 {
 	/**
-	 * @var object[]
+	 * @var ExistValidator[]
 	 */
 	protected static $parent = [];
 

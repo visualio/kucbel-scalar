@@ -35,47 +35,73 @@ class IntegerValidator extends NumericValidator
 		}
 
 		if( !in_array( $this->value, $values, true )) {
-			throw new ValidatorException( $this->name, Error::MIX_EQUAL, ['list' => $values ]);
+			$text = isset( $values[1] ) ? 'one of the following' : 'equal to';
+
+			$this->error("Parameter \$name must be {$text} \$list.", Error::MIX_EQUAL, ['list' => $values ]);
 		}
 
 		return $this;
 	}
 
 	/**
-	 * @param int|null $min
-	 * @param int|null $max
-	 * @param int $opt
+	 * @param int|null $lower
+	 * @param int|null $upper
+	 * @param int $flag
 	 * @return $this
 	 */
-	function value( ?int $min, ?int $max, int $opt = 0 )
+	function value( ?int $lower, ?int $upper, int $flag = 0 )
 	{
-		if( $min === null and $max === null ) {
+		if( $lower === null and $upper === null ) {
 			throw new InvalidArgumentException("Enter at least one value.");
 		}
 
-		$val = $this->value;
-		$nin = $opt & self::EXCL_MIN;
-		$nax = $opt & self::EXCL_MAX;
+		$match = true;
 
-		if(( $min !== null and ( $val <=> $min ) <= ( $nin ? 0 : -1 )) or ( $max !== null and ( $val <=> $max ) >= ( $nax ? 0 : 1 ))) {
-			throw new ValidatorException( $this->name, Error::MIX_VALUE, ['min' => $min, 'max' => $max, 'opt' => $opt ]);
+		if( $lower !== null ) {
+			if(( $this->value <=> $lower ) <= ( $flag & self::EXCL_LOWER ? 0 : -1 )) {
+				$match = false;
+			}
+		}
+
+		if( $upper !== null ) {
+			if(( $this->value <=> $upper ) >= ( $flag & self::EXCL_UPPER ? 0 : 1 )) {
+				$match = false;
+			}
+		}
+
+		if( !$match ) {
+			$text = '';
+
+			if( $lower !== null ) {
+				$text .= $flag & self::EXCL_LOWER ? " greater than \$lower" : " equal or greater than \$lower";
+			}
+
+			if( $lower !== null and $upper !== null ) {
+				$text .= " and";
+			}
+
+			if( $upper !== null ) {
+				$text .= $flag & self::EXCL_UPPER ? " less than \$upper" : " equal or less than \$upper";
+			}
+
+			$this->error("Parameter \$name must be{$text}.", Error::MIX_VALUE, ['lower' => $lower, 'upper' => $upper ]);
 		}
 
 		return $this;
 	}
 
 	/**
-	 * @param int $div
+	 * @param int $value
 	 * @return $this
 	 */
-	function modulo( int $div )
+	function modulo( int $value )
 	{
-		if( $div <= 0 ) {
-			throw new InvalidArgumentException("Enter a positive non-zero divisor.");
+		if( $value <= 0 ) {
+			throw new InvalidArgumentException("Enter a positive non-zero value.");
 		}
 
-		if( abs( $this->value ) % $div ) {
-			throw new ValidatorException( $this->name, Error::NUM_MODULO, ['div' => $div ]);
+		if( abs( $this->value ) % $value ) {
+			$this->error("Parameter \$name must be divisible by \$value.", Error::NUM_MODULO, ['value' => $value ]);
 		}
 
 		return $this;

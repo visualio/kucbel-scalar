@@ -2,22 +2,10 @@
 
 namespace Kucbel\Scalar\Schema;
 
-use JsonSerializable;
-use Kucbel\Scalar\Exception;
 use Kucbel\Scalar\Validator\ValidatorException;
 
-/**
- * Class AssertException
- *
- * @method ValidatorException getPrevious()
- */
-class AssertException extends Exception implements JsonSerializable
+class AssertException extends ValidatorException
 {
-	/**
-	 * @var ValidatorException
-	 */
-	protected $error;
-
 	/**
 	 * @var string
 	 */
@@ -26,23 +14,14 @@ class AssertException extends Exception implements JsonSerializable
 	/**
 	 * AssertException constructor.
 	 *
-	 * @param ValidatorException $error
 	 * @param string $type
+	 * @param ValidatorException $error
 	 */
-	function __construct( ValidatorException $error, string $type )
+	function __construct( string $type, ValidatorException $error )
 	{
-		parent::__construct( $error->getMessage(), $error->getCode(), $error );
+		parent::__construct( $error->getName(), $error->getMessage(), $error->getCode(), $error );
 
-		$this->error = $error;
 		$this->type = $type;
-	}
-
-	/**
-	 * @return string
-	 */
-	function getName() : string
-	{
-		return $this->error->getName();
 	}
 
 	/**
@@ -54,18 +33,13 @@ class AssertException extends Exception implements JsonSerializable
 	}
 
 	/**
-	 * @return array | null
-	 */
-	function getValues() : ?array
-	{
-		return $this->error->getValues();
-	}
-
-	/**
 	 * @return array
 	 */
-	function jsonSerialize()
+	function jsonSerialize() : array
 	{
-		return $this->error->jsonSerialize();
+		$json = parent::jsonSerialize();
+		$json['type'] = $this->type;
+
+		return $json;
 	}
 }

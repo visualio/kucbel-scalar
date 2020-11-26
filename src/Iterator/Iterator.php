@@ -3,24 +3,16 @@
 namespace Kucbel\Scalar\Iterator;
 
 use Kucbel\Scalar\Error;
-use Kucbel\Scalar\Validator\ValidatorException;
+use Kucbel\Scalar\Property;
 use Kucbel\Scalar\Validator\ValidatorInterface;
 use Nette\InvalidArgumentException;
-use Nette\SmartObject;
 
-abstract class Iterator implements IteratorInterface
+abstract class Iterator extends Property implements IteratorInterface
 {
-	use SmartObject;
-
-	/**
-	 * @var string
-	 */
-	protected $name;
-
 	/**
 	 * @var ValidatorInterface[]
 	 */
-	protected $list;
+	protected $items;
 
 	/**
 	 * @var int
@@ -28,22 +20,51 @@ abstract class Iterator implements IteratorInterface
 	private $index = 0;
 
 	/**
-	 * @param int|null $min
-	 * @param int|null $max
+	 * @param int|null $lower limit
+	 * @param int|null $upper limit
 	 * @return $this
 	 */
-	function count( ?int $min, ?int $max )
+	function count( ?int $lower, ?int $upper )
 	{
-		if(( $min !== null and $min < 0 ) or ( $max !== null and $max < 0 )) {
-			throw new InvalidArgumentException("Enter a positive count limit.");
-		} elseif( $min === null and $max === null ) {
+		if( $lower === null and $upper === null ) {
 			throw new InvalidArgumentException("Enter at least one value.");
 		}
 
-		$num = count( $this->list );
+		$check = count( $this->items );
+		$match = true;
 
-		if(( $min !== null and $num < $min ) or ( $max !== null and $num > $max )) {
-			throw new ValidatorException( $this->name, Error::ARR_COUNT, ['min' => $min, 'max' => $max ]);
+		if( $lower !== null and $lower !== 0 ) {
+			if( $lower < 0 ) {
+				throw new InvalidArgumentException("Enter a positive lower limit.");
+			}
+
+			if( $check < $lower ) {
+				$match = false;
+			}
+		}
+
+		if( $upper !== null ) {
+			if( $upper < 0 ) {
+				throw new InvalidArgumentException("Enter a positive upper limit.");
+			}
+
+			if( $check > $upper ) {
+				$match = false;
+			}
+		}
+
+		if( !$match ) {
+			if( $lower === $upper ) {
+				$text = "exactly \$lower";
+			} elseif( $upper === null ) {
+				$text = "at least \$lower";
+			} elseif( $lower === null ) {
+				$text = "at most \$upper";
+			} else {
+				$text = "between \$lower and \$upper";
+			}
+
+			$this->error("Parameter \$name must contain {$text} values.", Error::ARR_COUNT, ['lower' => $lower, 'upper' => $upper ]);
 		}
 
 		return $this;
@@ -56,7 +77,7 @@ abstract class Iterator implements IteratorInterface
 	{
 		$values = [];
 
-		foreach( $this->list as $item ) {
+		foreach( $this->items as $item ) {
 			$values[] = $item->fetch();
 		}
 
@@ -69,13 +90,13 @@ abstract class Iterator implements IteratorInterface
 	 */
 	function item( int $index )
 	{
-		$value = $this->list[ $index ] ?? null;
+		$item = $this->items[ $index ] ?? null;
 
-		if( $value === null ) {
-			throw new ValidatorException( $this->name, Error::ARR_COUNT, ['min' => $index + 1, 'max' => null ]);
+		if( $item === null ) {
+			$this->error("Parameter \$name must contain at least \$lower values.", Error::ARR_COUNT, ['lower' => $index + 1 ]);
 		}
 
-		return $value;
+		return $item;
 	}
 
 	/**
@@ -91,7 +112,7 @@ abstract class Iterator implements IteratorInterface
 	 */
 	function last()
 	{
-		return $this->item( $this->list ? count( $this->list ) - 1 : 0 );
+		return $this->item( $this->items ? count( $this->items ) - 1 : 0 );
 	}
 
 	/**
@@ -115,7 +136,7 @@ abstract class Iterator implements IteratorInterface
 	 */
 	function valid()
 	{
-		return isset( $this->list[ $this->index ] );
+		return isset( $this->items[ $this->index ] );
 	}
 
 	/**

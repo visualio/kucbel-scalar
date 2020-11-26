@@ -4,7 +4,6 @@ namespace Kucbel\Scalar\Iterator;
 
 use Kucbel\Scalar\Error;
 use Kucbel\Scalar\Validator\IntegerValidator;
-use Kucbel\Scalar\Validator\ValidatorException;
 use Nette\InvalidArgumentException;
 
 /**
@@ -23,12 +22,12 @@ class IntegerIterator extends NumericIterator
 	 * IntegerIterator constructor.
 	 *
 	 * @param string $name
-	 * @param IntegerValidator ...$list
+	 * @param IntegerValidator ...$items
 	 */
-	function __construct( string $name, IntegerValidator ...$list )
+	function __construct( string $name, IntegerValidator ...$items )
 	{
 		$this->name = $name;
-		$this->list = $list;
+		$this->items = $items;
 	}
 
 	/**
@@ -42,7 +41,9 @@ class IntegerIterator extends NumericIterator
 		}
 
 		if( array_diff( $values, $this->fetch() )) {
-			throw new ValidatorException( $this->name, Error::ARR_EXIST, ['list' => $values ]);
+			$text = isset( $values[1] ) ? "all of the following values" : "the value";
+
+			$this->error("Parameter \$name must contain {$text} \$list.", Error::ARR_EXIST, ['list' => $values ]);
 		}
 
 		return $this;
@@ -54,7 +55,7 @@ class IntegerIterator extends NumericIterator
 	 */
 	function equal( int ...$values )
 	{
-		foreach( $this->list as $item ) {
+		foreach( $this->items as $item ) {
 			$item->equal( ...$values );
 		}
 
@@ -62,28 +63,28 @@ class IntegerIterator extends NumericIterator
 	}
 
 	/**
-	 * @param int|null $min
-	 * @param int|null $max
-	 * @param int $opt
+	 * @param int|null $lower limit
+	 * @param int|null $upper limit
+	 * @param int $flag
 	 * @return $this
 	 */
-	function value( ?int $min, ?int $max, int $opt = 0 )
+	function value( ?int $lower, ?int $upper, int $flag = 0 )
 	{
-		foreach( $this->list as $item ) {
-			$item->value( $min, $max, $opt );
+		foreach( $this->items as $item ) {
+			$item->value( $lower, $upper, $flag );
 		}
 
 		return $this;
 	}
 
 	/**
-	 * @param int $div
+	 * @param int $value
 	 * @return $this
 	 */
-	function modulo( int $div )
+	function modulo( int $value )
 	{
-		foreach( $this->list as $item ) {
-			$item->modulo( $div );
+		foreach( $this->items as $item ) {
+			$item->modulo( $value );
 		}
 
 		return $this;

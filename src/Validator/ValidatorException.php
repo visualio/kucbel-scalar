@@ -3,9 +3,9 @@
 namespace Kucbel\Scalar\Validator;
 
 use JsonSerializable;
-use Kucbel\Scalar\Error;
 use Kucbel\Scalar\Exception;
-use Nette\Utils\Strings;
+use Kucbel\Scalar\Schema\AssertException;
+use Throwable;
 
 class ValidatorException extends Exception implements JsonSerializable
 {
@@ -15,32 +15,18 @@ class ValidatorException extends Exception implements JsonSerializable
 	protected $name;
 
 	/**
-	 * @var array | null
-	 */
-	protected $values;
-
-	/**
 	 * ValidatorException constructor.
 	 *
 	 * @param string $name
+	 * @param string $text
 	 * @param int $code
-	 * @param array $values
+	 * @param Throwable $error
 	 */
-	function __construct( string $name, int $code, array $values = null )
+	function __construct( string $name, string $text, int $code = null, Throwable $error = null )
 	{
+		parent::__construct( $text, $code, $error );
+
 		$this->name = $name;
-		$this->values = $values;
-
-		$text = Error::getText( $code, $values );
-
-		$values['name'] = $name;
-		$values = Error::getHints( $values );
-
-		$text = Strings::replace( $text, '~\$([a-z]+)~', function( $match ) use( $values ) {
-			return $values[ $match[1] ] ?? '???';
-		});
-
-		parent::__construct( $text, $code );
 	}
 
 	/**
@@ -52,32 +38,23 @@ class ValidatorException extends Exception implements JsonSerializable
 	}
 
 	/**
-	 * @param string $name
-	 * @return mixed
-	 */
-	function getValue( string $name )
-	{
-		return $this->values[ $name ] ?? null;
-	}
-
-	/**
-	 * @return array | null
-	 */
-	function getValues() : ?array
-	{
-		return $this->values;
-	}
-
-	/**
 	 * @return array
 	 */
-	function jsonSerialize()
+	function jsonSerialize() : array
 	{
 		return [
 			'message'	=> $this->message,
 			'code'		=> $this->code,
 			'name'		=> $this->name,
-			'values'	=> $this->values,
 		];
+	}
+
+	/**
+	 * @param string $type
+	 * @return AssertException
+	 */
+	function withType( string $type ) : AssertException
+	{
+		return new AssertException( $type, $this );
 	}
 }

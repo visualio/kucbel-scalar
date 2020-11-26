@@ -4,7 +4,6 @@ namespace Kucbel\Scalar\Iterator;
 
 use Kucbel\Scalar\Error;
 use Kucbel\Scalar\Validator\StringValidator;
-use Kucbel\Scalar\Validator\ValidatorException;
 use Nette\InvalidArgumentException;
 
 /**
@@ -23,12 +22,12 @@ class StringIterator extends ScalarIterator
 	 * StringIterator constructor.
 	 *
 	 * @param string $name
-	 * @param StringValidator ...$list
+	 * @param StringValidator ...$items
 	 */
-	function __construct( string $name, StringValidator ...$list )
+	function __construct( string $name, StringValidator ...$items )
 	{
 		$this->name = $name;
-		$this->list = $list;
+		$this->items = $items;
 	}
 
 	/**
@@ -42,7 +41,9 @@ class StringIterator extends ScalarIterator
 		}
 
 		if( array_diff( $values, $this->fetch() )) {
-			throw new ValidatorException( $this->name, Error::ARR_EXIST, ['list' => $values ]);
+			$text = isset( $values[1] ) ? "all of the following values" : "the value";
+
+			$this->error("Parameter \$name must contain {$text} \$list.", Error::ARR_EXIST, ['list' => $values ]);
 		}
 
 		return $this;
@@ -54,7 +55,7 @@ class StringIterator extends ScalarIterator
 	 */
 	function equal( string ...$values )
 	{
-		foreach( $this->list as $item ) {
+		foreach( $this->items as $item ) {
 			$item->equal( ...$values );
 		}
 
@@ -62,28 +63,28 @@ class StringIterator extends ScalarIterator
 	}
 
 	/**
-	 * @param int|null $min
-	 * @param int|null $max
+	 * @param int|null $lower limit
+	 * @param int|null $upper limit
 	 * @return $this
 	 */
-	function char( ?int $min, ?int $max )
+	function char( ?int $lower, ?int $upper )
 	{
-		foreach( $this->list as $item ) {
-			$item->char( $min, $max );
+		foreach( $this->items as $item ) {
+			$item->char( $lower, $upper );
 		}
 
 		return $this;
 	}
 
 	/**
-	 * @param int|null $min
-	 * @param int|null $max
+	 * @param int|null $lower limit
+	 * @param int|null $upper limit
 	 * @return $this
 	 */
-	function line( ?int $min, ?int $max )
+	function line( ?int $lower, ?int $upper )
 	{
-		foreach( $this->list as $item ) {
-			$item->line( $min, $max );
+		foreach( $this->items as $item ) {
+			$item->line( $lower, $upper );
 		}
 
 		return $this;
@@ -95,7 +96,7 @@ class StringIterator extends ScalarIterator
 	 */
 	function class( string $type )
 	{
-		foreach( $this->list as $item ) {
+		foreach( $this->items as $item ) {
 			$item->class( $type );
 		}
 
@@ -107,7 +108,7 @@ class StringIterator extends ScalarIterator
 	 */
 	function email()
 	{
-		foreach( $this->list as $item ) {
+		foreach( $this->items as $item ) {
 			$item->email();
 		}
 
@@ -119,7 +120,7 @@ class StringIterator extends ScalarIterator
 	 */
 	function url()
 	{
-		foreach( $this->list as $item ) {
+		foreach( $this->items as $item ) {
 			$item->url();
 		}
 
@@ -132,7 +133,7 @@ class StringIterator extends ScalarIterator
 	 */
 	function file( bool $real = true )
 	{
-		foreach( $this->list as $item ) {
+		foreach( $this->items as $item ) {
 			$item->file( $real );
 		}
 
@@ -145,7 +146,7 @@ class StringIterator extends ScalarIterator
 	 */
 	function folder( bool $real = true )
 	{
-		foreach( $this->list as $item ) {
+		foreach( $this->items as $item ) {
 			$item->folder( $real );
 		}
 
