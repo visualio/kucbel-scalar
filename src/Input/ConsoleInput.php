@@ -29,8 +29,10 @@ class ConsoleInput extends Input implements DetectInterface
 	{
 		if( $this->input->hasArgument( $name )) {
 			return $this->input->getArgument( $name );
-		} else {
+		} elseif( $this->input->hasOption( $name )) {
 			return $this->input->getOption( $name );
+		} else {
+			return null;
 		}
 	}
 
@@ -42,8 +44,10 @@ class ConsoleInput extends Input implements DetectInterface
 	{
 		if( $this->input->hasArgument( $name )) {
 			$value = $this->input->getArgument( $name );
-		} else {
+		} elseif( $this->input->hasOption( $name )) {
 			$value = $this->input->getOption( $name );
+		} else {
+			$value = null;
 		}
 
 		return $value !== null and $value !== false;
