@@ -7,8 +7,10 @@
 		"homepage": "https://bitbucket.org/kucbel/"
 	}],
 	"require": {
-		"php": "^7.2",
+		"php": ">=7.4",
+
 		"ext-json": "*",
+
 		"nette/utils": "^3.0"
 	},
 	"conflict": {
