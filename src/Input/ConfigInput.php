@@ -12,7 +12,7 @@ class ConfigInput extends StrictInput implements OutputInterface
 	/**
 	 * ConfigInput constructor.
 	 *
-	 * @param string $section
+	 * @param string | null $section
 	 */
 	function __construct( string $section = null )
 	{
@@ -24,7 +24,7 @@ class ConfigInput extends StrictInput implements OutputInterface
 	 * @param mixed $null
 	 * @return mixed
 	 */
-	function get( string $name, $null = null )
+	function get( string $name, mixed $null = null ) : mixed
 	{
 		$value = ini_get( $this->section . $name );
 
@@ -35,7 +35,7 @@ class ConfigInput extends StrictInput implements OutputInterface
 	 * @param string $name
 	 * @param mixed $value
 	 */
-	function set( string $name, $value )
+	function set( string $name, mixed $value )
 	{
 		$name = $this->section . $name;
 

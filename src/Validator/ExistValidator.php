@@ -50,7 +50,7 @@ class ExistValidator
 
 	/**
 	 * @param array $config
-	 * @param string $prefix
+	 * @param string | null $prefix
 	 * @throws ValidatorException
 	 */
 	function match( array $config, string $prefix = null )

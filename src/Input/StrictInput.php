@@ -18,5 +18,5 @@ abstract class StrictInput extends Input
 	 * @param mixed $null
 	 * @return mixed
 	 */
-	abstract function get( string $name, $null = null );
+	abstract function get( string $name, mixed $null = null ) : mixed;
 }

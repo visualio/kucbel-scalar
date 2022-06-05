@@ -29,7 +29,7 @@ class MixedIterator extends Iterator
 	/**
 	 * @return BoolIterator
 	 */
-	function bool()
+	function bool() : BoolIterator
 	{
 		$items = [];
 
@@ -43,7 +43,7 @@ class MixedIterator extends Iterator
 	/**
 	 * @return FloatIterator
 	 */
-	function float()
+	function float() : FloatIterator
 	{
 		$items = [];
 
@@ -57,7 +57,7 @@ class MixedIterator extends Iterator
 	/**
 	 * @return IntegerIterator
 	 */
-	function integer()
+	function integer() : IntegerIterator
 	{
 		$items = [];
 
@@ -71,7 +71,7 @@ class MixedIterator extends Iterator
 	/**
 	 * @return StringIterator
 	 */
-	function string()
+	function string() : StringIterator
 	{
 		$items = [];
 
@@ -85,7 +85,7 @@ class MixedIterator extends Iterator
 	/**
 	 * @return DateIterator
 	 */
-	function date()
+	function date() : DateIterator
 	{
 		$items = [];
 

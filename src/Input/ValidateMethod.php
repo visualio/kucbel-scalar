@@ -26,7 +26,7 @@ trait ValidateMethod
 	 * @param object $parent
 	 * @return ExistValidator
 	 */
-	protected static function validate( object $parent )
+	protected static function validate( object $parent ) : ExistValidator
 	{
 		$hash = spl_object_hash( $parent );
 

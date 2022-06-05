@@ -30,7 +30,7 @@ class StringValidator extends ScalarValidator
 	 * @param string ...$values
 	 * @return $this
 	 */
-	function equal( string ...$values )
+	function equal( string ...$values ) : static
 	{
 		if( !$values ) {
 			throw new InvalidArgumentException("Enter at least one value.");
@@ -50,7 +50,7 @@ class StringValidator extends ScalarValidator
 	 * @param int|null $upper limit
 	 * @return $this
 	 */
-	function char( ?int $lower, ?int $upper )
+	function char( ?int $lower, ?int $upper ) : static
 	{
 		if( $lower === null and $upper === null ) {
 			throw new InvalidArgumentException("Enter at least one value.");
@@ -101,7 +101,7 @@ class StringValidator extends ScalarValidator
 	 * @param int|null $upper
 	 * @return $this
 	 */
-	function line( ?int $lower, ?int $upper )
+	function line( ?int $lower, ?int $upper ) : static
 	{
 		if( $lower === null and $upper === null ) {
 			throw new InvalidArgumentException("Enter at least one value.");
@@ -151,7 +151,7 @@ class StringValidator extends ScalarValidator
 	 * @param string $type
 	 * @return $this
 	 */
-	function class( string $type )
+	function class( string $type ) : static
 	{
 		$check = ltrim( $this->value, '\\');
 
@@ -169,7 +169,7 @@ class StringValidator extends ScalarValidator
 	/**
 	 * @return $this
 	 */
-	function email()
+	function email() : static
 	{
 		if( !Validators::isEmail( $this->value )) {
 			$this->error("Parameter \$name must be an email.", Error::STR_EMAIL );
@@ -181,7 +181,7 @@ class StringValidator extends ScalarValidator
 	/**
 	 * @return $this
 	 */
-	function url()
+	function url() : static
 	{
 		if( !Validators::isUrl( $this->value )) {
 			$this->error("Parameter \$name must be an url.", Error::STR_URL );
@@ -194,7 +194,7 @@ class StringValidator extends ScalarValidator
 	 * @param bool $real
 	 * @return $this
 	 */
-	function file( bool $real = true )
+	function file( bool $real = true ) : static
 	{
 		if( !is_file( $this->value ) or !$this->path( $real )) {
 			$this->error("Parameter \$name must point to a file.", Error::STR_FILE );
@@ -207,7 +207,7 @@ class StringValidator extends ScalarValidator
 	 * @param bool $real
 	 * @return $this
 	 */
-	function folder( bool $real = true )
+	function folder( bool $real = true ) : static
 	{
 		if( !is_dir( $this->value ) or !$this->path( $real )) {
 			$this->error("Parameter \$name must point to a folder.", Error::STR_FOLDER );

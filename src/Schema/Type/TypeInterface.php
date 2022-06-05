@@ -10,5 +10,5 @@ interface TypeInterface
 	 * @param MixedValidator $value
 	 * @return mixed
 	 */
-	function fetch( MixedValidator $value );
+	function fetch( MixedValidator $value ) : mixed;
 }

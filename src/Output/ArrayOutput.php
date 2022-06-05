@@ -17,7 +17,7 @@ class ArrayOutput implements OutputInterface
 	/**
 	 * ArrayOutput constructor.
 	 *
-	 * @param ArrayAccess $values
+	 * @param ArrayAccess | null $values
 	 */
 	function __construct( ArrayAccess $values = null )
 	{
@@ -28,15 +28,15 @@ class ArrayOutput implements OutputInterface
 	 * @param string $name
 	 * @param mixed $value
 	 */
-	function set( string $name, $value )
+	function set( string $name, mixed $value )
 	{
 		$this->values[ $name ] = $value;
 	}
 
 	/**
-	 * @return iterable | array | null
+	 * @return ArrayAccess | array | null
 	 */
-	function fetch() : ?iterable
+	function fetch() : ArrayAccess | array | null
 	{
 		return $this->values;
 	}

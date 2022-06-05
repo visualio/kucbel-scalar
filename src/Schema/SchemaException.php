@@ -45,7 +45,7 @@ class SchemaException extends Exception implements JsonSerializable
 	/**
 	 * @return array
 	 */
-	function jsonSerialize()
+	function jsonSerialize() : array
 	{
 		$json = [];
 

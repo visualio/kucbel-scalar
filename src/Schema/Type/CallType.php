@@ -28,7 +28,7 @@ class CallType implements TypeInterface
 	 * @param MixedValidator $value
 	 * @return mixed
 	 */
-	function fetch( MixedValidator $value )
+	function fetch( MixedValidator $value ) : mixed
 	{
 		return ( $this->callback )( $value );
 	}

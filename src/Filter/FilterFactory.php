@@ -91,7 +91,7 @@ class FilterFactory
 	 * @param mixed $value
 	 * @return mixed
 	 */
-	function value( $value )
+	function value( mixed $value ) : mixed
 	{
 		foreach( $this->filters as $filter ) {
 			$value = $filter->clear( $value );

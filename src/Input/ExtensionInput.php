@@ -18,7 +18,7 @@ class ExtensionInput extends StrictInput
 	 * ExtensionInput constructor.
 	 *
 	 * @param CompilerExtension $extension
-	 * @param string $section
+	 * @param string | null $section
 	 */
 	function __construct( CompilerExtension $extension, string $section = null )
 	{
@@ -32,7 +32,7 @@ class ExtensionInput extends StrictInput
 	 * @param mixed $null
 	 * @return mixed
 	 */
-	function get( string $name, $null = null )
+	function get( string $name, mixed $null = null ) : mixed
 	{
 		$name = $this->section . $name;
 		$value = $this->extension->getConfig();

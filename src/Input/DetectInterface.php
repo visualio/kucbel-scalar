@@ -8,5 +8,5 @@ interface DetectInterface extends InputInterface
 	 * @param mixed $source
 	 * @return bool
 	 */
-	static function handle( $source ) : bool;
+	static function handle( mixed $source ) : bool;
 }

@@ -35,7 +35,7 @@ class Assert
 
 	/**
 	 * @param string $name
-	 * @param string $type
+	 * @param string | null $type
 	 * @return bool
 	 */
 	function has( string $name, string $type = null ) : bool
@@ -55,10 +55,10 @@ class Assert
 
 	/**
 	 * @param string $name
-	 * @param string $type
+	 * @param string | null $type
 	 * @return mixed
 	 */
-	function get( string $name, string $type = null )
+	function get( string $name, string $type = null ) : mixed
 	{
 		if( $type === null ) {
 			return $this->input->get( $name );

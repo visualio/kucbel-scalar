@@ -24,7 +24,7 @@ abstract class Iterator extends Property implements IteratorInterface
 	 * @param int|null $upper limit
 	 * @return $this
 	 */
-	function count( ?int $lower, ?int $upper )
+	function count( ?int $lower, ?int $upper ) : static
 	{
 		if( $lower === null and $upper === null ) {
 			throw new InvalidArgumentException("Enter at least one value.");
@@ -73,7 +73,7 @@ abstract class Iterator extends Property implements IteratorInterface
 	/**
 	 * @return array
 	 */
-	function fetch()
+	function fetch() : array
 	{
 		$values = [];
 
@@ -88,7 +88,7 @@ abstract class Iterator extends Property implements IteratorInterface
 	 * @param int $index
 	 * @return ValidatorInterface
 	 */
-	function item( int $index )
+	function item( int $index ) : ValidatorInterface
 	{
 		$item = $this->items[ $index ] ?? null;
 
@@ -102,7 +102,7 @@ abstract class Iterator extends Property implements IteratorInterface
 	/**
 	 * @return ValidatorInterface
 	 */
-	function first()
+	function first() : ValidatorInterface
 	{
 		return $this->item( 0 );
 	}
@@ -110,7 +110,7 @@ abstract class Iterator extends Property implements IteratorInterface
 	/**
 	 * @return ValidatorInterface
 	 */
-	function last()
+	function last() : ValidatorInterface
 	{
 		return $this->item( $this->items ? count( $this->items ) - 1 : 0 );
 	}
@@ -118,7 +118,7 @@ abstract class Iterator extends Property implements IteratorInterface
 	/**
 	 * @return ValidatorInterface
 	 */
-	function current()
+	function current() : ValidatorInterface
 	{
 		return $this->item( $this->index );
 	}
@@ -126,7 +126,7 @@ abstract class Iterator extends Property implements IteratorInterface
 	/**
 	 * @return int
 	 */
-	function key()
+	function key() : int
 	{
 		return $this->index;
 	}
@@ -134,7 +134,7 @@ abstract class Iterator extends Property implements IteratorInterface
 	/**
 	 * @return bool
 	 */
-	function valid()
+	function valid() : bool
 	{
 		return isset( $this->items[ $this->index ] );
 	}
@@ -142,7 +142,7 @@ abstract class Iterator extends Property implements IteratorInterface
 	/**
 	 * @return void
 	 */
-	function next()
+	function next() : void
 	{
 		$this->index++;
 	}
@@ -150,7 +150,7 @@ abstract class Iterator extends Property implements IteratorInterface
 	/**
 	 * @return void
 	 */
-	function rewind()
+	function rewind() : void
 	{
 		$this->index = 0;
 	}

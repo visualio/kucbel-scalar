@@ -8,5 +8,5 @@ interface OutputInterface
 	 * @param string $name
 	 * @param mixed $value
 	 */
-	function set( string $name, $value );
+	function set( string $name, mixed $value );
 }

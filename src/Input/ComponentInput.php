@@ -17,7 +17,7 @@ class ComponentInput extends StrictInput implements DetectInterface
 	 * ComponentInput constructor.
 	 *
 	 * @param Component $component
-	 * @param string $section
+	 * @param string | null $section
 	 */
 	function __construct( Component $component, string $section = null )
 	{
@@ -30,7 +30,7 @@ class ComponentInput extends StrictInput implements DetectInterface
 	 * @param mixed $null
 	 * @return mixed
 	 */
-	function get( string $name, $null = null )
+	function get( string $name, mixed $null = null ) : mixed
 	{
 		$name = $this->section . $name;
 		$value = $this->component->getParameters();
@@ -42,7 +42,7 @@ class ComponentInput extends StrictInput implements DetectInterface
 	 * @param mixed $source
 	 * @return bool
 	 */
-	static function handle( $source ) : bool
+	static function handle( mixed $source ) : bool
 	{
 		return $source instanceof Component;
 	}

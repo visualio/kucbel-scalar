@@ -44,7 +44,7 @@ class TrimFilter implements FilterInterface
 	 * @param mixed $value
 	 * @return mixed
 	 */
-	function clear( $value )
+	function clear( mixed $value ) : mixed
 	{
 		if( is_array( $value )) {
 			$value = array_map([ $this, 'clear' ], $value );
@@ -58,9 +58,9 @@ class TrimFilter implements FilterInterface
 			}
 		} elseif( is_string( $value )) {
 			if( $this->mode & self::SPACE ) {
-				$value = Strings::replace( $value, '~^[\pC\pZ]+|[\pC\pZ]+$|([\pC\pZ]+)~u', [ $this, $this->mode & self::BREAK ? 'space' : 'block']);
+				$value = Strings::replace( $value, '~^[\pC\pZ]+|[\pC\pZ]+$|([\pC\pZ]+)~Du', [ $this, $this->mode & self::BREAK ? 'space' : 'block']);
 			} elseif( $this->mode & self::STRING ) {
-				$value = Strings::replace( $value, '~^[\pC\pZ]+|[\pC\pZ]+$~u', '');
+				$value = Strings::replace( $value, '~^[\pC\pZ]+|[\pC\pZ]+$~Du');
 			}
 
 			if( $this->mode & self::EMPTY and $value === '') {
@@ -76,7 +76,7 @@ class TrimFilter implements FilterInterface
 	 * @return string
 	 * @internal
 	 */
-	function space( $match )
+	function space( mixed $match ) : string
 	{
 		return isset( $match[1] ) ? ' ' : '';
 	}
@@ -86,7 +86,7 @@ class TrimFilter implements FilterInterface
 	 * @return string
 	 * @internal
 	 */
-	function block( $match )
+	function block( array $match ) : string
 	{
 		if( isset( $match[1] )) {
 			return Strings::replace( $match[1], '~[^\r\n]*(\r\n|\r|\n)[^\r\n]*|[^\r\n]+~u', [ $this, 'line']);
@@ -100,7 +100,7 @@ class TrimFilter implements FilterInterface
 	 * @return string
 	 * @internal
 	 */
-	function line( $match )
+	function line( array $match ) : string
 	{
 		return isset( $match[1] ) ? "\n" : ' ';
 	}
@@ -110,7 +110,7 @@ class TrimFilter implements FilterInterface
 	 * @return bool
 	 * @internal
 	 */
-	function null( $value )
+	function null( mixed $value ) : bool
 	{
 		return $value !== null;
 	}

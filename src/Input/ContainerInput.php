@@ -18,7 +18,7 @@ class ContainerInput extends StrictInput
 	 * ContainerInput constructor.
 	 *
 	 * @param ContainerBuilder $container
-	 * @param string $section
+	 * @param string | null $section
 	 */
 	function __construct( ContainerBuilder $container, string $section = null )
 	{
@@ -36,7 +36,7 @@ class ContainerInput extends StrictInput
 	 * @param mixed $null
 	 * @return mixed
 	 */
-	function get( string $name, $null = null )
+	function get( string $name, mixed $null = null ) : mixed
 	{
 		$name = $this->section . $name;
 		$value = $this->container->parameters;

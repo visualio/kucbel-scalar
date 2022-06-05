@@ -7,5 +7,5 @@ interface ValidatorInterface
 	/**
 	 * @return mixed
 	 */
-	function fetch();
+	function fetch() : mixed;
 }

@@ -27,7 +27,7 @@ class BoolValidator extends Validator
 	 * @param bool $value
 	 * @return $this
 	 */
-	function equal( bool $value )
+	function equal( bool $value ) : static
 	{
 		if( $this->value !== $value ) {
 			$this->error("Parameter \$name must be equal to \$value.", Error::MIX_EQUAL, ['value' => $value ]);

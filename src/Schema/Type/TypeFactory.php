@@ -23,7 +23,7 @@ class TypeFactory
 	/**
 	 * TypeFactory constructor.
 	 *
-	 * @param array $tests
+	 * @param array | null $tests
 	 */
 	function __construct( array $tests = null )
 	{
@@ -74,7 +74,7 @@ class TypeFactory
 	 * @param TypeInterface $type
 	 * @return $this
 	 */
-	function set( string $name, TypeInterface $type )
+	function set( string $name, TypeInterface $type ) : static
 	{
 		if( $this->has( $name )) {
 			throw new InvalidStateException("Type '$name' already exists.");

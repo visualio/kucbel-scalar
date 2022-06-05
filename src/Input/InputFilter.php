@@ -34,7 +34,7 @@ class InputFilter implements InputInterface
 	 *
 	 * @param InputInterface $input
 	 * @param FilterInterface $filter
-	 * @param int $mode
+	 * @param int | null $mode
 	 */
 	function __construct( InputInterface $input, FilterInterface $filter, int $mode = null )
 	{
@@ -62,7 +62,7 @@ class InputFilter implements InputInterface
 	 * @param string $name
 	 * @return mixed
 	 */
-	function get( string $name )
+	function get( string $name ) : mixed
 	{
 		return $this->filter->clear( $this->input->get( $name ));
 	}

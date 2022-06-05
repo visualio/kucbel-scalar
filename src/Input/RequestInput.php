@@ -26,7 +26,7 @@ class RequestInput extends Input implements DetectInterface
 	 * RequestInput constructor.
 	 *
 	 * @param IRequest $request
-	 * @param int $source
+	 * @param int | null $source
 	 */
 	function __construct( IRequest $request, int $source = null )
 	{
@@ -46,7 +46,7 @@ class RequestInput extends Input implements DetectInterface
 	 * @param string $name
 	 * @return mixed
 	 */
-	function get( string $name )
+	function get( string $name ) : mixed
 	{
 		if( $this->source === self::POST ) {
 			return $this->request->getPost( $name );
@@ -61,7 +61,7 @@ class RequestInput extends Input implements DetectInterface
 	 * @param mixed $source
 	 * @return bool
 	 */
-	static function handle( $source ) : bool
+	static function handle( mixed $source ) : bool
 	{
 		return $source instanceof IRequest;
 	}

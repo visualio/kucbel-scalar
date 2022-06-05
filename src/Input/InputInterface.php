@@ -16,7 +16,7 @@ interface InputInterface
 	 * @param string $name
 	 * @return mixed
 	 */
-	function get( string $name );
+	function get( string $name ) : mixed;
 
 	/**
 	 * @param string $name

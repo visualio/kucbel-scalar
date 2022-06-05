@@ -34,7 +34,7 @@ class StringIterator extends ScalarIterator
 	 * @param string ...$values
 	 * @return $this
 	 */
-	function exist( string ...$values )
+	function exist( string ...$values ) : static
 	{
 		if( !$values ) {
 			throw new InvalidArgumentException("Enter at least one value.");
@@ -53,7 +53,7 @@ class StringIterator extends ScalarIterator
 	 * @param string ...$values
 	 * @return $this
 	 */
-	function equal( string ...$values )
+	function equal( string ...$values ) : static
 	{
 		foreach( $this->items as $item ) {
 			$item->equal( ...$values );
@@ -67,7 +67,7 @@ class StringIterator extends ScalarIterator
 	 * @param int|null $upper limit
 	 * @return $this
 	 */
-	function char( ?int $lower, ?int $upper )
+	function char( ?int $lower, ?int $upper ) : static
 	{
 		foreach( $this->items as $item ) {
 			$item->char( $lower, $upper );
@@ -81,7 +81,7 @@ class StringIterator extends ScalarIterator
 	 * @param int|null $upper limit
 	 * @return $this
 	 */
-	function line( ?int $lower, ?int $upper )
+	function line( ?int $lower, ?int $upper ) : static
 	{
 		foreach( $this->items as $item ) {
 			$item->line( $lower, $upper );
@@ -94,7 +94,7 @@ class StringIterator extends ScalarIterator
 	 * @param string $type
 	 * @return $this
 	 */
-	function class( string $type )
+	function class( string $type ) : static
 	{
 		foreach( $this->items as $item ) {
 			$item->class( $type );
@@ -106,7 +106,7 @@ class StringIterator extends ScalarIterator
 	/**
 	 * @return $this
 	 */
-	function email()
+	function email() : static
 	{
 		foreach( $this->items as $item ) {
 			$item->email();
@@ -118,7 +118,7 @@ class StringIterator extends ScalarIterator
 	/**
 	 * @return $this
 	 */
-	function url()
+	function url() : static
 	{
 		foreach( $this->items as $item ) {
 			$item->url();
@@ -131,7 +131,7 @@ class StringIterator extends ScalarIterator
 	 * @param bool $real
 	 * @return $this
 	 */
-	function file( bool $real = true )
+	function file( bool $real = true ) : static
 	{
 		foreach( $this->items as $item ) {
 			$item->file( $real );
@@ -144,7 +144,7 @@ class StringIterator extends ScalarIterator
 	 * @param bool $real
 	 * @return $this
 	 */
-	function folder( bool $real = true )
+	function folder( bool $real = true ) : static
 	{
 		foreach( $this->items as $item ) {
 			$item->folder( $real );

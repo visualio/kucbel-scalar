@@ -17,7 +17,7 @@ abstract class Property
 	/**
 	 * @param int $code
 	 * @param string $text
-	 * @param array $values
+	 * @param array | null $values
 	 */
 	protected function error( string $text, int $code, array $values = null ) : void
 	{

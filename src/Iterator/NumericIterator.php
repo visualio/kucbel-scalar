@@ -11,7 +11,7 @@ abstract class NumericIterator extends ScalarIterator
 	 * @param int|null $upper
 	 * @return $this
 	 */
-	function digit( ?int $lower, ?int $upper )
+	function digit( ?int $lower, ?int $upper ) : static
 	{
 		/** @var NumericValidator $item */
 		foreach( $this->items as $item ) {

@@ -31,7 +31,7 @@ class MixedValidator extends Validator
 	 * @param string $name
 	 * @param mixed $value
 	 */
-	function __construct( string $name, $value )
+	function __construct( string $name, mixed $value )
 	{
 		$this->name = $name;
 		$this->value = $value;
@@ -41,7 +41,7 @@ class MixedValidator extends Validator
 	 * @param FilterInterface $filter
 	 * @return $this
 	 */
-	function clear( FilterInterface $filter )
+	function clear( FilterInterface $filter ) : static
 	{
 		$this->value = $filter->clear( $this->value );
 
@@ -52,7 +52,7 @@ class MixedValidator extends Validator
 	 * @param mixed $value
 	 * @return VoidValidator | $this
 	 */
-	function optional( $value = null )
+	function optional( mixed $value = null ) : VoidValidator | static
 	{
 		if( $this->value !== null ) {
 			return $this;
@@ -68,7 +68,7 @@ class MixedValidator extends Validator
 	/**
 	 * @return BoolValidator
 	 */
-	function bool()
+	function bool() : BoolValidator
 	{
 		$value = $this->value;
 		$type = self::detect( $value );
@@ -93,12 +93,12 @@ class MixedValidator extends Validator
 	/**
 	 * @return FloatValidator
 	 */
-	function float()
+	function float() : FloatValidator
 	{
 		$value = $this->value;
 		$type = self::detect( $value );
 
-		if( $type === self::STR and $match = Strings::match( $value, '~^[+-]?([.][0-9]+|[0-9]+[.]?[0-9]*)([Ee][+-]?[0-9]{1,2})?$~') and strlen( Strings::replace( $match[1], '~^[0.]+|[0.]+$|[.]~', '')) <= 14 ) {
+		if( $type === self::STR and $match = Strings::match( $value, '~^[+-]?([.][0-9]+|[0-9]+[.]?[0-9]*)([Ee][+-]?[0-9]{1,2})?$~D') and strlen( Strings::replace( $match[1], '~^[0.]+|[0.]+$|[.]~D')) <= 14 ) {
 			$type = self::DEC;
 			$value = (float) $value;
 		} elseif( $type === self::DATE ) {
@@ -118,7 +118,7 @@ class MixedValidator extends Validator
 	/**
 	 * @return IntegerValidator
 	 */
-	function integer()
+	function integer() : IntegerValidator
 	{
 		$value = $this->value;
 		$type = self::detect( $value );
@@ -149,7 +149,7 @@ class MixedValidator extends Validator
 	/**
 	 * @return StringValidator
 	 */
-	function string()
+	function string() : StringValidator
 	{
 		$value = $this->value;
 		$type = self::detect( $value );
@@ -172,7 +172,7 @@ class MixedValidator extends Validator
 	 * @return DateValidator
 	 * @todo string $from = null
 	 */
-	function date()
+	function date() : DateValidator
 	{
 		$value = $this->value;
 		$type = self::detect( $value );
@@ -200,7 +200,7 @@ class MixedValidator extends Validator
 	/**
 	 * @return MixedIterator
 	 */
-	function array()
+	function array() : MixedIterator
 	{
 		$type = self::detect( $this->value );
 
@@ -227,7 +227,7 @@ class MixedValidator extends Validator
 	/**
 	 * @return MixedIterator
 	 */
-	function index()
+	function index() : MixedIterator
 	{
 		$type = self::detect( $this->value );
 
@@ -253,7 +253,7 @@ class MixedValidator extends Validator
 	 * @param mixed $value
 	 * @return int
 	 */
-	static protected function detect( $value ) : int
+	static protected function detect( mixed $value ) : int
 	{
 		switch( gettype( $value )) {
 			case 'NULL':

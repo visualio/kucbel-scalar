@@ -32,7 +32,7 @@ class BoolIterator extends Iterator
 	 * @param bool $value
 	 * @return $this
 	 */
-	function equal( bool $value )
+	function equal( bool $value ) : static
 	{
 		foreach( $this->items as $item ) {
 			$item->equal( $value );

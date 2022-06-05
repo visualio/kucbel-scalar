@@ -14,7 +14,7 @@ use Nette\DI\CompilerExtension;
 use Nette\DI\Definitions\ServiceDefinition;
 use Nette\InvalidStateException;
 use Nette\Neon\Exception as NeonException;
-use Nette\PhpGenerator\PhpLiteral;
+use Nette\PhpGenerator\Literal;
 use Nette\Utils\JsonException;
 use ReflectionClass;
 
@@ -83,6 +83,8 @@ class ScalarExtension extends CompilerExtension
 
 	/**
 	 * InputExtension constructor.
+	 *
+	 * @throws
 	 */
 	function __construct()
 	{
@@ -175,7 +177,7 @@ class ScalarExtension extends CompilerExtension
 			$filters[] = "@$filter";
 		}
 
-		$this->services['filter']->setArguments( $filters ?? [ new PhpLiteral('') ]);
+		$this->services['filter']->setArguments( $filters ?? [ new Literal('') ]);
 		$this->services['input']->setArgument( 1, $this->inputs );
 		$this->services['type']->setArgument( 0, $types );
 		$this->services['schema']->setArgument( 1, $this->schemas );
@@ -259,7 +261,7 @@ class ScalarExtension extends CompilerExtension
 	/**
 	 * @param InputInterface $input
 	 * @param string $name
-	 * @param string $alias
+	 * @param string | null $alias
 	 */
 	function addType( InputInterface $input, string $name, string $alias = null ) : void
 	{
@@ -400,7 +402,7 @@ class ScalarExtension extends CompilerExtension
 	/**
 	 * @param InputInterface $input
 	 * @param string $name
-	 * @param string $alias
+	 * @param string | null $alias
 	 */
 	function addSchema( InputInterface $input, string $name, string $alias = null ) : void
 	{

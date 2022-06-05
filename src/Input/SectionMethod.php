@@ -10,10 +10,10 @@ trait SectionMethod
 	protected $section;
 
 	/**
-	 * @param string $section
-	 * @return $this
+	 * @param string | null $section
+	 * @return static
 	 */
-	function withSection( ?string $section ) : self
+	function withSection( ?string $section ) : static
 	{
 		$that = clone $this;
 		$that->section = Input::suffix( $section );

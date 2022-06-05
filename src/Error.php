@@ -44,7 +44,7 @@ class Error
 	/**
 	 * @param string $name
 	 * @param string $text
-	 * @param array $values
+	 * @param array | null $values
 	 * @return string
 	 */
 	static function compose( string $name, string $text, array $values = null ) : string
@@ -61,7 +61,7 @@ class Error
 	 * @param mixed $value
 	 * @return string
 	 */
-	static function export( $value ) : string
+	static function export( mixed $value ) : string
 	{
 		if( $value instanceof DateTimeInterface ) {
 			return $value->format('Y-m-d H:i:s');

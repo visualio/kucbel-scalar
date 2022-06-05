@@ -8,5 +8,5 @@ interface FilterInterface
 	 * @param mixed $value
 	 * @return mixed
 	 */
-	function clear( $value );
+	function clear( mixed $value ) : mixed;
 }

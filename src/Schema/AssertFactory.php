@@ -41,7 +41,7 @@ class AssertFactory
 	 * @param string $type
 	 * @return mixed
 	 */
-	function value( MixedValidator $value, string $type )
+	function value( MixedValidator $value, string $type ) : mixed
 	{
 		try {
 			return $this->type->get( $type )->fetch( $value );

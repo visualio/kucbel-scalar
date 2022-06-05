@@ -26,7 +26,7 @@ class SchemaFactory
 	 * SchemaFactory constructor.
 	 *
 	 * @param TypeFactory $type
-	 * @param array $schemas
+	 * @param array | null $schemas
 	 */
 	function __construct( TypeFactory $type, array $schemas = null )
 	{

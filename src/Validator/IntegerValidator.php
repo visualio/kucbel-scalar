@@ -28,7 +28,7 @@ class IntegerValidator extends NumericValidator
 	 * @param int ...$values
 	 * @return $this
 	 */
-	function equal( int ...$values )
+	function equal( int ...$values ) : static
 	{
 		if( !$values ) {
 			throw new InvalidArgumentException("Enter at least one value.");
@@ -49,7 +49,7 @@ class IntegerValidator extends NumericValidator
 	 * @param int $flag
 	 * @return $this
 	 */
-	function value( ?int $lower, ?int $upper, int $flag = 0 )
+	function value( ?int $lower, ?int $upper, int $flag = 0 ) : static
 	{
 		if( $lower === null and $upper === null ) {
 			throw new InvalidArgumentException("Enter at least one value.");
@@ -94,7 +94,7 @@ class IntegerValidator extends NumericValidator
 	 * @param int $value
 	 * @return $this
 	 */
-	function modulo( int $value )
+	function modulo( int $value ) : static
 	{
 		if( $value <= 0 ) {
 			throw new InvalidArgumentException("Enter a positive non-zero value.");

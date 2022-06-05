@@ -28,9 +28,9 @@ class MixedInput extends StrictInput implements DetectInterface
 	 * MixedInput constructor.
 	 *
 	 * @param mixed $value
-	 * @param string $alias
+	 * @param string | null $alias
 	 */
-	function __construct( $value, string $alias = null )
+	function __construct( mixed $value, string $alias = null )
 	{
 		$this->value = $value;
 		$this->alias = self::suffix( $alias );
@@ -41,7 +41,7 @@ class MixedInput extends StrictInput implements DetectInterface
 	 * @param mixed $null
 	 * @return mixed
 	 */
-	function get( string $name, $null = null )
+	function get( string $name, mixed $null = null ) : mixed
 	{
 		$name = $this->section . $name;
 		$value = $this->value;
@@ -62,14 +62,14 @@ class MixedInput extends StrictInput implements DetectInterface
 	 * @param mixed $source
 	 * @return bool
 	 */
-	static function handle( $source ) : bool
+	static function handle( mixed $source ) : bool
 	{
 		return is_array( $source ) or is_object( $source );
 	}
 
 	/**
 	 * @param string $neon
-	 * @param string $alias
+	 * @param string | null $alias
 	 * @return static
 	 * @throws NeonException
 	 */
@@ -84,7 +84,7 @@ class MixedInput extends StrictInput implements DetectInterface
 
 	/**
 	 * @param string $json
-	 * @param string $alias
+	 * @param string | null $alias
 	 * @return static
 	 * @throws JsonException
 	 */
@@ -99,7 +99,7 @@ class MixedInput extends StrictInput implements DetectInterface
 
 	/**
 	 * @param string $file
-	 * @param string $alias
+	 * @param string | null $alias
 	 * @return MixedInput
 	 * @throws JsonException
 	 * @throws NeonException

@@ -54,7 +54,7 @@ class Schema
 	 * @param string $name
 	 * @return mixed
 	 */
-	function value( string $name )
+	function value( string $name ) : mixed
 	{
 		$type = $this->schema[ $name ] ?? null;
 

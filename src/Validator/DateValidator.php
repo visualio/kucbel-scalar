@@ -28,8 +28,9 @@ class DateValidator extends Validator
 	/**
 	 * @param mixed ...$values
 	 * @return $this
+	 * @throws
 	 */
-	function equal( ...$values )
+	function equal( mixed ...$values ) : static
 	{
 		if( !$values ) {
 			throw new InvalidArgumentException("Enter at least one value.");
@@ -57,12 +58,13 @@ class DateValidator extends Validator
 	}
 
 	/**
-	 * @param mixed|null $lower limit
-	 * @param mixed|null $upper limit
+	 * @param mixed | null $lower limit
+	 * @param mixed | null $upper limit
 	 * @param int $flag
 	 * @return $this
+	 * @throws
 	 */
-	function value( $lower, $upper, int $flag = 0 )
+	function value( mixed $lower, mixed $upper, int $flag = 0 ) : static
 	{
 		if( $lower === null and $upper === null ) {
 			throw new InvalidArgumentException("Enter at least one value.");

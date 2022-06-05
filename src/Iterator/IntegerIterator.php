@@ -34,7 +34,7 @@ class IntegerIterator extends NumericIterator
 	 * @param int ...$values
 	 * @return $this
 	 */
-	function exist( int ...$values )
+	function exist( int ...$values ) : static
 	{
 		if( !$values ) {
 			throw new InvalidArgumentException("Enter at least one value.");
@@ -53,7 +53,7 @@ class IntegerIterator extends NumericIterator
 	 * @param int ...$values
 	 * @return $this
 	 */
-	function equal( int ...$values )
+	function equal( int ...$values ) : static
 	{
 		foreach( $this->items as $item ) {
 			$item->equal( ...$values );
@@ -68,7 +68,7 @@ class IntegerIterator extends NumericIterator
 	 * @param int $flag
 	 * @return $this
 	 */
-	function value( ?int $lower, ?int $upper, int $flag = 0 )
+	function value( ?int $lower, ?int $upper, int $flag = 0 ) : static
 	{
 		foreach( $this->items as $item ) {
 			$item->value( $lower, $upper, $flag );
@@ -81,7 +81,7 @@ class IntegerIterator extends NumericIterator
 	 * @param int $value
 	 * @return $this
 	 */
-	function modulo( int $value )
+	function modulo( int $value ) : static
 	{
 		foreach( $this->items as $item ) {
 			$item->modulo( $value );

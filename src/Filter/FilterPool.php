@@ -27,9 +27,13 @@ class FilterPool implements FilterInterface
 	 * @param mixed $value
 	 * @return mixed
 	 */
-	function clear( $value )
+	function clear( mixed $value ) : mixed
 	{
 		foreach( $this->filters as $filter ) {
+			if( $value === null ) {
+				break;
+			}
+
 			$value = $filter->clear( $value );
 		}
 

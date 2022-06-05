@@ -31,8 +31,8 @@ class DocumentInput extends Input implements DetectInterface
 	 * DocumentInput constructor.
 	 *
 	 * @param DOMDocument $document
-	 * @param DOMElement $element
-	 * @param DOMXPath $search
+	 * @param DOMElement | null $element
+	 * @param DOMXPath | null $search
 	 */
 	function __construct( DOMDocument $document, DOMElement $element = null, DOMXPath $search = null )
 	{
@@ -61,7 +61,7 @@ class DocumentInput extends Input implements DetectInterface
 	 * @param string $name
 	 * @return mixed
 	 */
-	function get( string $name )
+	function get( string $name ) : mixed
 	{
 		$query = @$this->search->query( $name, $this->element );
 
@@ -96,7 +96,7 @@ class DocumentInput extends Input implements DetectInterface
 
 		if( !@$document->load( $file )) {
 			if( $error = libxml_get_last_error() ) {
-				$message = Strings::replace( $error->message, '~line [0-9]+.*$~', '');
+				$message = Strings::replace( $error->message, '~line [0-9]+.*$~D');
 				$message = Strings::trim( $message );
 
 				$previous = new DOMException( "{$message}, line {$error->line}.", $error->code );
@@ -114,7 +114,7 @@ class DocumentInput extends Input implements DetectInterface
 	 * @param mixed $source
 	 * @return bool
 	 */
-	static function handle( $source ) : bool
+	static function handle( mixed $source ) : bool
 	{
 		return $source instanceof DOMDocument;
 	}

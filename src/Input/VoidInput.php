@@ -17,7 +17,7 @@ class VoidInput extends Input implements DetectInterface
 	 * @param string $name
 	 * @return mixed
 	 */
-	function get( string $name )
+	function get( string $name ) : mixed
 	{
 		return null;
 	}
@@ -26,8 +26,8 @@ class VoidInput extends Input implements DetectInterface
 	 * @param mixed $source
 	 * @return bool
 	 */
-	static function handle( $source ) : bool
+	static function handle( mixed $source ) : bool
 	{
-		return $source ? false : true;
+		return (bool) $source;
 	}
 }

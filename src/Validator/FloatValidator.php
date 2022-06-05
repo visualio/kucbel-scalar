@@ -20,14 +20,14 @@ class FloatValidator extends NumericValidator
 	function __construct( string $name, float $value )
 	{
 		$this->name = $name;
-		$this->value = $value ? $value : 0.;
+		$this->value = $value ?: 0.;
 	}
 
 	/**
 	 * @param float ...$values
 	 * @return $this
 	 */
-	function equal( float ...$values )
+	function equal( float ...$values ) : static
 	{
 		if( !$values ) {
 			throw new InvalidArgumentException("Enter at least one value.");
@@ -48,7 +48,7 @@ class FloatValidator extends NumericValidator
 	 * @param int $flag
 	 * @return $this
 	 */
-	function value( ?float $lower, ?float $upper, int $flag = 0 )
+	function value( ?float $lower, ?float $upper, int $flag = 0 ) : static
 	{
 		if( $lower === null and $upper === null ) {
 			throw new InvalidArgumentException("Enter at least one value.");
@@ -94,7 +94,7 @@ class FloatValidator extends NumericValidator
 	 * @param int|null $upper limit
 	 * @return $this
 	 */
-	function point( ?int $lower, ?int $upper )
+	function point( ?int $lower, ?int $upper ) : static
 	{
 		if( $lower === null and $upper === null ) {
 			throw new InvalidArgumentException("Enter at least one value.");
@@ -143,7 +143,7 @@ class FloatValidator extends NumericValidator
 	 * @param float $value
 	 * @return $this
 	 */
-	function modulo( float $value )
+	function modulo( float $value ) : static
 	{
 		if( $value <= 0 ) {
 			throw new InvalidArgumentException("Enter a positive non-zero value.");

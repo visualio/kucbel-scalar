@@ -25,7 +25,7 @@ class ConsoleInput extends Input implements DetectInterface
 	 * @param string $name
 	 * @return mixed
 	 */
-	function get( string $name )
+	function get( string $name ) : mixed
 	{
 		if( $this->input->hasArgument( $name )) {
 			return $this->input->getArgument( $name );
@@ -57,7 +57,7 @@ class ConsoleInput extends Input implements DetectInterface
 	 * @param mixed $source
 	 * @return bool
 	 */
-	static function handle( $source ) : bool
+	static function handle( mixed $source ) : bool
 	{
 		return $source instanceof InputInterface;
 	}

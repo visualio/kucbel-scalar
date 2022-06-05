@@ -19,7 +19,7 @@ class ZoneFilter implements FilterInterface
 	/**
 	 * ZoneFilter constructor.
 	 *
-	 * @param DateTimeZone $zone
+	 * @param DateTimeZone | null $zone
 	 */
 	function __construct( DateTimeZone $zone = null )
 	{
@@ -30,7 +30,7 @@ class ZoneFilter implements FilterInterface
 	 * @param mixed $value
 	 * @return mixed
 	 */
-	function clear( $value )
+	function clear( mixed $value ) : mixed
 	{
 		if( $value instanceof DateTime or $value instanceof DateTimeImmutable ) {
 			$value = $value->setTimezone( $this->zone );

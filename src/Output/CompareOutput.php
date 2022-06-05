@@ -35,7 +35,7 @@ class CompareOutput implements OutputInterface
 	 * @param string $name
 	 * @param mixed $value
 	 */
-	function set( string $name, $value )
+	function set( string $name, mixed $value )
 	{
 		$exist = $this->input->get( $name );
 
@@ -49,7 +49,7 @@ class CompareOutput implements OutputInterface
 	 * @param mixed $new
 	 * @return bool
 	 */
-	protected function equal( $old, $new ) : bool
+	protected function equal( mixed $old, mixed $new ) : bool
 	{
 		if( is_object( $old ) and is_object( $new )) {
 			return $old == $new;

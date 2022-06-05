@@ -19,7 +19,7 @@ abstract class Validator extends Property implements ValidatorInterface
 	/**
 	 * @return mixed
 	 */
-	function fetch()
+	function fetch() : mixed
 	{
 		return $this->value;
 	}

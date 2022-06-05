@@ -19,12 +19,12 @@ class ValidatorException extends Exception implements JsonSerializable
 	 *
 	 * @param string $name
 	 * @param string $text
-	 * @param int $code
-	 * @param Throwable $error
+	 * @param int | null $code
+	 * @param Throwable | null $error
 	 */
 	function __construct( string $name, string $text, int $code = null, Throwable $error = null )
 	{
-		parent::__construct( $text, $code, $error );
+		parent::__construct( $text, $code ?? 0, $error );
 
 		$this->name = $name;
 	}

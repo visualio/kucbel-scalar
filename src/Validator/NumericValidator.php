@@ -12,7 +12,7 @@ abstract class NumericValidator extends ScalarValidator
 	 * @param int|null $upper limit
 	 * @return $this
 	 */
-	function digit( ?int $lower, ?int $upper )
+	function digit( ?int $lower, ?int $upper ) : static
 	{
 		if( $lower === null and $upper === null ) {
 			throw new InvalidArgumentException("Enter at least one value.");

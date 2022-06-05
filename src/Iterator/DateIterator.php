@@ -33,7 +33,7 @@ class DateIterator extends Iterator
 	 * @param mixed ...$values
 	 * @return $this
 	 */
-	function equal( ...$values )
+	function equal( mixed ...$values ) : static
 	{
 		foreach( $this->items as $item ) {
 			$item->equal( ...$values );
@@ -43,12 +43,12 @@ class DateIterator extends Iterator
 	}
 
 	/**
-	 * @param mixed|null $lower
-	 * @param mixed|null $upper
+	 * @param mixed | null $lower
+	 * @param mixed | null $upper
 	 * @param int $flag
 	 * @return $this
 	 */
-	function value( $lower, $upper, int $flag = 0 )
+	function value( mixed $lower, mixed $upper, int $flag = 0 ) : static
 	{
 		foreach( $this->items as $item ) {
 			$item->value( $lower, $upper, $flag );

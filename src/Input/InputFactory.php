@@ -44,7 +44,7 @@ class InputFactory
 	 * @param mixed ...$options
 	 * @return InputInterface
 	 */
-	protected function wrap( $source, ...$options ) : InputInterface
+	protected function wrap( mixed $source, mixed ...$options ) : InputInterface
 	{
 		if( $source instanceof InputInterface ) {
 			return $source;
@@ -72,7 +72,7 @@ class InputFactory
 	 * @param mixed ...$options
 	 * @return InputInterface
 	 */
-	function create( $source, ...$options ) : InputInterface
+	function create( mixed $source, mixed ...$options ) : InputInterface
 	{
 		$input = $this->wrap( $source, ...$options );
 
@@ -84,7 +84,7 @@ class InputFactory
 	 * @param string $name
 	 * @return MixedValidator
 	 */
-	function value( $value, string $name = '???') : MixedValidator
+	function value( mixed $value, string $name = '???') : MixedValidator
 	{
 		$value = $this->filter->value( $value );
 

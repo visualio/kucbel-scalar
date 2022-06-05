@@ -57,7 +57,7 @@ class InputList implements InputInterface
 	 * @param string $name
 	 * @return mixed
 	 */
-	function get( string $name )
+	function get( string $name ) : mixed
 	{
 		$values = null;
 
@@ -99,7 +99,7 @@ class InputList implements InputInterface
 	 * @param int $mode
 	 * @return $this
 	 */
-	function mode( int $mode )
+	function mode( int $mode ) : static
 	{
 		if( $mode & self::CHECK ) {
 			$this->check = true;

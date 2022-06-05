@@ -35,7 +35,7 @@ class OutputFilter implements OutputInterface
 	 * @param string $name
 	 * @param mixed $value
 	 */
-	function set( string $name, $value )
+	function set( string $name, mixed $value )
 	{
 		$this->output->set( $name, $this->filter->clear( $value ));
 	}

@@ -9,7 +9,7 @@ trait SearchMethod
 	 * @param mixed $value
 	 * @return bool
 	 */
-	protected function search( string $name, &$value ) : bool
+	protected function search( string $name, mixed &$value ) : bool
 	{
 		if( strpos( $name, '.')) {
 			foreach( explode('.', $name ) as $part ) {
@@ -29,7 +29,7 @@ trait SearchMethod
 	 * @param mixed $value
 	 * @return bool
 	 */
-	protected function read( string $name, &$value ) : bool
+	protected function read( string $name, mixed &$value ) : bool
 	{
 		if( is_object( $value ) and property_exists( $value, $name )) {
 			$value = $value->$name;

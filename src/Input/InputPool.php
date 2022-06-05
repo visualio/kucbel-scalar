@@ -69,7 +69,7 @@ class InputPool implements InputInterface
 	 * @param string $name
 	 * @return mixed
 	 */
-	function get( string $name )
+	function get( string $name ) : mixed
 	{
 		foreach( $this->inputs as $input ) {
 			if( $this->check and ( $value = $input->get( $name )) !== null ) {
@@ -103,7 +103,7 @@ class InputPool implements InputInterface
 	 * @param int $mode
 	 * @return $this
 	 */
-	function mode( int $mode )
+	function mode( int $mode ) : static
 	{
 		if( $mode & self::CHECK ) {
 			$this->check = true;

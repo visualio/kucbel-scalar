@@ -34,7 +34,7 @@ class FloatIterator extends NumericIterator
 	 * @param float ...$values
 	 * @return $this
 	 */
-	function exist( float ...$values )
+	function exist( float ...$values ) : static
 	{
 		if( !$values ) {
 			throw new InvalidArgumentException("Enter at least one value.");
@@ -53,7 +53,7 @@ class FloatIterator extends NumericIterator
 	 * @param float ...$values
 	 * @return $this
 	 */
-	function equal( float ...$values )
+	function equal( float ...$values ) : static
 	{
 		foreach( $this->items as $item ) {
 			$item->equal( ...$values );
@@ -68,7 +68,7 @@ class FloatIterator extends NumericIterator
 	 * @param int $flag
 	 * @return $this
 	 */
-	function value( ?float $lower, ?float $upper, int $flag = 0 )
+	function value( ?float $lower, ?float $upper, int $flag = 0 ) : static
 	{
 		foreach( $this->items as $item ) {
 			$item->value( $lower, $upper, $flag );
@@ -82,7 +82,7 @@ class FloatIterator extends NumericIterator
 	 * @param int|null $upper limit
 	 * @return $this
 	 */
-	function point( ?int $lower, ?int $upper )
+	function point( ?int $lower, ?int $upper ) : static
 	{
 		foreach( $this->items as $item ) {
 			$item->point( $lower, $upper );
@@ -95,7 +95,7 @@ class FloatIterator extends NumericIterator
 	 * @param float $value
 	 * @return $this
 	 */
-	function modulo( float $value )
+	function modulo( float $value ) : static
 	{
 		foreach( $this->items as $item ) {
 			$item->modulo( $value );

@@ -39,7 +39,7 @@ class RoundFilter implements FilterInterface
 	 * @param mixed $value
 	 * @return mixed
 	 */
-	function clear( $value )
+	function clear( mixed $value ) : mixed
 	{
 		if( $value and is_float( $value ) and is_finite( $value )) {
 			$point = $this->digit - floor( log10( abs( $value )));

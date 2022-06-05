@@ -10,7 +10,7 @@ abstract class ScalarIterator extends Iterator
 	/**
 	 * @return $this
 	 */
-	function unique()
+	function unique() : static
 	{
 		$values = $this->fetch();
 		$checks = [];
@@ -30,7 +30,7 @@ abstract class ScalarIterator extends Iterator
 	 * @param string $regex
 	 * @return $this
 	 */
-	function match( string $regex )
+	function match( string $regex ) : static
 	{
 		/** @var ScalarValidator $item */
 		foreach( $this->items as $item ) {
