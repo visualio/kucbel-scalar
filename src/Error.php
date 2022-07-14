@@ -16,7 +16,7 @@ class Error
 		TYPE_FLOAT		= 3,
 		TYPE_INTEGER	= 4,
 		TYPE_STRING		= 5,
-		TYPE_CLASS		= 6, /** @deprecated */
+		TYPE_DECIMAL	= 6,
 		TYPE_DATE		= 7,
 		TYPE_ARRAY		= 8,
 		TYPE_VOID		= 9,

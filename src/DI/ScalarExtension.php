@@ -249,7 +249,7 @@ class ScalarExtension extends CompilerExtension
 			->optional()
 			->index()
 			->string()
-			->match('~^[^.]+$~')
+			->match('~^[^.]+$~D')
 			->match('~[a-z]~')
 			->fetch();
 
@@ -390,7 +390,7 @@ class ScalarExtension extends CompilerExtension
 			->optional()
 			->index()
 			->string()
-			->match('~^[^.]+$~')
+			->match('~^[^.]+$~D')
 			->match('~[a-z]~')
 			->fetch();
 
@@ -410,7 +410,7 @@ class ScalarExtension extends CompilerExtension
 			->optional()
 			->index()
 			->string()
-			->match('~^[^.]+$~')
+			->match('~^[^.]+$~D')
 			->match('~[a-z]~')
 			->fetch();
 
@@ -448,7 +448,7 @@ class ScalarExtension extends CompilerExtension
 	{
 		return $input->create("schemas.$name.$type")
 			->string()
-			->match('~^[^.]+$~')
+			->match('~^[^.]+$~D')
 			->match('~^[^@]+~')
 			->fetch();
 	}

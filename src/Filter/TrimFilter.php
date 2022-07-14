@@ -58,9 +58,9 @@ class TrimFilter implements FilterInterface
 			}
 		} elseif( is_string( $value )) {
 			if( $this->mode & self::SPACE ) {
-				$value = Strings::replace( $value, '~^[\pC\pZ]+|[\pC\pZ]+$|([\pC\pZ]+)~Du', [ $this, $this->mode & self::BREAK ? 'space' : 'block']);
+				$value = Strings::replace( $value, '~^[\pC\pZ]+|[\pC\pZ]+$|([\pC\pZ]+)~uD', [ $this, $this->mode & self::BREAK ? 'space' : 'block']);
 			} elseif( $this->mode & self::STRING ) {
-				$value = Strings::replace( $value, '~^[\pC\pZ]+|[\pC\pZ]+$~Du');
+				$value = Strings::replace( $value, '~^[\pC\pZ]+|[\pC\pZ]+$~uD');
 			}
 
 			if( $this->mode & self::EMPTY and $value === '') {

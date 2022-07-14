@@ -76,7 +76,7 @@ class MixedValidator extends Validator
 		if( $value === 1 or $value === 1. or $value === 0. or $value === 0 ) {
 			$type = self::BOOL;
 			$value = (bool) $value;
-		} elseif( $type === self::STR and $match = Strings::match( $value, '~^(true|on|yes|y|1)$|^(false|off|no|n|0)$~i')) {
+		} elseif( $type === self::STR and $match = Strings::match( $value, '~^(true|on|yes|y|1)$|^(false|off|no|n|0)$~iD')) {
 			$type = self::BOOL;
 			$value = (bool) $match[1];
 		}
@@ -126,7 +126,7 @@ class MixedValidator extends Validator
 		if( $type === self::BOOL ) {
 			$type = self::INT;
 			$value = (int) $value;
-		} elseif( $type === self::STR and Strings::match( $value, '~^[+-]?[0-9]+[.]?0*$~') and $value >= PHP_INT_MIN and $value <= PHP_INT_MAX ) {
+		} elseif( $type === self::STR and Strings::match( $value, '~^[+-]?[0-9]+[.]?0*$~D') and $value >= PHP_INT_MIN and $value <= PHP_INT_MAX ) {
 			$type = self::INT;
 			$value = (int) $value;
 		} elseif( $type === self::DEC and $value === floor( $value ) and $value >= PHP_INT_MIN and $value <= PHP_INT_MAX ) {
@@ -144,6 +144,31 @@ class MixedValidator extends Validator
 		}
 
 		return new IntegerValidator( $this->name, $value );
+	}
+
+	/**
+	 * @return DecimalValidator
+	 */
+	function decimal() : DecimalValidator
+	{
+		$value = $this->value;
+		$type = self::detect( $value );
+
+		if( $type === self::INT ) {
+			$value = (string) $value;
+		} elseif( $type === self::DEC ) {
+			$value = sprintf('%F', $value );
+		} elseif( $type === self::STR ) {
+			if( !Strings::match( $value, '~^[+-]?([.][0-9]+|[0-9]+[.]?[0-9]*)$~D')) {
+				$this->error("Parameter \$name must be a decimal.", Error::TYPE_DECIMAL );
+			}
+		} elseif( $type === self::NULL ) {
+			$this->error("Parameter \$name must be provided.", Error::TYPE_NULL );
+		} else {
+			$this->error("Parameter \$name must be a decimal.", Error::TYPE_DECIMAL );
+		}
+
+		return new DecimalValidator( $this->name, $value );
 	}
 
 	/**
