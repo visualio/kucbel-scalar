@@ -23,7 +23,9 @@ class DecimalValidator extends ScalarValidator
 		$value = ltrim( $value, '+');
 		$value = ltrim( $value, '0');
 
-		if( str_starts_with( $value, '.')) {
+		if( $value === '') {
+			$value = '0';
+		} elseif( str_starts_with( $value, '.')) {
 			$value = "0{$value}";
 		}
 
